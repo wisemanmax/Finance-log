@@ -10,6 +10,16 @@
 <meta name="theme-color" content="#08080d"/>
 <title>FinanceLog</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script>
+// Apply theme before paint to avoid flash
+try{
+  var _th=localStorage.getItem("fl-theme");
+  if(_th&&JSON.parse(_th)==="light"){
+    document.documentElement.setAttribute("data-theme","light");
+    document.querySelector('meta[name="theme-color"]')&&document.querySelector('meta[name="theme-color"]').setAttribute("content","#f0f0f5");
+  }
+}catch(e){}
+</script>
 
 <style>
 
@@ -27,13 +37,88 @@ select option{background:#1a1a28;color:#e8e8ec}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes splashLogoIn{0%{opacity:0;transform:scale(.7)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes splashRingPulse{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.35;transform:scale(1.12)}}
+@keyframes splashFadeOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.05)}}
+@keyframes tourSlideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tourSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-40px)}}
+@keyframes notifBell{0%,100%{transform:rotate(0deg)}20%{transform:rotate(-12deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(8deg)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(0,245,160,.2),0 8px 32px rgba(0,0,0,.5)}50%{box-shadow:0 0 40px rgba(0,245,160,.4),0 8px 32px rgba(0,0,0,.5)}}
+@keyframes shimmerBar{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ── Splash ── */
+#splash-root{position:fixed;inset:0;background:#08080d;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:opacity .5s ease,transform .5s ease}
+#splash-root.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
+.splash-ring{position:absolute;width:180px;height:180px;border-radius:50%;border:1.5px solid rgba(0,245,160,.12);animation:splashRingPulse 2.4s ease-in-out infinite}
+.splash-ring2{position:absolute;width:240px;height:240px;border-radius:50%;border:1px solid rgba(0,213,245,.08);animation:splashRingPulse 2.4s ease-in-out infinite .6s}
+.splash-logo-wrap{position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;animation:splashLogoIn .7s cubic-bezier(.175,.885,.32,1.275) forwards;opacity:0}
+.splash-logo-bg{position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,#00f5a0,#00d9f5);box-shadow:0 12px 40px rgba(0,245,160,.35);animation:glowPulse 2s ease-in-out infinite}
+.splash-msgs{margin-top:56px;height:20px;display:flex;align-items:center;justify-content:center}
+.splash-msg{font-size:12px;color:#4a4a5c;font-family:'Outfit',sans-serif;font-weight:500;letter-spacing:.04em;animation:fadeUp .4s ease forwards;opacity:0}
+
+/* ── Tour overlay ── */
+#tour-root{position:fixed;inset:0;background:rgba(8,8,13,.97);z-index:8888;display:flex;flex-direction:column;overflow:hidden}
+.tour-slide{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px 20px;animation:tourSlideIn .35s ease forwards;opacity:0}
+.tour-icon-wrap{width:96px;height:96px;border-radius:28px;display:flex;align-items:center;justify-content:center;margin-bottom:28px;position:relative}
+.tour-icon-bg{position:absolute;inset:0;border-radius:28px;opacity:.15}
+.tour-title{font-size:24px;font-weight:800;color:#e8e8ec;text-align:center;margin-bottom:12px;letter-spacing:-.02em;line-height:1.2}
+.tour-desc{font-size:14px;color:#8b8b9e;text-align:center;line-height:1.7;max-width:280px}
+.tour-dots{display:flex;gap:6px;justify-content:center;padding:20px 0 12px}
+.tour-dot{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.12);transition:all .3s}
+.tour-dot.active{width:22px;background:linear-gradient(90deg,#00f5a0,#00d9f5)}
+.tour-footer{padding:16px 24px;padding-bottom:max(28px,env(safe-area-inset-bottom,20px));display:flex;gap:10px}
+
+/* ── Notif prompt ── */
+#notif-root{position:fixed;inset:0;background:rgba(8,8,13,.95);z-index:8889;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .3s ease forwards}
+.notif-card{background:#0f0f1a;border:1px solid rgba(0,245,160,.15);border-radius:24px;padding:32px 24px;max-width:360px;width:100%;text-align:center}
+.notif-bell{font-size:48px;margin-bottom:16px;display:block;animation:notifBell 1.2s ease .5s forwards}
+
+/* ── Enhanced welcome features strip ── */
+.feat-strip{display:flex;gap:10px;margin:20px 0;overflow:hidden}
+.feat-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:6px 12px;flex-shrink:0;animation:fadeUp .5s ease forwards;opacity:0}
+.feat-pill-icon{font-size:13px}
+.feat-pill-label{font-size:11px;font-weight:600;color:#8b8b9e;white-space:nowrap}
 @media(orientation:landscape) and (max-height:500px){
   #app-shell{display:none!important}
   #ll{display:flex!important}
 }
 
-/* ── Auth styles ── */
+/* ── Theme variables ── */
+:root{
+  --bg:#08080d;--card:rgba(255,255,255,0.035);--brd:rgba(255,255,255,0.06);
+  --t1:#e8e8ec;--t2:#8b8b9e;--t3:#4a4a5c;
+  --sel-bg:#1a1a28;--inp-bg:rgba(255,255,255,0.04);
+}
+[data-theme="light"]{
+  --bg:#f0f0f5;--card:rgba(0,0,0,0.04);--brd:rgba(0,0,0,0.08);
+  --t1:#0f0f18;--t2:#5a5a72;--t3:#9a9ab0;
+  --sel-bg:#e8e8f0;--inp-bg:rgba(0,0,0,0.06);
+}
+[data-theme="light"] body{background:#f0f0f5;color:#0f0f18}
+[data-theme="light"] select{background:rgba(0,0,0,.06);color:#0f0f18}
+[data-theme="light"] select option{background:#e8e8f0;color:#0f0f18}
+[data-theme="light"] .ipt{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.1);color:#0f0f18}
+[data-theme="light"] #app-shell{background:#f0f0f5}
+[data-theme="light"] #auth-root{background:#f0f0f5}
+[data-theme="light"] #splash-root{background:#f0f0f5}
+[data-theme="light"] .auth-inner{background:#f0f0f5}
+
+/* ── Nav badge (streak / unlogged) ── */
+.nav-badge{position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:4px;background:#ff6b6b;border:1.5px solid var(--bg,#08080d)}
+
+/* ── AI Coach sheet ── */
+@keyframes coachIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.coach-bubble{background:rgba(0,245,160,0.06);border:1px solid rgba(0,245,160,0.14);border-radius:16px;padding:14px 16px;margin-bottom:10px;animation:coachIn .3s ease forwards;opacity:0}
+.coach-bubble-user{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:12px 16px;margin-bottom:10px}
+.coach-typing{display:flex;gap:5px;align-items:center;padding:14px 16px;background:rgba(0,245,160,0.04);border:1px solid rgba(0,245,160,0.1);border-radius:16px}
+.coach-dot{width:7px;height:7px;border-radius:50%;background:#00f5a0;animation:pulse 1.2s ease-in-out infinite}
+
+/* ── PWA install modal ── */
+@keyframes installIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.install-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.install-step:last-child{border-bottom:none}
+.install-num{width:26px;height:26px;border-radius:8px;background:rgba(0,245,160,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#00f5a0;flex-shrink:0;margin-top:1px}
 #auth-root{
   height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
   display:flex;flex-direction:column;
@@ -67,21 +152,34 @@ select option{background:#1a1a28;color:#e8e8ec}
 </style>
 </head>
 <body>
-<!-- Auth Screen -->
-<div id="auth-root">
-<div class="auth-inner">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;padding:40px 0">
-    <div style="width:36px;height:36px;border:3px solid rgba(0,245,160,0.15);border-top-color:#00f5a0;border-radius:50%;animation:spin .8s linear infinite"></div>
-    <div style="font-size:13px;color:#8b8b9e;font-family:'Outfit',sans-serif;animation:pulse 1.5s infinite">Loading…</div>
+<!-- Splash Screen -->
+<div id="splash-root">
+  <div class="splash-ring2"></div>
+  <div class="splash-ring"></div>
+  <div class="splash-logo-wrap">
+    <div class="splash-logo-bg"></div>
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#08080d" stroke-width="2.5" stroke-linecap="round" style="position:relative;z-index:1">
+      <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+    </svg>
   </div>
+  <div class="splash-msgs"><div class="splash-msg" id="splash-msg">Loading…</div></div>
 </div>
-</div>
+
+<!-- Auth Screen -->
+<div id="auth-root" style="display:none">
+<div class="auth-inner">
+
+<!-- Tour Overlay -->
+<div id="tour-root" style="display:none"></div>
+
+<!-- Notif Overlay -->
+<div id="notif-root" style="display:none"></div>
 
 <!-- Landscape Lock -->
 <div id="ll">
-  <div style="font-size:40px">📱</div>
-  <div style="font-size:16px;font-weight:700;color:#e8e8ec">Rotate to Portrait</div>
-  <div style="font-size:12px;color:#71717a">FinanceLog works best in portrait mode</div>
+  <div style="font-size:48px">📱</div>
+  <div style="font-size:17px;font-weight:800;color:#e8e8ec;letter-spacing:-.02em">Rotate to Portrait</div>
+  <div style="font-size:12px;color:#4a4a5c;margin-top:4px">FinanceLog works best in portrait mode</div>
 </div>
 
 <!-- App Screen -->
@@ -274,7 +372,12 @@ let _currentView = null;
 function setState(updates) { _state = { ..._state, ...updates }; render(); }
 function render() {
   const root = document.getElementById("auth-root");
-  if (root && _currentView) { root.innerHTML = ""; _currentView(root, _state); }
+  if (root && _currentView) {
+    // Clear and re-render into the inner .auth-inner if present, else root itself
+    const inner = root.querySelector(".auth-inner") || root;
+    inner.innerHTML = "";
+    _currentView(inner, _state);
+  }
 }
 
 function Ipt(container, { label, type = "text", value, placeholder, inputMode, maxLength, unit, mono } = {}) {
@@ -345,22 +448,46 @@ function PinDots(container, pin) {
 function viewWelcome(root, state) {
   const sso = state.detectedSSO;
   root.innerHTML = `
-    <div style="text-align:center;padding:40px 0 20px">
-      <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,${V.accent},${V.accent2});display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:30px">💎</div>
-      <div style="font-size:28px;font-weight:800;margin-bottom:8px;color:${V.text}">Finance<span style="color:${V.accent}">Log</span></div>
-      <div style="font-size:14px;color:${V.text3};margin-bottom:32px;line-height:1.6">Track spending, build budgets,<br/>and grow your wealth.</div>
+    <div style="text-align:center;padding:48px 0 24px;animation:fadeUp .5s ease forwards">
+      <div style="width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,${V.accent},${V.accent2});display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 12px 40px rgba(0,245,160,.3)">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${V.bg}" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div style="font-size:30px;font-weight:800;margin-bottom:10px;color:${V.text};letter-spacing:-.03em">Finance<span style="color:${V.accent}">Log</span></div>
+      <div style="font-size:14px;color:${V.text3};margin-bottom:0;line-height:1.7">Track spending, build budgets,<br/>and grow your wealth — all in one place.</div>
     </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 20px">
+      ${[["📊","Budgeting"],["💸","Transactions"],["📈","Net Worth"],["🎯","Goals"],["🏆","Milestones"]].map(([i,l],idx)=>`
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:6px 12px;animation:fadeUp .5s ${idx*80}ms ease forwards;opacity:0">
+          <span style="font-size:13px">${i}</span>
+          <span style="font-size:11px;font-weight:600;color:#8b8b9e">${l}</span>
+        </div>`).join("")}
+    </div>
+
     ${sso && sso.valid ? `
-    <div style="padding:14px 16px;border-radius:14px;background:${V.card};border:1px solid rgba(0,245,160,0.2);margin-bottom:16px;display:flex;align-items:center;gap:12px">
+    <div style="padding:14px 16px;border-radius:14px;background:${V.card};border:1px solid rgba(0,245,160,0.2);margin-bottom:16px;display:flex;align-items:center;gap:12px;animation:fadeUp .5s .2s ease forwards;opacity:0">
       <div style="width:36px;height:36px;border-radius:11px;background:rgba(0,245,160,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🔗</div>
       <div>
         <div style="font-size:12px;font-weight:700;color:${V.accent}">IronLog Account Detected</div>
-        <div style="font-size:10px;color:${V.text3};margin-top:2px">${sso.email || ""} · Tap to link</div>
+        <div style="font-size:10px;color:${V.text3};margin-top:2px">${sso.email || ""} · Tap to link instantly</div>
       </div>
       <button id="btn-sso" style="margin-left:auto;background:linear-gradient(135deg,${V.accent},${V.accent2});color:${V.bg};border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:${V.font}">Link</button>
     </div>` : ""}
-    <button id="btn-create" style="display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border-radius:12px;border:none;background:linear-gradient(135deg,${V.accent},${V.accent2});color:${V.bg};font-size:15px;font-weight:700;cursor:pointer;font-family:${V.font};margin-bottom:10px">Get Started</button>
-    <button id="btn-signin" style="display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;border-radius:12px;border:1px solid ${V.cardBorder};background:rgba(255,255,255,0.04);color:${V.text2};font-size:14px;font-weight:600;cursor:pointer;font-family:${V.font}">Sign In — Restore My Data</button>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;animation:fadeUp .5s .3s ease forwards;opacity:0">
+      <button id="btn-create" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border-radius:14px;border:none;background:linear-gradient(135deg,${V.accent},${V.accent2});color:${V.bg};font-size:16px;font-weight:700;cursor:pointer;font-family:${V.font};box-shadow:0 8px 24px rgba(0,245,160,.25)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="${V.bg}" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Get Started — It's Free
+      </button>
+      <button id="btn-signin" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;border-radius:14px;border:1px solid ${V.cardBorder};background:rgba(255,255,255,0.04);color:${V.text2};font-size:14px;font-weight:600;cursor:pointer;font-family:${V.font}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Sign In — Restore My Data
+      </button>
+    </div>
+
+    <div style="text-align:center;margin-top:20px;animation:fadeUp .5s .45s ease forwards;opacity:0">
+      <div style="font-size:11px;color:${V.text3}">🔒 All data stored locally on your device · 100% private</div>
+    </div>
   `;
   root.querySelector("#btn-create").addEventListener("click", () => {
     setState({ signupStep: 1, signupData: {}, signupError: "" });
@@ -380,6 +507,165 @@ function viewWelcome(root, state) {
       _currentView = viewSignup; render();
     });
   }
+}
+
+// ─── TOUR ─────────────────────────────────────────────────────────────────────
+const TOUR_SLIDES = [
+  {
+    icon: "💰",
+    grad: "135deg,#00f5a0,#00d9f5",
+    title: "Welcome to FinanceLog",
+    desc: "Your personal finance companion. Track every dollar, set budgets, and watch your wealth grow — all stored privately on your device.",
+  },
+  {
+    icon: "💸",
+    grad: "135deg,#a78bfa,#818cf8",
+    title: "Log Transactions Instantly",
+    desc: "Add income and expenses in seconds. Tag by category, account, or note — then see exactly where your money goes.",
+  },
+  {
+    icon: "📊",
+    grad: "135deg,#f59e0b,#ef4444",
+    title: "Budgets That Actually Work",
+    desc: "Set monthly limits per category. Real-time progress bars show you how much you have left before you overspend.",
+  },
+  {
+    icon: "📈",
+    grad: "135deg,#00d9f5,#3b82f6",
+    title: "Track Your Net Worth",
+    desc: "Add all your accounts — checking, savings, investments, debts. Watch your net worth climb month over month.",
+  },
+  {
+    icon: "🏆",
+    grad: "135deg,#f59e0b,#f97316",
+    title: "Earn XP & Level Up",
+    desc: "Hit financial milestones and earn experience points. Complete missions, level up, and build lasting money habits.",
+  },
+];
+
+let _tourSlide = 0;
+let _tourAnimating = false;
+
+function viewTour() {
+  const root = document.getElementById("tour-root");
+  root.style.display = "flex";
+  root.style.flexDirection = "column";
+  renderTourSlide(_tourSlide);
+}
+
+function renderTourSlide(idx) {
+  const root = document.getElementById("tour-root");
+  const slide = TOUR_SLIDES[idx];
+  const isLast = idx === TOUR_SLIDES.length - 1;
+
+  root.innerHTML = `
+    <div class="tour-slide" id="ts">
+      <div class="tour-icon-wrap">
+        <div class="tour-icon-bg" style="background:linear-gradient(${slide.grad})"></div>
+        <div style="width:96px;height:96px;border-radius:28px;border:1.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;position:relative">
+          <span style="font-size:44px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))">${slide.icon}</span>
+        </div>
+      </div>
+      <div class="tour-title">${slide.title}</div>
+      <div class="tour-desc">${slide.desc}</div>
+    </div>
+
+    <div class="tour-dots">
+      ${TOUR_SLIDES.map((_,i)=>`<div class="tour-dot${i===idx?" active":""}"></div>`).join("")}
+    </div>
+
+    <div class="tour-footer" style="padding-bottom:max(28px,env(safe-area-inset-bottom,20px))">
+      <button id="btn-tour-skip" style="flex:1;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:#4a4a5c;font-size:14px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif">
+        ${isLast ? "" : "Skip"}
+      </button>
+      <button id="btn-tour-next" style="flex:2;min-height:46px;border-radius:12px;border:none;background:linear-gradient(135deg,#00f5a0,#00d9f5);color:#08080d;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">
+        ${isLast ? "Let's Go 🚀" : `Next <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#08080d" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`}
+      </button>
+    </div>
+  `;
+
+  const nextBtn = root.querySelector("#btn-tour-next");
+  const skipBtn = root.querySelector("#btn-tour-skip");
+
+  function advance() {
+    if (_tourAnimating) return;
+    _tourAnimating = true;
+    const ts = root.querySelector("#ts");
+    if (ts) { ts.style.animation = "tourSlideOut .25s ease forwards"; }
+    setTimeout(() => {
+      _tourAnimating = false;
+      if (_tourSlide >= TOUR_SLIDES.length - 1) {
+        // Done — show notif prompt
+        root.style.display = "none";
+        viewNotifPrompt();
+      } else {
+        _tourSlide++;
+        renderTourSlide(_tourSlide);
+      }
+    }, 260);
+  }
+
+  nextBtn.addEventListener("click", advance);
+  skipBtn.addEventListener("click", () => {
+    root.style.display = "none";
+    viewNotifPrompt();
+  });
+}
+
+// ─── NOTIF PROMPT ─────────────────────────────────────────────────────────────
+function viewNotifPrompt() {
+  const root = document.getElementById("notif-root");
+  root.style.display = "flex";
+  root.style.flexDirection = "column";
+  root.style.alignItems = "center";
+  root.style.justifyContent = "center";
+  root.style.padding = "24px";
+
+  root.innerHTML = `
+    <div class="notif-card">
+      <span class="notif-bell">🔔</span>
+      <div style="font-size:22px;font-weight:800;color:#e8e8ec;margin-bottom:10px">Stay on Track</div>
+      <div style="font-size:13px;color:#8b8b9e;line-height:1.6;margin-bottom:16px">
+        Enable smart reminders and FinanceLog will help you:
+      </div>
+      <div style="text-align:left;padding:12px 16px;background:rgba(255,255,255,.03);border-radius:14px;border:1px solid rgba(255,255,255,.06);margin-bottom:20px">
+        ${[
+          ["💸","Log daily expenses before you forget"],
+          ["📊","Check your budget before big purchases"],
+          ["💰","Review your weekly spending summary"],
+          ["🎯","Stay on track with monthly savings goals"],
+          ["🏆","Keep your financial streaks alive"],
+        ].map(([icon,text],i)=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<4?"border-bottom:1px solid rgba(255,255,255,.03)":""}">
+            <span style="font-size:15px">${icon}</span>
+            <span style="font-size:12px;color:#e8e8ec">${text}</span>
+          </div>`).join("")}
+      </div>
+      <div style="font-size:11px;color:#00f5a0;font-weight:600;margin-bottom:18px">
+        People with reminders save 2.4x more per month
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button id="btn-notif-yes" style="width:100%;min-height:50px;border-radius:14px;border:none;background:linear-gradient(135deg,#00f5a0,#00d9f5);color:#08080d;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">Enable Reminders</button>
+        <button id="btn-notif-no" style="width:100%;min-height:42px;border-radius:12px;border:none;background:transparent;color:#4a4a5c;font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif">Maybe later</button>
+      </div>
+    </div>
+  `;
+
+  root.querySelector("#btn-notif-yes").addEventListener("click", () => {
+    if ("Notification" in window) {
+      Notification.requestPermission().finally(() => {
+        root.style.display = "none";
+        mountApp();
+      });
+    } else {
+      root.style.display = "none";
+      mountApp();
+    }
+  });
+  root.querySelector("#btn-notif-no").addEventListener("click", () => {
+    root.style.display = "none";
+    mountApp();
+  });
 }
 
 // ─── SIGNUP ───────────────────────────────────────────────────────────────────
@@ -760,38 +1046,109 @@ function viewSignIn(root, state) {
 }
 
 // ─── Mount App ────────────────────────────────────────────────────────────────
+let _isNewUser = false;
+
 function mountApp() {
   document.getElementById("auth-root").style.display = "none";
   document.getElementById("app-shell").style.display = "flex";
-  if (window.__reactReady && window.__mountApp) {
-    window.__mountApp();
+
+  if (_isNewUser) {
+    // New user: show tour OVER the app, then notif prompt, then fully mount
+    _isNewUser = false;
+    _tourSlide = 0;
+    viewTour();
+    // Pre-mount React in background so it's ready after tour
+    if (window.__reactReady && window.__mountApp) {
+      window.__mountApp();
+    } else {
+      window.__pendingMount = function() { window.__mountApp(); };
+    }
   } else {
-    window.__pendingMount = function() { window.__mountApp(); };
+    if (window.__reactReady && window.__mountApp) {
+      window.__mountApp();
+    } else {
+      window.__pendingMount = function() { window.__mountApp(); };
+    }
   }
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 (function() {
-  function startAuth(sso) {
+  // ── Splash messages ──
+  const MSGS = [
+    "Loading FinanceLog…",
+    "Preparing your dashboard…",
+    "Setting up charts…",
+    "Almost ready…",
+  ];
+  let msgIdx = 0;
+  const msgEl = document.getElementById("splash-msg");
+
+  function cycleSplashMsg() {
+    if (!msgEl) return;
+    msgEl.style.opacity = "0";
+    setTimeout(() => {
+      msgIdx = (msgIdx + 1) % MSGS.length;
+      msgEl.textContent = MSGS[msgIdx];
+      msgEl.style.opacity = "1";
+    }, 200);
+  }
+  const msgTimer = setInterval(cycleSplashMsg, 900);
+
+  function hideSplash(then) {
+    clearInterval(msgTimer);
+    const splash = document.getElementById("splash-root");
+    if (splash) {
+      splash.classList.add("fade-out");
+      setTimeout(() => {
+        splash.style.display = "none";
+        then();
+      }, 500);
+    } else {
+      then();
+    }
+  }
+
+  function showAuth(sso) {
+    const authRoot = document.getElementById("auth-root");
+    if (authRoot) authRoot.style.display = "flex";
     _state = { detectedSSO: sso || null };
     _currentView = viewWelcome;
     render();
   }
 
+  function startAuth(sso) {
+    hideSplash(() => showAuth(sso));
+  }
+
   const onboarded = LS.get("fl-onboarded");
   const sessionToken = LS.get("fl-session-token");
 
-  if (onboarded && sessionToken) { mountApp(); return; }
+  if (onboarded && sessionToken) {
+    // Returning user — short splash then go straight to app
+    setTimeout(() => hideSplash(() => mountApp()), 800);
+    return;
+  }
+
+  // Mark as new user so tour fires after signup
+  _isNewUser = true;
+
+  // Minimum splash duration: 1.4s, then auth
+  const minDelay = new Promise(r => setTimeout(r, 1400));
 
   const sso = detectSSO();
   if (sso && sso.type !== "fl_session") {
-    const t = setTimeout(() => startAuth(null), 3000);
-    SessionManager.validateSSO(sso.token)
-      .then(r => { clearTimeout(t); startAuth(r?.valid ? { ...sso, email: r.email || sso.email, valid: true } : null); })
-      .catch(() => { clearTimeout(t); startAuth(null); });
+    const ssoCheck = new Promise(resolve => {
+      const t = setTimeout(() => resolve(null), 3000);
+      SessionManager.validateSSO(sso.token)
+        .then(r => { clearTimeout(t); resolve(r?.valid ? { ...sso, email: r.email || sso.email, valid: true } : null); })
+        .catch(() => { clearTimeout(t); resolve(null); });
+    });
+    Promise.all([minDelay, ssoCheck]).then(([, ssoResult]) => startAuth(ssoResult));
     return;
   }
-  startAuth(sso);
+
+  minDelay.then(() => startAuth(sso));
 })();
 
 </script>
@@ -993,17 +1350,137 @@ function useLevelUp(score,lsKey){
   return{celebrating,celebRank,dismiss:()=>setCelebrating(false)};
 }
 
-const INIT={tab:"home",transactions:[],accounts:[],budgets:{},loaded:false};
+// ── Sheet ─────────────────────────────────────────────────────────────────────
+function Sheet({title,onClose,children,footer}){
+  return ReactDOM.createPortal(
+    <div style={{position:"fixed",inset:0,zIndex:9995,background:"rgba(0,0,0,.65)",backdropFilter:"blur(6px)",display:"flex",alignItems:"flex-end"}} onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{width:"100%",maxHeight:"90vh",background:"#0f0f1a",borderRadius:"24px 24px 0 0",border:"1px solid rgba(255,255,255,.08)",display:"flex",flexDirection:"column",animation:"slideUpSheet .3s ease"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"18px 20px 12px",borderBottom:"1px solid rgba(255,255,255,.06)",flexShrink:0}}>
+          <div style={{fontSize:17,fontWeight:800,color:T.t1}}>{title}</div>
+          <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",padding:8,borderRadius:8}}>
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div style={{overflowY:"auto",flex:1,padding:"16px 20px"}}>{children}</div>
+        {footer&&<div style={{padding:"12px 20px",paddingBottom:"max(20px,env(safe-area-inset-bottom,16px))",borderTop:"1px solid rgba(255,255,255,.06)",flexShrink:0}}>{footer}</div>}
+      </div>
+    </div>,document.body);
+}
+
+// ── AnimCount ─────────────────────────────────────────────────────────────────
+function AnimCount({value,dec=0}){
+  const[disp,setDisp]=useState(value);
+  const ref=useRef(value);
+  useEffect(()=>{
+    const start=ref.current,end=value,dur=600,s=performance.now();
+    ref.current=value;
+    function tick(now){
+      const p=Math.min((now-s)/dur,1);
+      const e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+      setDisp(start+(end-start)*e);
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  },[value]);
+  return<span>{fmtMoney(disp,dec)}</span>;
+}
+
+// ── Sparkline ─────────────────────────────────────────────────────────────────
+function Sparkline({data,w=280,h=44,color=T.acc}){
+  if(!data||data.length<2)return null;
+  const max=Math.max(...data.map(Math.abs),1);
+  const mid=h/2;
+  const pts=data.map((v,i)=>[i/(data.length-1)*w, mid-v/max*mid*0.85]);
+  const path=pts.map((p,i)=>(i===0?`M${p[0]},${p[1]}`:`L${p[0]},${p[1]}`)).join(" ");
+  const area=`${path} L${pts[pts.length-1][0]},${h} L${pts[0][0]},${h} Z`;
+  const months=Array.from({length:data.length},(_,i)=>mShort(monthAgo(data.length-1-i)));
+  return(
+    <svg width="100%" viewBox={`0 0 ${w} ${h+18}`} style={{overflow:"visible"}}>
+      <defs>
+        <linearGradient id="spg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.2"/>
+          <stop offset="100%" stopColor={color} stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#spg)"/>
+      <line x1="0" y1={mid} x2={w} y2={mid} stroke="rgba(255,255,255,.06)" strokeWidth="1" strokeDasharray="3,3"/>
+      <path d={path} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      {pts.map((p,i)=><circle key={i} cx={p[0]} cy={p[1]} r="2.5" fill={data[i]>=0?T.acc:T.danger}/>)}
+      {months.map((m,i)=><text key={i} x={pts[i][0]} y={h+14} textAnchor="middle" fontSize="8" fill={T.t3} fontFamily={T.font}>{m}</text>)}
+    </svg>);
+}
+
+// ── DonutChart ────────────────────────────────────────────────────────────────
+function DonutChart({data,size=140,sw=18}){
+  if(!data||!data.length)return null;
+  const total=data.reduce((a,d)=>a+d.v,0);
+  const r=(size-sw)/2,cx=size/2,cy=size/2,circ=2*Math.PI*r;
+  let offset=0;
+  return(
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {data.map((d,i)=>{
+        const pct=d.v/total,dash=circ*pct,gap=circ-dash;
+        const slice=<circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={d.color} strokeWidth={sw} strokeDasharray={`${dash} ${gap}`} strokeDashoffset={-offset*circ} strokeLinecap="butt" style={{transform:"rotate(-90deg)",transformOrigin:"center"}}/>;
+        offset+=pct;return slice;
+      })}
+      <circle cx={cx} cy={cy} r={r-sw/2-1} fill="rgba(0,0,0,0.3)"/>
+    </svg>);
+}
+
+// ── Ring ──────────────────────────────────────────────────────────────────────
+function Ring({value,max,size=52,sw=6,color=T.acc}){
+  const r=(size-sw)/2,circ=2*Math.PI*r,pct=Math.min(value/max,1),dash=circ*pct;
+  return(
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,.07)" strokeWidth={sw}/>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={sw}
+        strokeDasharray={`${dash} ${circ-dash}`} strokeLinecap="round"
+        style={{transform:"rotate(-90deg)",transformOrigin:"center",transition:"stroke-dasharray .5s ease"}}/>
+    </svg>);
+}
+
+// ── MoM Bar Chart ─────────────────────────────────────────────────────────────
+function MoMChart({transactions}){
+  const months=Array.from({length:4},(_,i)=>monthAgo(3-i));
+  const data=months.map(mo=>{
+    const tx=transactions.filter(t=>t.date.startsWith(mo));
+    return{mo,inc:tx.filter(t=>t.type==="income").reduce((a,t)=>a+t.amount,0),exp:tx.filter(t=>t.type==="expense").reduce((a,t)=>a+t.amount,0)};
+  });
+  const maxVal=Math.max(...data.flatMap(d=>[d.inc,d.exp]),1);
+  const bw=28,gap=20,pad=8,chartW=(bw*2+gap)*4+pad*3,chartH=80;
+  return(
+    <svg width="100%" viewBox={`0 0 ${chartW} ${chartH+20}`} style={{overflow:"visible"}}>
+      {data.map((d,i)=>{
+        const x=i*(bw*2+gap+pad);
+        const ih=Math.max(d.inc/maxVal*chartH,2),eh=Math.max(d.exp/maxVal*chartH,2);
+        return(
+          <g key={d.mo}>
+            <rect x={x} y={chartH-ih} width={bw} height={ih} rx="4" fill={`${T.acc}55`}/>
+            <rect x={x+bw+2} y={chartH-eh} width={bw} height={eh} rx="4" fill={`${T.danger}55`}/>
+            <text x={x+bw+1} y={chartH+14} textAnchor="middle" fontSize="9" fill={T.t3} fontFamily={T.font}>{mShort(d.mo)}</text>
+          </g>);
+      })}
+      <line x1="0" y1={chartH} x2={chartW} y2={chartH} stroke="rgba(255,255,255,.07)" strokeWidth="1"/>
+    </svg>);
+}
+
+const INIT={tab:"home",transactions:[],accounts:[],budgets:{},goals:[],recurring:[],loaded:false};
 function reducer(s,a){
   switch(a.type){
     case"INIT":return{...s,...a.p,loaded:true};
     case"TAB":return{...s,tab:a.tab};
     case"ADD_TX":return{...s,transactions:[a.tx,...s.transactions]};
     case"DEL_TX":return{...s,transactions:s.transactions.filter(t=>t.id!==a.id)};
+    case"UPD_TX":return{...s,transactions:s.transactions.map(t=>t.id===a.tx.id?a.tx:t)};
     case"ADD_ACC":return{...s,accounts:[...s.accounts,a.acc]};
     case"DEL_ACC":return{...s,accounts:s.accounts.filter(x=>x.id!==a.id)};
     case"UPD_ACC":return{...s,accounts:s.accounts.map(x=>x.id===a.acc.id?a.acc:x)};
     case"SET_BUD":return{...s,budgets:{...s.budgets,...a.b}};
+    case"ADD_GOAL":return{...s,goals:[...s.goals,a.goal]};
+    case"UPD_GOAL":return{...s,goals:s.goals.map(g=>g.id===a.goal.id?a.goal:g)};
+    case"DEL_GOAL":return{...s,goals:s.goals.filter(g=>g.id!==a.id)};
+    case"ADD_RECUR":return{...s,recurring:[...s.recurring,a.r]};
+    case"DEL_RECUR":return{...s,recurring:s.recurring.filter(r=>r.id!==a.id)};
     default:return s;
   }
 }
@@ -1185,17 +1662,26 @@ function LevelUp({rank,onDismiss}){
     </div>,document.body);
 }
 
-function AddTx({onClose,onSave}){
-  const[type,setType]=useState("expense");
-  const[amount,setAmount]=useState("");
-  const[cat,setCat]=useState("food");
-  const[note,setNote]=useState("");
-  const[date,setDate]=useState(today());
+// ── TxForm (Add + Edit) ───────────────────────────────────────────────────────
+function TxForm({onClose,onSave,initial}){
+  const editing=!!initial;
+  const[type,setType]=useState(initial?.type||"expense");
+  const[amount,setAmount]=useState(initial?initial.amount.toString():"");
+  const[cat,setCat]=useState(initial?.catId||initial?.cat||"food");
+  const[note,setNote]=useState(initial?.note||"");
+  const[date,setDate]=useState(initial?.date||today());
+  const[recur,setRecur]=useState("");
+  const[showRecur,setShowRecur]=useState(false);
   const cats=type==="expense"?EXP_CATS:INC_CATS;
   const valid=amount&&parseFloat(amount)>0;
-  const save=()=>{if(!valid)return;onSave({id:uid(),type,amount:parseFloat(amount),catId:cat,cat,note:note.trim(),date});onClose();};
+  const save=()=>{
+    if(!valid)return;
+    const tx={id:initial?.id||uid(),type,amount:parseFloat(amount),catId:cat,cat,note:note.trim(),date};
+    if(recur&&!editing){tx.recurring=recur;}
+    onSave(tx,recur&&!editing?recur:null);onClose();
+  };
   return(
-    <Sheet title="Add Transaction" onClose={onClose} footer={<Btn full onClick={save} disabled={!valid}><svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>Save</Btn>}>
+    <Sheet title={editing?"Edit Transaction":"Add Transaction"} onClose={onClose} footer={<Btn full onClick={save} disabled={!valid}><svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>{editing?"Save Changes":"Save"}</Btn>}>
       <div style={{display:"flex",background:"rgba(255,255,255,.04)",borderRadius:16,padding:4,marginBottom:20,border:`1px solid ${T.brd}`}}>
         {[{v:"expense",l:"− Expense"},{v:"income",l:"+ Income"}].map(o=>(
           <button key={o.v} onClick={()=>{setType(o.v);setCat(o.v==="expense"?"food":"salary");}} className="pr"
@@ -1223,27 +1709,116 @@ function AddTx({onClose,onSave}){
       </div>
       <Field label="Date" type="date" value={date} onChange={setDate}/>
       <Field label="Note (optional)" value={note} onChange={setNote} placeholder="What was this for?"/>
+      {!editing&&<>
+        <button onClick={()=>setShowRecur(!showRecur)} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:"8px 0",width:"100%",marginBottom:4}}>
+          <div style={{width:20,height:20,borderRadius:6,border:`1.5px solid ${showRecur?T.acc:T.brd}`,background:showRecur?T.acc:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all .2s",flexShrink:0}}>
+            {showRecur&&<svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={T.bg} strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
+          </div>
+          <span style={{fontSize:13,color:showRecur?T.t1:T.t3,fontWeight:600}}>Make recurring</span>
+        </button>
+        {showRecur&&<div style={{display:"flex",gap:8,marginBottom:8}}>
+          {["weekly","monthly"].map(f=>(
+            <button key={f} onClick={()=>setRecur(recur===f?"":f)} className="pr"
+              style={{flex:1,padding:"10px",borderRadius:12,border:`1px solid ${recur===f?T.acc+"55":T.brd}`,background:recur===f?`${T.acc}12`:"transparent",color:recur===f?T.acc:T.t3,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:T.font,textTransform:"capitalize"}}>{f}</button>))}
+        </div>}
+      </>}
     </Sheet>);
 }
 
-function TxRow({tx,onDelete}){
+// ── TxRow (tappable for edit) ─────────────────────────────────────────────────
+function TxRow({tx,onEdit,onDelete}){
   const c=getCat(tx.catId||tx.cat);
   return(
-    <div style={{display:"flex",alignItems:"center",gap:12,padding:"12px 0",borderBottom:`1px solid rgba(255,255,255,.04)`}}>
+    <button onClick={onEdit} className="pr" style={{display:"flex",alignItems:"center",gap:12,padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,.04)",width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",WebkitTapHighlightColor:"transparent",borderBottom:"1px solid rgba(255,255,255,.04)"}}>
       <div style={{width:42,height:42,borderRadius:13,background:`${c.color||T.acc}18`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:21}}>{c.icon}</div>
       <div style={{flex:1,minWidth:0}}>
         <div style={{fontSize:13,fontWeight:600,color:T.t1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{tx.note||c.label}</div>
-        <div style={{fontSize:10,color:T.t3,marginTop:2}}>{fmtDateShort(tx.date)} · {c.label}</div>
+        <div style={{fontSize:10,color:T.t3,marginTop:2}}>{fmtDateShort(tx.date)} · {c.label}{tx.recurring?` · 🔁 ${tx.recurring}`:""}</div>
       </div>
       <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
         <span style={{fontSize:15,fontWeight:700,fontFamily:T.mono,color:tx.type==="income"?T.acc:T.danger}}>{tx.type==="income"?"+":"-"}${fmtMoney(tx.amount)}</span>
-        {onDelete&&<button onClick={onDelete} className="pr" style={{background:"none",border:"none",padding:6,cursor:"pointer",opacity:.38,borderRadius:8}}>
+        {onDelete&&<button onClick={e=>{e.stopPropagation();Confirm.show("Delete transaction?","This cannot be undone.",onDelete);}} className="pr" style={{background:"none",border:"none",padding:6,cursor:"pointer",opacity:.38,borderRadius:8}}>
           <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
         </button>}
       </div>
+    </button>);
+}
+// ── Goals Section ─────────────────────────────────────────────────────────────
+const GOAL_ICONS=["🏠","🚗","🎓","✈️","💍","🏖️","🛡️","💰","📱","🎯","🏋️","💎"];
+function GoalsSection({s,d}){
+  const[show,setShow]=useState(false);
+  const[form,setForm]=useState({name:"",target:"",current:"",icon:"🎯",targetDate:""});
+  const[editId,setEditId]=useState(null);
+  const open=(g=null)=>{
+    if(g){setEditId(g.id);setForm({name:g.name,target:g.target.toString(),current:g.current.toString(),icon:g.icon||"🎯",targetDate:g.targetDate||""});}
+    else{setEditId(null);setForm({name:"",target:"",current:"",icon:"🎯",targetDate:""});}
+    setShow(true);
+  };
+  const save=()=>{
+    if(!form.name.trim()||!form.target)return;
+    const goal={id:editId||uid(),name:form.name.trim(),target:parseFloat(form.target),current:parseFloat(form.current)||0,icon:form.icon,targetDate:form.targetDate,createdAt:today()};
+    if(editId){d({type:"UPD_GOAL",goal});}else{d({type:"ADD_GOAL",goal});}
+    Toast.show(editId?"Goal updated ✓":"Goal added 🎯",T.acc);setShow(false);
+  };
+  if(!s.goals?.length&&!show)return(
+    <button onClick={()=>open()} className="pr" style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:16,background:T.card,border:`1px dashed ${T.brd}`,cursor:"pointer",width:"100%",textAlign:"left"}}>
+      <div style={{width:36,height:36,borderRadius:11,background:"rgba(251,191,36,.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🎯</div>
+      <div>
+        <div style={{fontSize:13,fontWeight:700,color:T.t1}}>Set a Savings Goal</div>
+        <div style={{fontSize:11,color:T.t3}}>Emergency fund, vacation, down payment…</div>
+      </div>
+    </button>);
+  return(
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+        <div style={{fontSize:11,fontWeight:700,color:T.t3,textTransform:"uppercase",letterSpacing:".06em"}}>Goals</div>
+        <button onClick={()=>open()} style={{background:"none",border:"none",cursor:"pointer",fontSize:11,color:T.acc,fontWeight:700,fontFamily:T.font}}>+ Add</button>
+      </div>
+      {s.goals.map(g=>{
+        const pct=Math.min(g.current/g.target,1);
+        const done=g.current>=g.target;
+        const daysLeft=g.targetDate?Math.ceil((new Date(g.targetDate)-new Date())/86400000):null;
+        const needed=Math.max(0,g.target-g.current);
+        return(
+          <button key={g.id} onClick={()=>open(g)} className="pr" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,background:done?"rgba(0,245,160,.06)":T.card,border:`1px solid ${done?"rgba(0,245,160,.2)":T.brd}`,cursor:"pointer",width:"100%",textAlign:"left",marginBottom:8,WebkitTapHighlightColor:"transparent"}}>
+            <div style={{position:"relative",flexShrink:0}}>
+              <Ring value={g.current} max={g.target} size={52} sw={5} color={done?T.acc:T.gold}/>
+              <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",fontSize:16}}>{g.icon}</div>
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:13,fontWeight:700,color:T.t1,marginBottom:3}}>{g.name}{done?" ✅":""}</div>
+              <div style={{height:4,borderRadius:2,background:"rgba(255,255,255,.07)",marginBottom:4}}>
+                <div style={{height:"100%",borderRadius:2,width:`${pct*100}%`,background:`linear-gradient(90deg,${T.gold},${T.acc})`,transition:"width .5s"}}/>
+              </div>
+              <div style={{fontSize:10,color:T.t3}}>${fmtShort(g.current)} of ${fmtShort(g.target)}{daysLeft!==null&&!done?` · ${daysLeft}d left`:""}</div>
+            </div>
+            <div style={{textAlign:"right",flexShrink:0}}>
+              <div style={{fontSize:13,fontWeight:800,fontFamily:T.mono,color:done?T.acc:T.gold}}>{Math.round(pct*100)}%</div>
+              {!done&&<div style={{fontSize:9,color:T.t3}}>-${fmtShort(needed)}</div>}
+            </div>
+            <button onClick={e=>{e.stopPropagation();Confirm.show(`Delete "${g.name}"?`,"",()=>d({type:"DEL_GOAL",id:g.id}));}} className="pr" style={{background:"none",border:"none",padding:4,cursor:"pointer",opacity:.35,borderRadius:6,flexShrink:0}}>
+              <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+            </button>
+          </button>);
+      })}
+      {show&&(
+        <Sheet title={editId?"Edit Goal":"New Goal"} onClose={()=>setShow(false)} footer={<Btn full onClick={save}>Save Goal</Btn>}>
+          <div style={{marginBottom:14}}>
+            <div style={{fontSize:11,color:T.t3,fontWeight:600,marginBottom:8,textTransform:"uppercase",letterSpacing:".08em"}}>Icon</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+              {GOAL_ICONS.map(ic=><button key={ic} onClick={()=>setForm(f=>({...f,icon:ic}))} className="pr" style={{width:38,height:38,borderRadius:10,border:`1px solid ${form.icon===ic?T.acc+"55":T.brd}`,background:form.icon===ic?`${T.acc}12`:"transparent",fontSize:20,cursor:"pointer"}}>{ic}</button>)}
+            </div>
+          </div>
+          <Field label="Goal Name" value={form.name} onChange={v=>setForm(f=>({...f,name:v}))} placeholder="e.g. Emergency Fund"/>
+          <Field label="Target Amount" type="number" value={form.target} onChange={v=>setForm(f=>({...f,target:v}))} unit="$" step="100" placeholder="5000"/>
+          <Field label="Current Amount" type="number" value={form.current} onChange={v=>setForm(f=>({...f,current:v}))} unit="$" step="10" placeholder="0"/>
+          <Field label="Target Date (optional)" type="date" value={form.targetDate} onChange={v=>setForm(f=>({...f,targetDate:v}))}/>
+        </Sheet>)}
     </div>);
 }
+
 function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
+  const[editTx,setEditTx]=useState(null);
   const m=thisMonth();
   const mTx=s.transactions.filter(tx=>tx.date.startsWith(m));
   const mInc=mTx.filter(tx=>tx.type==="income").reduce((a,tx)=>a+tx.amount,0);
@@ -1258,12 +1833,14 @@ function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
   const recent=useMemo(()=>{const g={};s.transactions.slice(0,10).forEach(tx=>{const l=fmtDate(tx.date);if(!g[l])g[l]=[];g[l].push(tx);});return Object.entries(g);},[s.transactions.length]);
   const h=new Date().getHours();
   const greet=h<12?"Good morning":h<17?"Good afternoon":"Good evening";
+  const hasMoM=s.transactions.some(t=>t.date.startsWith(monthAgo(1)));
   return(
     <div style={{display:"flex",flexDirection:"column",gap:14}}>
       <div className="fu" style={{paddingTop:4}}>
         <div style={{fontSize:11,color:T.t3,marginBottom:1}}>{greet}</div>
         <div style={{fontSize:23,fontWeight:800,color:T.t1}}>Your Overview</div>
       </div>
+      {/* Net Worth Hero */}
       <div className="fu s1" style={{borderRadius:24,padding:"22px 20px",background:"linear-gradient(135deg,rgba(0,212,160,.1),rgba(0,176,138,.04))",border:"1px solid rgba(0,212,160,.18)",boxShadow:"0 8px 40px rgba(0,0,0,.3)"}}>
         <div style={{fontSize:10,color:T.t3,fontWeight:600,letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>Total Net Worth</div>
         <div style={{fontSize:40,fontWeight:800,fontFamily:T.mono,color:netWorth>=0?T.acc:T.danger,lineHeight:1,marginBottom:s.accounts.length?12:0}}>
@@ -1275,6 +1852,7 @@ function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
         </div>}
         {sparkData.some(v=>v!==0)&&<Sparkline data={sparkData} w={290} h={48} color={sparkData[sparkData.length-1]>=0?T.acc:T.danger}/>}
       </div>
+      {/* Month Summary */}
       <div className="fu s2" style={{borderRadius:20,border:`1px solid ${T.brd}`,background:T.card,padding:"16px 18px"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <div style={{fontSize:13,fontWeight:700,color:T.t1}}>{new Date().toLocaleDateString("en-US",{month:"long"})}</div>
@@ -1292,6 +1870,18 @@ function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
           <div style={{height:"100%",borderRadius:3,width:`${Math.min(100,mExp/mInc*100)}%`,background:`linear-gradient(90deg,${T.acc},${mExp>mInc?T.danger:T.acc2})`,transition:"width .5s"}}/>
         </div>}
       </div>
+      {/* Month-over-Month */}
+      {hasMoM&&<div className="fu s2" style={{borderRadius:20,border:`1px solid ${T.brd}`,background:T.card,padding:"16px 18px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <div style={{fontSize:11,fontWeight:700,color:T.t3,textTransform:"uppercase",letterSpacing:".06em"}}>Month vs Month</div>
+          <div style={{display:"flex",gap:10}}>
+            <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:`${T.acc}55`}}/><span style={{fontSize:9,color:T.t3}}>Income</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:`${T.danger}55`}}/><span style={{fontSize:9,color:T.t3}}>Expense</span></div>
+          </div>
+        </div>
+        <MoMChart transactions={s.transactions}/>
+      </div>}
+      {/* Spending Donut */}
       {donutData.length>0&&(
         <div className="fu s2" style={{borderRadius:20,border:`1px solid ${T.brd}`,background:T.card,padding:18}}>
           <div style={{fontSize:11,fontWeight:700,color:T.t3,textTransform:"uppercase",letterSpacing:".06em",marginBottom:14}}>Spending Breakdown</div>
@@ -1313,6 +1903,7 @@ function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
             </div>
           </div>
         </div>)}
+      {/* Insights */}
       {insights.length>0&&(
         <div className="fu s3">
           <div style={{fontSize:11,fontWeight:700,color:T.t3,textTransform:"uppercase",letterSpacing:".06em",marginBottom:10}}>Insights</div>
@@ -1325,13 +1916,18 @@ function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
               </div>))}
           </div>
         </div>)}
+      {/* Iron Rank */}
       <div className="fu s3" style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderRadius:16,background:T.card,border:`1px solid ${T.brd}`}}>
         <IronCard score={score} compact/>
       </div>
+      {/* Goals */}
+      <div className="fu s4"><GoalsSection s={s} d={d}/></div>
+      {/* CTA */}
       <Btn full onClick={()=>setShowAdd(true)} style={{height:52,fontWeight:700,fontSize:15,borderRadius:16,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:"#08080d",boxShadow:`0 4px 24px ${T.acc}2e`}}>
         <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Transaction
       </Btn>
+      {/* Recent */}
       {recent.length>0&&(
         <div className="fu s4">
           <div style={{fontSize:11,fontWeight:700,color:T.t3,textTransform:"uppercase",letterSpacing:".06em",marginBottom:12}}>Recent Activity</div>
@@ -1339,7 +1935,7 @@ function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
             <div key={gi} style={{marginBottom:14}}>
               <div style={{fontSize:10,color:T.t3,fontWeight:600,marginBottom:8,paddingLeft:4}}>{label}</div>
               <div style={{borderRadius:16,background:T.card,border:`1px solid ${T.brd}`,padding:"0 14px"}}>
-                {txs.map(tx=><TxRow key={tx.id} tx={tx} onDelete={()=>Confirm.show("Delete transaction?","This cannot be undone.",()=>d({type:"DEL_TX",id:tx.id}))}/>)}
+                {txs.map(tx=><TxRow key={tx.id} tx={tx} onEdit={()=>setEditTx(tx)} onDelete={()=>d({type:"DEL_TX",id:tx.id})}/>)}
               </div>
             </div>))}
         </div>)}
@@ -1351,23 +1947,43 @@ function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
           <Btn onClick={()=>setShowAdd(true)}>Get Started</Btn>
         </div>)}
       <div className="fu s5"><Missions missions={missions}/></div>
-      {showAdd&&<AddTx onClose={()=>setShowAdd(false)} onSave={tx=>{d({type:"ADD_TX",tx});Toast.show(tx.type==="income"?"💚 Income logged":"🔴 Expense added",tx.type==="income"?T.acc:T.danger);Haptic.med();}}/>}
+      {showAdd&&<TxForm onClose={()=>setShowAdd(false)} onSave={(tx,recur)=>{d({type:"ADD_TX",tx});if(recur){d({type:"ADD_RECUR",r:{id:uid(),type:tx.type,amount:tx.amount,catId:tx.catId,cat:tx.cat,note:tx.note,freq:recur,lastLogged:tx.date}});}Toast.show(tx.type==="income"?"💚 Income logged":"🔴 Expense added",tx.type==="income"?T.acc:T.danger);Haptic.med();}}/>}
+      {editTx&&<TxForm initial={editTx} onClose={()=>setEditTx(null)} onSave={(tx)=>{d({type:"UPD_TX",tx});Toast.show("Transaction updated ✓",T.acc);setEditTx(null);}}/>}
     </div>);
 }
 function TxTab({s,d}){
   const[showAdd,setShowAdd]=useState(false);
+  const[editTx,setEditTx]=useState(null);
   const[fType,setFType]=useState("all");
   const[fMonth,setFMonth]=useState(thisMonth());
+  const[fCat,setFCat]=useState("");
+  const[search,setSearch]=useState("");
   const months=useMemo(()=>{const ms=new Set(s.transactions.map(tx=>tx.date.slice(0,7)));return[thisMonth(),...[...ms].filter(m=>m!==thisMonth())].sort().reverse().slice(0,8);},[s.transactions.length]);
-  const filtered=s.transactions.filter(tx=>{const mOk=!fMonth||tx.date.startsWith(fMonth);const tOk=fType==="all"||tx.type===fType;return mOk&&tOk;});
+  const activeCats=useMemo(()=>{const cs=new Set(s.transactions.filter(t=>fType==="all"||t.type===fType).map(t=>t.catId));return EXP_CATS.concat(INC_CATS).filter(c=>cs.has(c.id));},[s.transactions.length,fType]);
+  const filtered=s.transactions.filter(tx=>{
+    const mOk=!fMonth||tx.date.startsWith(fMonth);
+    const tOk=fType==="all"||tx.type===fType;
+    const cOk=!fCat||tx.catId===fCat;
+    const q=search.toLowerCase().trim();
+    const sOk=!q||tx.note?.toLowerCase().includes(q)||getCat(tx.catId||tx.cat).label.toLowerCase().includes(q);
+    return mOk&&tOk&&cOk&&sOk;
+  });
   const totals={i:filtered.filter(t=>t.type==="income").reduce((a,t)=>a+t.amount,0),e:filtered.filter(t=>t.type==="expense").reduce((a,t)=>a+t.amount,0)};
-  const grouped=useMemo(()=>{const g={};filtered.forEach(tx=>{const l=fmtDate(tx.date);if(!g[l])g[l]=[];g[l].push(tx);});return Object.entries(g);},[filtered.length,fType,fMonth]);
+  const grouped=useMemo(()=>{const g={};filtered.forEach(tx=>{const l=fmtDate(tx.date);if(!g[l])g[l]=[];g[l].push(tx);});return Object.entries(g);},[filtered.length,fType,fMonth,fCat,search]);
   return(
     <div style={{display:"flex",flexDirection:"column",gap:14}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div style={{fontSize:23,fontWeight:800,color:T.t1}}>Transactions</div>
         <Btn v="sm" onClick={()=>setShowAdd(true)}>+ Add</Btn>
       </div>
+      {/* Search bar */}
+      <div style={{position:"relative"}}>
+        <svg style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)"}} width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search transactions…"
+          style={{width:"100%",padding:"11px 14px 11px 34px",background:"rgba(255,255,255,.04)",border:`1px solid ${T.brd}`,borderRadius:12,color:T.t1,fontSize:14,outline:"none",fontFamily:T.font,boxSizing:"border-box"}}/>
+        {search&&<button onClick={()=>setSearch("")} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:T.t3,fontSize:16,padding:4}}>×</button>}
+      </div>
+      {/* Month filter */}
       <div className="sx">
         {months.map(m=>(
           <button key={m} onClick={()=>setFMonth(fMonth===m?"":m)} className="pr"
@@ -1376,15 +1992,26 @@ function TxTab({s,d}){
             {fMonth===m?"✓ ":""}{mShort(m)} {m.slice(0,4)}
           </button>))}
       </div>
+      {/* Type filter */}
       <div style={{display:"flex",background:"rgba(255,255,255,.04)",borderRadius:14,padding:3,border:`1px solid ${T.brd}`}}>
         {["all","income","expense"].map(t=>(
-          <button key={t} onClick={()=>setFType(t)} className="pr"
+          <button key={t} onClick={()=>{setFType(t);setFCat("");}} className="pr"
             style={{flex:1,padding:9,borderRadius:11,border:"none",fontSize:12,fontWeight:700,fontFamily:T.font,cursor:"pointer",transition:"all .2s",
               background:fType===t?(t==="income"?"rgba(0,212,160,.15)":t==="expense"?"rgba(255,87,87,.15)":"rgba(255,255,255,.07)"):"transparent",
               color:fType===t?(t==="income"?T.acc:t==="expense"?T.danger:T.t1):T.t3}}>
             {t==="all"?"All":t==="income"?"Income":"Expenses"}
           </button>))}
       </div>
+      {/* Category filter chips */}
+      {activeCats.length>1&&<div className="sx" style={{gap:6}}>
+        <button onClick={()=>setFCat("")} className="pr" style={{padding:"6px 12px",borderRadius:16,border:`1px solid ${!fCat?T.acc+"55":T.brd}`,background:!fCat?`${T.acc}12`:"transparent",color:!fCat?T.acc:T.t3,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:T.font,whiteSpace:"nowrap",flexShrink:0}}>All</button>
+        {activeCats.map(c=>(
+          <button key={c.id} onClick={()=>setFCat(fCat===c.id?"":c.id)} className="pr"
+            style={{padding:"6px 12px",borderRadius:16,border:`1px solid ${fCat===c.id?(c.color||T.acc)+"55":T.brd}`,background:fCat===c.id?`${c.color||T.acc}12`:"transparent",color:fCat===c.id?(c.color||T.acc):T.t3,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:T.font,display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
+            <span style={{fontSize:12}}>{c.icon}</span><span>{c.label}</span>
+          </button>))}
+      </div>}
+      {/* Totals */}
       {filtered.length>0&&(
         <div style={{display:"grid",gridTemplateColumns:"1fr 1px 1fr 1px 1fr",borderRadius:16,background:T.card,border:`1px solid ${T.brd}`,overflow:"hidden"}}>
           {[{l:"IN",v:totals.i,c:T.acc,s:"+"},{l:"OUT",v:totals.e,c:T.danger,s:"-"},{l:"NET",v:totals.i-totals.e,c:(totals.i-totals.e)>=0?T.acc:T.danger,s:(totals.i-totals.e)>=0?"+":"-"}].map((x,i)=>[
@@ -1394,15 +2021,17 @@ function TxTab({s,d}){
               <div style={{fontSize:14,fontWeight:800,color:x.c,fontFamily:T.mono}}>{x.s}${fmtShort(Math.abs(x.v))}</div>
             </div>])}
         </div>)}
+      {/* Grouped list */}
       {grouped.map(([label,txs],gi)=>(
         <div key={gi}>
           <div style={{fontSize:10,color:T.t3,fontWeight:700,letterSpacing:".06em",paddingLeft:4,marginBottom:8}}>{label.toUpperCase()}</div>
           <div style={{borderRadius:16,background:T.card,border:`1px solid ${T.brd}`,padding:"0 14px"}}>
-            {txs.map(tx=><TxRow key={tx.id} tx={tx} onDelete={()=>Confirm.show("Delete?","",()=>d({type:"DEL_TX",id:tx.id}))}/>)}
+            {txs.map(tx=><TxRow key={tx.id} tx={tx} onEdit={()=>setEditTx(tx)} onDelete={()=>d({type:"DEL_TX",id:tx.id})}/>)}
           </div>
         </div>))}
       {filtered.length===0&&<div style={{textAlign:"center",padding:"48px 20px"}}><div style={{fontSize:36,marginBottom:12}}>🔍</div><div style={{fontSize:14,color:T.t2,marginBottom:4}}>No transactions</div><div style={{fontSize:12,color:T.t3}}>Try a different filter</div></div>}
-      {showAdd&&<AddTx onClose={()=>setShowAdd(false)} onSave={tx=>{d({type:"ADD_TX",tx});Toast.show(tx.type==="income"?"Income added":"Expense logged",tx.type==="income"?T.acc:T.danger);Haptic.med();}}/>}
+      {showAdd&&<TxForm onClose={()=>setShowAdd(false)} onSave={(tx,recur)=>{d({type:"ADD_TX",tx});if(recur)d({type:"ADD_RECUR",r:{id:uid(),type:tx.type,amount:tx.amount,catId:tx.catId,cat:tx.cat,note:tx.note,freq:recur,lastLogged:tx.date}});Toast.show(tx.type==="income"?"Income added":"Expense logged",tx.type==="income"?T.acc:T.danger);Haptic.med();}}/>}
+      {editTx&&<TxForm initial={editTx} onClose={()=>setEditTx(null)} onSave={(tx)=>{d({type:"UPD_TX",tx});Toast.show("Updated ✓",T.acc);setEditTx(null);}}/>}
     </div>);
 }
 
@@ -1596,7 +2225,7 @@ function WealthTab({s,d}){
         </Sheet>)}
     </div>);
 }
-function SettingsTab({s,d,score,missions}){
+function SettingsTab({s,d,score,missions,dark,toggleTheme}){
   const[open,setOpen]=useState(null);
   const tog=id=>setOpen(o=>o===id?null:id);
   const Acc=({id,icon,label,children})=>(
@@ -1611,6 +2240,38 @@ function SettingsTab({s,d,score,missions}){
   return(
     <div style={{display:"flex",flexDirection:"column"}}>
       <div style={{fontSize:23,fontWeight:800,color:T.t1,marginBottom:16}}>Settings</div>
+
+      {/* Theme Toggle */}
+      <div style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,background:T.card,border:`1px solid ${T.brd}`,marginBottom:10}}>
+        <div style={{width:38,height:38,borderRadius:12,background:"rgba(0,245,160,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{dark?"🌙":"☀️"}</div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:14,fontWeight:600,color:T.t1}}>{dark?"Dark Mode":"Light Mode"}</div>
+          <div style={{fontSize:11,color:T.t3,marginTop:1}}>Tap to switch themes</div>
+        </div>
+        <button onClick={toggleTheme} style={{width:52,height:30,borderRadius:15,border:"none",cursor:"pointer",position:"relative",background:dark?`linear-gradient(135deg,${T.acc},${T.acc2})`:"rgba(255,255,255,.1)",transition:"all .3s",flexShrink:0}}>
+          <div style={{position:"absolute",top:3,left:dark?26:4,width:24,height:24,borderRadius:12,background:"white",transition:"left .3s",boxShadow:"0 2px 6px rgba(0,0,0,.3)"}}/>
+        </button>
+      </div>
+
+      <Acc id="recurring" icon="🔁" label="Recurring Transactions">
+        {(!s.recurring||s.recurring.length===0)?
+          <div style={{fontSize:12,color:T.t3,lineHeight:1.6}}>No recurring transactions yet. Mark a transaction as recurring when adding it to auto-log it weekly or monthly.</div>
+          :<div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {s.recurring.map(r=>{
+              const c=getCat(r.catId||r.cat);
+              return(
+                <div key={r.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:14,background:"rgba(255,255,255,.03)",border:`1px solid ${T.brd}`}}>
+                  <div style={{width:36,height:36,borderRadius:11,background:`${c.color||T.acc}18`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{c.icon}</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:13,fontWeight:700,color:T.t1}}>{r.note||c.label}</div>
+                    <div style={{fontSize:10,color:T.t3}}>🔁 {r.freq} · {r.type==="income"?"+":"-"}${fmtMoney(r.amount,0)}</div>
+                  </div>
+                  <button onClick={()=>Confirm.show(`Remove recurring "${r.note||c.label}"?`,"This won't delete past transactions.",()=>d({type:"DEL_RECUR",id:r.id}))} className="pr" style={{background:"none",border:"none",padding:6,cursor:"pointer",opacity:.4,borderRadius:8}}>
+                    <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                  </button>
+                </div>);})}
+          </div>}
+      </Acc>
       <Acc id="rank" icon="🏆" label="IRON Rank">
         <IronCard score={score} compact={false}/>
         <div style={{fontSize:11,color:T.t3,lineHeight:1.6,marginTop:12,marginBottom:12}}>Rank up by logging consistently, hitting savings goals, and completing daily missions.</div>
@@ -1645,15 +2306,251 @@ function SettingsTab({s,d,score,missions}){
     </div>);
 }
 
+// ─── Error Boundary ───────────────────────────────────────────────────────────
+class ErrorBoundary extends React.Component {
+  constructor(p){super(p);this.state={err:null};}
+  static getDerivedStateFromError(e){return{err:e};}
+  render(){
+    if(this.state.err){return(
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",padding:24,background:T.bg,gap:16,textAlign:"center"}}>
+        <div style={{fontSize:48}}>⚠️</div>
+        <div style={{fontSize:18,fontWeight:800,color:T.t1}}>Something went wrong</div>
+        <div style={{fontSize:12,color:T.t3,fontFamily:T.mono,maxWidth:280,lineHeight:1.7,wordBreak:"break-all"}}>{this.state.err.message}</div>
+        <button onClick={()=>window.location.reload()} style={{padding:"12px 28px",borderRadius:12,border:"none",background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:T.bg,fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:T.font}}>Reload App</button>
+      </div>);}
+    return this.props.children;
+  }
+}
+
+// ─── Theme ────────────────────────────────────────────────────────────────────
+function useTheme(){
+  const[dark,setDark]=useState(()=>(LS.get("fl-theme")||"dark")==="dark");
+  const toggle=()=>{
+    const next=dark?"light":"dark";
+    setDark(!dark);
+    LS.set("fl-theme",next);
+    document.documentElement.setAttribute("data-theme",next);
+  };
+  return{dark,toggle};
+}
+
+// ─── Streak ───────────────────────────────────────────────────────────────────
+function calcStreak(transactions){
+  if(!transactions||transactions.length===0)return 0;
+  const days=new Set(transactions.map(t=>t.date));
+  let streak=0,d=new Date();
+  while(true){
+    const key=d.toISOString().split("T")[0];
+    if(days.has(key)){streak++;d.setDate(d.getDate()-1);}
+    else if(streak===0&&d.toISOString().split("T")[0]===today()){d.setDate(d.getDate()-1);continue;}
+    else break;
+  }
+  return streak;
+}
+
+// ─── AI Spending Coach ────────────────────────────────────────────────────────
+function CoachModal({s,onClose}){
+  const[msgs,setMsgs]=useState([]);
+  const[input,setInput]=useState("");
+  const[loading,setLoading]=useState(false);
+  const[greeted,setGreeted]=useState(false);
+  const scrollRef=useRef(null);
+
+  function buildContext(){
+    const txs=s.transactions.slice(0,40);
+    const m=thisMonth();
+    const mTx=txs.filter(t=>t.date.startsWith(m));
+    const inc=mTx.filter(t=>t.type==="income").reduce((a,t)=>a+t.amount,0);
+    const exp=mTx.filter(t=>t.type==="expense").reduce((a,t)=>a+t.amount,0);
+    const cats={};
+    mTx.filter(t=>t.type==="expense").forEach(t=>{cats[t.catId]=(cats[t.catId]||0)+t.amount;});
+    const topCats=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([k,v])=>`${getCat(k).label}: $${v.toFixed(0)}`).join(", ");
+    const nw=s.accounts.reduce((a,ac)=>ac.type==="debt"?a-parseFloat(ac.balance||0):a+parseFloat(ac.balance||0),0);
+    const budgets=Object.entries(s.budgets||{}).filter(([,v])=>parseFloat(v)>0).map(([k,v])=>`${getCat(k).label}: $${parseFloat(v).toFixed(0)}`).join(", ");
+    return `User's FinanceLog data (this month):
+- Income: $${inc.toFixed(0)}, Expenses: $${exp.toFixed(0)}, Net: $${(inc-exp).toFixed(0)}
+- Top spending categories: ${topCats||"none yet"}
+- Budgets set: ${budgets||"none yet"}
+- Net worth: $${nw.toFixed(0)} across ${s.accounts.length} account(s)
+- Total transactions logged: ${s.transactions.length}`;
+  }
+
+  async function sendMsg(userMsg){
+    if(loading)return;
+    const newMsgs=[...msgs,{role:"user",content:userMsg}];
+    setMsgs(newMsgs);setInput("");setLoading(true);
+    try{
+      const res=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:1000,
+          system:`You are a friendly, sharp personal finance coach embedded in FinanceLog. You have access to the user's real financial data. Give concise, actionable, personalized advice. Use emojis sparingly. Keep responses under 120 words unless asked for detail. Never make up numbers beyond what's provided.\n\n${buildContext()}`,
+          messages:newMsgs.map(m=>({role:m.role,content:m.content})),
+        }),
+      });
+      const data=await res.json();
+      const reply=data?.content?.[0]?.text||"Couldn't get a response. Try again.";
+      setMsgs(prev=>[...prev,{role:"assistant",content:reply}]);
+    }catch{
+      setMsgs(prev=>[...prev,{role:"assistant",content:"Connection error. Check your internet and try again."}]);
+    }
+    setLoading(false);
+  }
+
+  useEffect(()=>{
+    if(!greeted){
+      setGreeted(true);
+      sendMsg("Give me a brief personalized financial summary and one key action I should take this month.");
+    }
+  },[]);
+
+  useEffect(()=>{
+    if(scrollRef.current)scrollRef.current.scrollTop=scrollRef.current.scrollHeight;
+  },[msgs,loading]);
+
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:9997,background:"rgba(0,0,0,.7)",backdropFilter:"blur(8px)",display:"flex",flexDirection:"column"}} onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{position:"absolute",bottom:0,left:0,right:0,background:T.bg,borderRadius:"24px 24px 0 0",border:`1px solid ${T.brd}`,display:"flex",flexDirection:"column",maxHeight:"82vh"}}>
+        {/* Header */}
+        <div style={{padding:"20px 20px 14px",display:"flex",alignItems:"center",gap:12,borderBottom:`1px solid ${T.brd}`,flexShrink:0}}>
+          <div style={{width:44,height:44,borderRadius:14,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>🤖</div>
+          <div>
+            <div style={{fontSize:16,fontWeight:800,color:T.t1}}>AI Finance Coach</div>
+            <div style={{fontSize:11,color:T.t3}}>Powered by Claude · Your data stays private</div>
+          </div>
+          <button onClick={onClose} style={{marginLeft:"auto",background:"none",border:"none",cursor:"pointer",padding:8}}>
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        {/* Messages */}
+        <div ref={scrollRef} style={{flex:1,overflowY:"auto",padding:"16px 20px",display:"flex",flexDirection:"column",gap:8,minHeight:0}}>
+          {msgs.map((m,i)=>(
+            m.role==="assistant"
+              ?<div key={i} className="coach-bubble"><div style={{fontSize:13,color:T.t1,lineHeight:1.65}}>{m.content}</div></div>
+              :<div key={i} className="coach-bubble-user"><div style={{fontSize:12,color:T.t2,lineHeight:1.6}}>{m.content}</div></div>
+          ))}
+          {loading&&<div className="coach-typing">
+            {[0,1,2].map(i=><div key={i} className="coach-dot" style={{animationDelay:`${i*.2}s`}}/>)}
+          </div>}
+        </div>
+        {/* Suggestions */}
+        {msgs.length<=2&&!loading&&(
+          <div style={{padding:"0 16px 8px",display:"flex",gap:8,overflowX:"auto",flexShrink:0}}>
+            {["Where am I overspending?","How do I save more?","Am I on track this month?"].map((q,i)=>(
+              <button key={i} onClick={()=>sendMsg(q)} style={{flexShrink:0,padding:"8px 14px",borderRadius:20,border:`1px solid ${T.acc}30`,background:`${T.acc}0a`,color:T.acc,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:T.font,whiteSpace:"nowrap"}}>{q}</button>
+            ))}
+          </div>
+        )}
+        {/* Input */}
+        <div style={{padding:"12px 16px",paddingBottom:"max(20px,env(safe-area-inset-bottom,16px))",borderTop:`1px solid ${T.brd}`,display:"flex",gap:10,flexShrink:0}}>
+          <input value={input} onChange={e=>setInput(e.target.value)}
+            onKeyDown={e=>{if(e.key==="Enter"&&input.trim())sendMsg(input.trim());}}
+            placeholder="Ask your coach anything…"
+            style={{flex:1,padding:"12px 14px",borderRadius:12,border:`1px solid ${T.brd}`,background:"rgba(255,255,255,.05)",color:T.t1,fontSize:14,outline:"none",fontFamily:T.font}}/>
+          <button onClick={()=>input.trim()&&sendMsg(input.trim())} disabled={!input.trim()||loading}
+            style={{width:44,height:44,borderRadius:12,border:"none",background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:T.bg,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",opacity:!input.trim()||loading?.4:1,flexShrink:0}}>
+            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>);
+}
+
+// ─── PWA Install Modal ────────────────────────────────────────────────────────
+function InstallModal({onClose}){
+  const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isAndroid=/Android/.test(navigator.userAgent);
+  const steps=isIOS?[
+    ["Tap the Share button","The box-with-arrow icon in Safari's toolbar"],
+    ["Scroll and tap \"Add to Home Screen\"","You may need to scroll the share sheet down"],
+    ["Tap \"Add\" in the top right","FinanceLog will appear on your home screen"],
+  ]:isAndroid?[
+    ["Tap the 3-dot menu","In Chrome's top-right corner"],
+    ["Tap \"Add to Home screen\"","Or \"Install app\" if you see it"],
+    ["Tap \"Add\"","FinanceLog will appear on your home screen"],
+  ]:[
+    ["Look for the install icon","In your browser's address bar or menu"],
+    ["Click \"Install\" or \"Add to Home Screen\"","The exact label varies by browser"],
+    ["Confirm the installation","FinanceLog will open as a standalone app"],
+  ];
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:9997,background:"rgba(0,0,0,.75)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",padding:"0 0"}} onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{width:"100%",background:T.bg,borderRadius:"24px 24px 0 0",border:`1px solid ${T.brd}`,padding:"24px 24px max(28px,env(safe-area-inset-bottom,24px))",animation:"installIn .3s ease forwards"}}>
+        <div style={{textAlign:"center",marginBottom:20}}>
+          <div style={{fontSize:36,marginBottom:10}}>📲</div>
+          <div style={{fontSize:18,fontWeight:800,color:T.t1}}>Install FinanceLog</div>
+          <div style={{fontSize:12,color:T.t3,marginTop:4}}>{isIOS?"iOS Safari":isAndroid?"Android Chrome":"Your browser"}</div>
+        </div>
+        <div style={{background:"rgba(255,255,255,.03)",borderRadius:16,border:`1px solid ${T.brd}`,padding:"8px 16px",marginBottom:20}}>
+          {steps.map(([title,sub],i)=>(
+            <div key={i} className="install-step">
+              <div className="install-num">{i+1}</div>
+              <div>
+                <div style={{fontSize:13,fontWeight:700,color:T.t1}}>{title}</div>
+                <div style={{fontSize:11,color:T.t3,marginTop:2,lineHeight:1.5}}>{sub}</div>
+              </div>
+            </div>))}
+        </div>
+        <button onClick={onClose} style={{width:"100%",minHeight:48,borderRadius:14,border:"none",background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:T.bg,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:T.font}}>Got it!</button>
+      </div>
+    </div>);
+}
+
 function App(){
   const[s,d]=useReducer(reducer,INIT);
   const score=useMemo(()=>calcScore(s),[s.transactions.length,s.accounts.length,JSON.stringify(s.budgets)]);
   const missions=useMemo(()=>getMissions(s),[s.transactions.length,s.accounts.length,JSON.stringify(s.budgets)]);
   const{celebrating,celebRank,dismiss}=useLevelUp(score,"fl-last-level");
   const[showAdd,setShowAdd]=useState(false);
+  const[showCoach,setShowCoach]=useState(false);
+  const[showInstall,setShowInstall]=useState(false);
+  const{dark,toggle:toggleTheme}=useTheme();
+
+  const streak=useMemo(()=>calcStreak(s.transactions),[s.transactions.length]);
+  const loggedToday=useMemo(()=>(s.transactions||[]).some(t=>t.date===today()),[s.transactions.length]);
+
+  // Apply theme tokens reactively
+  const Tdyn={...T,
+    bg:dark?"#08080d":"#f0f0f5",
+    card:dark?"rgba(255,255,255,0.035)":"rgba(0,0,0,0.04)",
+    brd:dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.08)",
+    t1:dark?"#e8e8ec":"#0f0f18",
+    t2:dark?"#8b8b9e":"#5a5a72",
+    t3:dark?"#4a4a5c":"#9a9ab0",
+  };
+
+  // PWA install prompt
+  const[deferredPrompt,setDeferredPrompt]=useState(null);
+  useEffect(()=>{
+    const handler=e=>{e.preventDefault();setDeferredPrompt(e);};
+    window.addEventListener("beforeinstallprompt",handler);
+    return()=>window.removeEventListener("beforeinstallprompt",handler);
+  },[]);
 
   useEffect(()=>{
-    d({type:"INIT",p:{transactions:LS.get("fl-tx")||[],accounts:LS.get("fl-accounts")||[],budgets:LS.get("fl-budgets")||{}}});
+    const txs=LS.get("fl-tx")||[];
+    const accs=LS.get("fl-accounts")||[];
+    const buds=LS.get("fl-budgets")||{};
+    const goals=LS.get("fl-goals-v2")||[];
+    const recurring=LS.get("fl-recurring")||[];
+    // Auto-log overdue recurring transactions
+    const td=today();
+    const newTxs=[...txs];
+    recurring.forEach(r=>{
+      if(!r.lastLogged)return;
+      const last=new Date(r.lastLogged);
+      const now=new Date(td);
+      const diffDays=Math.round((now-last)/86400000);
+      const needed=r.freq==="weekly"?diffDays>=7:diffDays>=28;
+      if(needed){
+        const newTx={id:uid(),type:r.type,amount:r.amount,catId:r.catId,cat:r.cat,note:r.note,date:td,recurring:r.freq};
+        newTxs.unshift(newTx);
+        r.lastLogged=td;
+      }
+    });
+    d({type:"INIT",p:{transactions:newTxs,accounts:accs,budgets:buds,goals,recurring}});
   },[]);
 
   useEffect(()=>{
@@ -1661,7 +2558,9 @@ function App(){
     LS.set("fl-tx",s.transactions);
     LS.set("fl-accounts",s.accounts);
     LS.set("fl-budgets",s.budgets);
-  },[s.transactions,s.accounts,s.budgets,s.loaded]);
+    LS.set("fl-goals-v2",s.goals||[]);
+    LS.set("fl-recurring",s.recurring||[]);
+  },[s.transactions,s.accounts,s.budgets,s.goals,s.recurring,s.loaded]);
 
   if(!s.loaded)return(
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",background:T.bg,flexDirection:"column",gap:16}}>
@@ -1670,24 +2569,24 @@ function App(){
     </div>);
 
   const TABS=[
-    {id:"home",label:"Home",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+    {id:"home",label:"Home",badge:!loggedToday,icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
         <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/>
       </svg>)},
-    {id:"transactions",label:"Activity",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+    {id:"transactions",label:"Activity",badge:false,icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
         <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
         <line x1="7" y1="15" x2="9" y2="15"/><line x1="12" y1="15" x2="17" y2="15"/>
       </svg>)},
-    {id:"budget",label:"Budget",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+    {id:"budget",label:"Budget",badge:false,icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
         <circle cx="12" cy="12" r="10"/><path d="M12 6v2M12 16v2M8.5 9a3.5 3.5 0 0 1 7 0c0 2-3.5 3-3.5 3s-3.5 1-3.5 3a3.5 3.5 0 0 0 7 0"/>
       </svg>)},
-    {id:"wealth",label:"Wealth",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+    {id:"wealth",label:"Wealth",badge:false,icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
       </svg>)},
-    {id:"settings",label:"More",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+    {id:"settings",label:"More",badge:false,icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -1695,23 +2594,41 @@ function App(){
   ];
 
   return(
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,color:T.t1,fontFamily:T.font,position:"relative"}}>
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:Tdyn.bg,color:Tdyn.t1,fontFamily:T.font,position:"relative"}}>
       {/* safe-area top */}
-      <div style={{height:"env(safe-area-inset-top,0px)",background:T.bg,flexShrink:0}}/>
+      <div style={{height:"env(safe-area-inset-top,0px)",background:Tdyn.bg,flexShrink:0}}/>
 
       {/* Header */}
-      <div style={{padding:"12px 20px 10px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,borderBottom:`1px solid ${T.brd}`}}>
+      <div style={{padding:"12px 16px 10px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,borderBottom:`1px solid ${Tdyn.brd}`}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:28,height:28,borderRadius:8,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,display:"flex",alignItems:"center",justifyContent:"center"}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={T.bg} strokeWidth="2.5" strokeLinecap="round">
               <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
           </div>
-          <span style={{fontSize:17,fontWeight:800,letterSpacing:"-0.03em",color:T.t1}}>Finance<span style={{color:T.acc}}>Log</span></span>
+          <span style={{fontSize:17,fontWeight:800,letterSpacing:"-0.03em",color:Tdyn.t1}}>Finance<span style={{color:T.acc}}>Log</span></span>
+          {streak>=2&&<div style={{display:"flex",alignItems:"center",gap:4,background:"rgba(251,146,60,0.12)",border:"1px solid rgba(251,146,60,0.25)",borderRadius:10,padding:"3px 8px"}}>
+            <span style={{fontSize:11}}>🔥</span>
+            <span style={{fontSize:11,fontWeight:700,color:"#fb923c"}}>{streak}d</span>
+          </div>}
         </div>
-        <button onClick={()=>setShowAdd(true)} style={{width:34,height:34,borderRadius:10,background:`${T.acc}15`,border:`1px solid ${T.acc}30`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",border:"none"}}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.acc} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          {/* AI Coach */}
+          <button onClick={()=>setShowCoach(true)} title="AI Finance Coach"
+            style={{width:34,height:34,borderRadius:10,background:`${T.acc}12`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",border:`1px solid ${T.acc}25`,flexShrink:0}}>
+            <span style={{fontSize:15}}>🤖</span>
+          </button>
+          {/* Install */}
+          <button onClick={()=>{if(deferredPrompt){deferredPrompt.prompt();}else{setShowInstall(true);}}} title="Install App"
+            style={{width:34,height:34,borderRadius:10,background:"rgba(255,255,255,.06)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",border:`1px solid ${Tdyn.brd}`,flexShrink:0}}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={Tdyn.t3} strokeWidth="2.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          {/* Add transaction */}
+          <button onClick={()=>setShowAdd(true)}
+            style={{width:34,height:34,borderRadius:10,background:`${T.acc}15`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",border:"none"}}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.acc} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
       </div>
 
       {/* Content */}
@@ -1720,12 +2637,12 @@ function App(){
         {s.tab==="transactions"&&<TxTab s={s} d={d}/>}
         {s.tab==="budget"&&<BudgetTab s={s} d={d}/>}
         {s.tab==="wealth"&&<WealthTab s={s} d={d}/>}
-        {s.tab==="settings"&&<SettingsTab s={s} d={d}/>}
+        {s.tab==="settings"&&<SettingsTab s={s} d={d} score={score} missions={missions} dark={dark} toggleTheme={toggleTheme}/>}
       </div>
 
-      {/* Bottom Nav — IronLog style */}
-      <nav style={{flexShrink:0,background:"rgba(8,8,13,0.95)",backdropFilter:"blur(24px) saturate(180%)",
-        borderTop:`1px solid rgba(255,255,255,0.06)`,paddingBottom:"env(safe-area-inset-bottom,8px)",
+      {/* Bottom Nav */}
+      <nav style={{flexShrink:0,background:dark?"rgba(8,8,13,0.95)":"rgba(240,240,245,0.95)",backdropFilter:"blur(24px) saturate(180%)",
+        borderTop:`1px solid ${Tdyn.brd}`,paddingBottom:"env(safe-area-inset-bottom,8px)",
         display:"flex",justifyContent:"space-around",alignItems:"center",paddingTop:8,position:"relative",zIndex:50}}>
         {TABS.map(tab=>{
           const active=s.tab===tab.id;
@@ -1736,9 +2653,10 @@ function App(){
               <div style={{width:active?42:36,height:active?42:36,borderRadius:active?14:12,position:"relative",
                 background:active?`${T.acc}18`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",
                 transition:"all .2s ease"}}>
-                {tab.icon({size:active?22:20,color:active?T.acc:T.t3,strokeWidth:active?2.2:1.6})}
+                {tab.icon({size:active?22:20,color:active?T.acc:Tdyn.t3,strokeWidth:active?2.2:1.6})}
+                {tab.badge&&!active&&<div className="nav-badge"/>}
               </div>
-              <span style={{fontSize:10,fontWeight:active?700:500,color:active?T.acc:T.t3,letterSpacing:".01em"}}>{tab.label}</span>
+              <span style={{fontSize:10,fontWeight:active?700:500,color:active?T.acc:Tdyn.t3,letterSpacing:".01em"}}>{tab.label}</span>
             </button>);
         })}
       </nav>
@@ -1746,11 +2664,13 @@ function App(){
       <ToastBar/>
       <ConfirmDlg/>
       {celebrating&&celebRank&&<LevelUp rank={celebRank} onDismiss={dismiss}/>}
+      {showCoach&&<CoachModal s={s} onClose={()=>setShowCoach(false)}/>}
+      {showInstall&&<InstallModal onClose={()=>setShowInstall(false)}/>}
     </div>);
 }
 
 
-function __mountApp() { ReactDOM.createRoot(document.getElementById("react-root")).render(<App/>); }
+function __mountApp() { ReactDOM.createRoot(document.getElementById("react-root")).render(<ErrorBoundary><App/></ErrorBoundary>); }
 
 </script>
 </body>
