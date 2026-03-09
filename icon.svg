@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#081a0e"/>
+      <stop offset="100%" stop-color="#030b07"/>
+    </radialGradient>
+    <radialGradient id="glowG" cx="55%" cy="38%" r="50%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="barGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="barGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0.5"/>
+    </linearGradient>
+    <linearGradient id="barGrad3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6ee7b7"/>
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="112" fill="url(#glowG)"/>
+
+  <!-- Grid lines (subtle) -->
+  <line x1="110" y1="190" x2="402" y2="190" stroke="#34d399" stroke-width="1" opacity="0.07"/>
+  <line x1="110" y1="240" x2="402" y2="240" stroke="#34d399" stroke-width="1" opacity="0.07"/>
+  <line x1="110" y1="290" x2="402" y2="290" stroke="#34d399" stroke-width="1" opacity="0.07"/>
+  <line x1="110" y1="340" x2="402" y2="340" stroke="#34d399" stroke-width="1" opacity="0.07"/>
+
+  <!-- Bar 1 (shortest - leftmost) -->
+  <rect x="118" y="300" width="48" height="80" rx="8" fill="url(#barGrad1)" opacity="0.55"/>
+  <!-- Bar 2 -->
+  <rect x="186" y="258" width="48" height="122" rx="8" fill="url(#barGrad2)" opacity="0.65"/>
+  <!-- Bar 3 -->
+  <rect x="254" y="216" width="48" height="164" rx="8" fill="url(#barGrad2)" opacity="0.75"/>
+  <!-- Bar 4 (tallest - rightmost) -->
+  <rect x="322" y="168" width="48" height="212" rx="8" fill="url(#barGrad3)" opacity="0.9" filter="url(#softglow)"/>
+
+  <!-- Area chart fill behind bars -->
+  <path d="M 118 300 L 186 258 L 254 216 L 346 168 L 346 380 L 118 380 Z"
+    fill="url(#areaFill)"/>
+
+  <!-- Trend line over the bars -->
+  <polyline
+    points="142,300 210,258 278,216 346,168"
+    fill="none" stroke="#6ee7b7" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"
+    filter="url(#softglow)" opacity="0.85"/>
+
+  <!-- Dots on trend line -->
+  <circle cx="142" cy="300" r="5.5" fill="#34d399" opacity="0.7"/>
+  <circle cx="210" cy="258" r="5.5" fill="#34d399" opacity="0.75"/>
+  <circle cx="278" cy="216" r="5.5" fill="#34d399" opacity="0.8"/>
+  <circle cx="346" cy="168" r="7" fill="#6ee7b7" filter="url(#glow)" opacity="0.95"/>
+
+  <!-- Upward arrow at peak dot -->
+  <path d="M 346 146 L 336 162 M 346 146 L 356 162" 
+    stroke="#6ee7b7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+    filter="url(#softglow)" opacity="0.9"/>
+
+  <!-- Baseline -->
+  <line x1="106" y1="380" x2="406" y2="380" stroke="#34d399" stroke-width="2.5" opacity="0.3"/>
+
+  <!-- Dollar sign watermark (subtle, bottom right) -->
+  <text x="390" y="376" text-anchor="end" font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="18" font-weight="700" fill="#34d399" opacity="0.18">$</text>
+
+  <!-- FL monogram bottom center -->
+  <text x="256" y="430" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="24" font-weight="700" letter-spacing="4" fill="#34d399" opacity="0.3">FL</text>
+</svg>

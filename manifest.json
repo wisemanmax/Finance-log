@@ -1,0 +1,33 @@
+{
+  "name": "FinanceLog",
+  "short_name": "FinanceLog",
+  "description": "A personal finance and budget tracking PWA. Part of the IRONLOG ecosystem.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#030b07",
+  "theme_color": "#030b07",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "health",
+    "lifestyle",
+    "productivity"
+  ],
+  "scope": "/",
+  "lang": "en-US",
+  "shortcuts": [
+    {
+      "name": "Open FinanceLog",
+      "short_name": "FinanceLog",
+      "description": "Open FinanceLog",
+      "url": "/"
+    }
+  ]
+}
