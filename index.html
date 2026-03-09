@@ -3,205 +3,98 @@
 <head>
 
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#070e18"/>
+<meta name="apple-mobile-web-app-title" content="FinanceLog"/>
+<meta name="theme-color" content="#08080d"/>
 <title>FinanceLog</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
-html,body,#root{height:100%;width:100%;margin:0;padding:0;overflow:hidden;position:fixed;inset:0;background:#070e18}
-@supports(-webkit-touch-callout:none){html,body,#root{height:-webkit-fill-available}}
-body{font-family:'Sora',sans-serif;color:#dff0ea;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
-input,button,select{font-family:'Sora',sans-serif}
-input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.5) sepia(1) saturate(4) hue-rotate(130deg)}
-::-webkit-scrollbar{display:none}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes popIn{0%{transform:scale(.82);opacity:0}100%{transform:scale(1);opacity:1}}
-.fu{animation:fadeUp .38s cubic-bezier(.22,.68,0,1.2) both}
-.fi{animation:fadeIn .3s ease both}
-.su{animation:slideUp .4s cubic-bezier(.22,.68,0,1.1) both}
-.pi{animation:popIn .32s cubic-bezier(.22,.68,0,1.3) both}
-.s1{animation-delay:.05s}.s2{animation-delay:.1s}.s3{animation-delay:.15s}.s4{animation-delay:.2s}.s5{animation-delay:.25s}
-.sx{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
-.ms{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;height:100%;padding-bottom:max(120px,calc(108px + env(safe-area-inset-bottom,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.shh{padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:14px;flex-shrink:0}
-.shf{padding-bottom:max(24px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:14px;flex-shrink:0}
-.pr:active{transform:scale(.95);transition:transform .1s}
-@media(orientation:landscape) and (max-height:500px){#root{display:none!important}#ll{display:flex!important}}
-#ll{display:none;position:fixed;inset:0;background:#070e18;z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-family:'Sora',sans-serif;color:#3a5a4a;font-size:14px;text-align:center}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
 <style>
-/* ── Auth Styles ── */
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
-html,body{height:100%;width:100%;margin:0;padding:0;background:#070e18;font-family:'Sora',sans-serif;color:#dff0ea;overscroll-behavior-y:contain}
-input,button,select{font-family:'Sora',sans-serif}
-::-webkit-scrollbar{display:none}
-input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.fu{animation:fadeUp .38s cubic-bezier(.22,.68,0,1.2) both}
-.fi{animation:fadeIn .3s ease both}
-.s1{animation-delay:.06s}.s2{animation-delay:.12s}.s3{animation-delay:.18s}.s4{animation-delay:.24s}
-.pr:active{transform:scale(.96);transition:transform .1s}
-
-/* Layout */
-.progress-bar{height:3px;border-radius:2px;background:rgba(255,255,255,.07);margin-bottom:32px;overflow:hidden}
-.progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#00d4a0,#00b08a);transition:width .5s cubic-bezier(.22,.68,0,1)}
-
-/* Cards */
-.card{background:rgba(255,255,255,.038);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:18px}
-.card-glow{background:linear-gradient(135deg,rgba(0,212,160,.1),rgba(0,176,138,.04));border:1px solid rgba(0,212,160,.22);border-radius:20px;padding:18px}
-.sso-card{background:linear-gradient(135deg,rgba(77,158,245,.12),rgba(77,158,245,.04));border:1px solid rgba(77,158,245,.28);border-radius:20px;padding:18px}
-
-/* Inputs */
-.field-wrap{margin-bottom:16px}
-.field-label{font-size:11px;color:#3a5a4a;text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:8px;display:block}
-.field-input{width:100%;padding:14px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;color:#dff0ea;font-size:16px;font-family:'DM Mono',monospace;outline:none;transition:border .2s;-webkit-appearance:none}
-.field-input:focus{border-color:rgba(0,212,160,.4)}
-.field-input::placeholder{color:#3a5a4a}
-select.field-input option{background:#0d1a28;color:#dff0ea}
-
-/* PIN dots */
-.pin-row{display:flex;gap:12px;justify-content:center;margin:24px 0 8px}
-.pin-dot{width:52px;height:60px;border-radius:14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:28px;font-family:'DM Mono',monospace;font-weight:600;color:#dff0ea;transition:all .15s}
-.pin-dot.filled{background:rgba(0,212,160,.14);border-color:rgba(0,212,160,.4);color:#00d4a0}
-.pin-dot.error{background:rgba(255,87,87,.12);border-color:rgba(255,87,87,.4);animation:shake .35s ease}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
-.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:280px;margin:0 auto}
-.num-key{height:62px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.07);color:#dff0ea;font-size:22px;font-weight:600;font-family:'DM Mono',monospace;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s}
-.num-key:active{background:rgba(0,212,160,.18)}
-.num-key.del{font-size:18px;color:#7faa9a}
-.num-key.empty{background:transparent;border:none;pointer-events:none}
-
-/* Buttons */
-.btn-primary{width:100%;height:52px;border-radius:16px;border:none;background:linear-gradient(135deg,#00d4a0,#00b08a);color:#070e18;font-size:15px;font-weight:700;font-family:'Sora',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 24px rgba(0,212,160,.28);transition:opacity .15s}
-.btn-primary:disabled{opacity:.38;cursor:not-allowed}
-.btn-ghost{width:100%;height:48px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#7faa9a;font-size:14px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;transition:opacity .15s}
-.btn-sso{width:100%;height:56px;border-radius:16px;border:1px solid rgba(77,158,245,.35);background:rgba(77,158,245,.12);color:#4d9ef5;font-size:15px;font-weight:700;font-family:'Sora',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .15s}
-
-/* Chips */
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:9px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#7faa9a;font-size:12px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:all .15s}
-.chip.sel{background:rgba(0,212,160,.14);border-color:rgba(0,212,160,.35);color:#00d4a0}
-
-/* Verify code input */
-.code-input{width:100%;padding:18px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:16px;color:#dff0ea;font-size:28px;font-family:'DM Mono',monospace;font-weight:600;text-align:center;outline:none;letter-spacing:.25em;-webkit-appearance:none}
-.code-input:focus{border-color:rgba(0,212,160,.4)}
-
-/* Misc */
-.err{color:#ff5757;font-size:12px;margin-top:6px;min-height:18px}
-.muted{color:#3a5a4a;font-size:12px}
-.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
-.divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.07)}
-.divider span{font-size:11px;color:#3a5a4a;font-weight:600;white-space:nowrap}
-.legal-check{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
-.checkbox{width:22px;height:22px;border-radius:7px;border:1.5px solid rgba(255,255,255,.18);background:transparent;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s}
-.checkbox.checked{background:#00d4a0;border-color:#00d4a0}
-.step-indicator{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.step-dot{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.15);transition:all .3s}
-.step-dot.active{width:20px;background:#00d4a0}
-.step-dot.done{background:rgba(0,212,160,.4)}
-.spinner{width:20px;height:20px;border:2px solid rgba(7,14,24,.3);border-top-color:#070e18;border-radius:50%;animation:spin .7s linear infinite}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;background:#08080d;margin:0;padding:0;overflow:hidden;position:fixed;top:0;left:0;right:0;bottom:0}
+@supports(-webkit-touch-callout:none){html,body{height:-webkit-fill-available}}
+body{font-family:'Outfit',sans-serif;color:#e8e8ec;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
+input,select,button{font-family:inherit}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+select{background:rgba(255,255,255,0.04);color:#e8e8ec}
+select option{background:#1a1a28;color:#e8e8ec}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-
-/* ── App Styles ── */
-
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
-html,body,#root{height:100%;width:100%;margin:0;padding:0;overflow:hidden;position:fixed;inset:0;background:#070e18}
-@supports(-webkit-touch-callout:none){html,body,#root{height:-webkit-fill-available}}
-body{font-family:'Sora',sans-serif;color:#dff0ea;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
-input,button,select{font-family:'Sora',sans-serif}
-input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.5) sepia(1) saturate(4) hue-rotate(130deg)}
-::-webkit-scrollbar{display:none}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes popIn{0%{transform:scale(.82);opacity:0}100%{transform:scale(1);opacity:1}}
-.fu{animation:fadeUp .38s cubic-bezier(.22,.68,0,1.2) both}
-.fi{animation:fadeIn .3s ease both}
-.su{animation:slideUp .4s cubic-bezier(.22,.68,0,1.1) both}
-.pi{animation:popIn .32s cubic-bezier(.22,.68,0,1.3) both}
-.s1{animation-delay:.05s}.s2{animation-delay:.1s}.s3{animation-delay:.15s}.s4{animation-delay:.2s}.s5{animation-delay:.25s}
-.sx{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
-.ms{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;height:100%;padding-bottom:max(120px,calc(108px + env(safe-area-inset-bottom,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.shh{padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:14px;flex-shrink:0}
-.shf{padding-bottom:max(24px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:14px;flex-shrink:0}
-.pr:active{transform:scale(.95);transition:transform .1s}
-@media(orientation:landscape) and (max-height:500px){#root{display:none!important}#ll{display:flex!important}}
-#ll{display:none;position:fixed;inset:0;background:#070e18;z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-family:'Sora',sans-serif;color:#3a5a4a;font-size:14px;text-align:center}
-
-
-/* ── Shell ── */
-#auth-root {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  padding: max(20px, env(safe-area-inset-top, 20px)) 20px max(32px, env(safe-area-inset-bottom, 32px));
-  max-width: 440px;
-  margin: 0 auto;
-  box-sizing: border-box;
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(orientation:landscape) and (max-height:500px){
+  #app-shell{display:none!important}
+  #ll{display:flex!important}
 }
-#app-shell {
-  display: none;
-  flex-direction: column;
-  height: 100dvh;
-  overflow: hidden;
+
+/* ── Auth styles ── */
+#auth-root{
+  height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;
 }
-#ll {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: #070e18;
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-  color: #7faa9a;
-  font-size: 14px;
-  font-weight: 600;
+.auth-inner{
+  flex:1;display:flex;flex-direction:column;
+  max-width:430px;margin:0 auto;width:100%;
+  padding:max(20px,env(safe-area-inset-top,20px)) 24px max(32px,env(safe-area-inset-bottom,32px));
+  box-sizing:border-box;
 }
-@media (orientation: landscape) and (max-height: 500px) {
-  #ll { display: flex; }
+.field-wrap{margin-bottom:12px}
+.field-lbl{font-size:11px;color:#4a4a5c;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:600}
+.ipt{width:100%;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:12px;color:#e8e8ec;font-size:16px;outline:none;box-sizing:border-box;-webkit-appearance:none;min-height:44px;font-family:'Outfit',sans-serif}
+.ipt:focus{border-color:rgba(0,245,160,0.4)}
+.btn-primary{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border-radius:12px;border:none;background:linear-gradient(135deg,#00f5a0,#00d9f5);color:#08080d;font-size:15px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:0}
+
+/* ── App shell ── */
+#app-shell{
+  display:none;flex-direction:column;
+  height:100%;overflow:hidden;
 }
+#react-root{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── Landscape lock ── */
+#ll{
+  display:none;position:fixed;inset:0;background:#08080d;z-index:99999;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  font-family:'Outfit',sans-serif;color:#8b8b9e;font-size:14px;font-weight:600;
+}
+
 </style>
 </head>
 <body>
-<!-- ── Auth Layer ── -->
+<!-- Auth Screen -->
 <div id="auth-root">
-  <div style="display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:14px;color:#00d4a0">
-    <div style="font-size:36px">💎</div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;opacity:.35;letter-spacing:.15em;animation:pulse 1.5s infinite">LOADING</div>
+<div class="auth-inner">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;padding:40px 0">
+    <div style="width:36px;height:36px;border:3px solid rgba(0,245,160,0.15);border-top-color:#00f5a0;border-radius:50%;animation:spin .8s linear infinite"></div>
+    <div style="font-size:13px;color:#8b8b9e;font-family:'Outfit',sans-serif;animation:pulse 1.5s infinite">Loading…</div>
   </div>
 </div>
+</div>
 
-<!-- ── App Layer ── -->
+<!-- Landscape Lock -->
+<div id="ll">
+  <div style="font-size:40px">📱</div>
+  <div style="font-size:16px;font-weight:700;color:#e8e8ec">Rotate to Portrait</div>
+  <div style="font-size:12px;color:#71717a">FinanceLog works best in portrait mode</div>
+</div>
+
+<!-- App Screen -->
 <div id="app-shell">
-  <div id="ll"><div style="font-size:32px">🔄</div><div>Rotate to portrait mode</div></div>
-  <div id="react-root" style="flex:1;min-height:0;display:flex;flex-direction:column;height:100%">
-    <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:14px;color:#00d4a0">
-      <div style="font-size:38px">💎</div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;opacity:.35;letter-spacing:.15em;animation:pulse 1.5s infinite">LOADING</div>
+  <div id="react-root" style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:16px">
+      <div style="width:36px;height:36px;border:3px solid rgba(0,245,160,0.15);border-top-color:#00f5a0;border-radius:50%;animation:spin .8s linear infinite"></div>
+      <div style="font-size:13px;color:#8b8b9e;font-family:'Outfit',sans-serif">Starting app…</div>
     </div>
   </div>
 </div>
 
-<!-- ── Auth Logic (vanilla JS, no deps) ── -->
+<!-- Auth Logic (runs immediately) -->
 <script>
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -214,12 +107,35 @@ const LS = {
 };
 const Cookie = {
   get: (name) => { const m = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)")); return m ? decodeURIComponent(m[2]) : null; },
-  set: (name, value, days = 30) => { const exp = new Date(Date.now() + days * 864e5).toUTCString(); const isIronlog = window.location.hostname.endsWith('ironlog.space'); document.cookie = `${name}=${encodeURIComponent(value)};expires=${exp};${isIronlog ? 'domain=.ironlog.space;' : ''}path=/;${isIronlog ? 'secure;' : ''}samesite=lax`; },
-  clear: (name) => { const isIL = window.location.hostname.endsWith('ironlog.space'); document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;${isIL ? 'domain=.ironlog.space;' : ''}path=/;${isIL ? 'secure' : ''}`; },
+  set: (name, value, days = 30) => {
+    const exp = new Date(Date.now() + days * 864e5).toUTCString();
+    const isIronlog = window.location.hostname.endsWith('ironlog.space');
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${exp};${isIronlog ? 'domain=.ironlog.space;' : ''}path=/;${isIronlog ? 'secure;' : ''}samesite=lax`;
+  },
+  clear: (name) => {
+    const isIL = window.location.hostname.endsWith('ironlog.space');
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;${isIL ? 'domain=.ironlog.space;' : ''}path=/;${isIL ? 'secure' : ''}`;
+  },
 };
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 const today = () => new Date().toISOString().split("T")[0];
 const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+
+// ─── Design Tokens (matches IronLog) ─────────────────────────────────────────
+const V = {
+  bg: "#08080d",
+  card: "rgba(255,255,255,0.035)",
+  cardBorder: "rgba(255,255,255,0.06)",
+  accent: "#00f5a0",
+  accent2: "#00d9f5",
+  danger: "#ff6b6b",
+  warn: "#ff9f43",
+  text: "#e8e8ec",
+  text2: "#8b8b9e",
+  text3: "#4a4a5c",
+  font: "'Outfit', sans-serif",
+  mono: "'JetBrains Mono', monospace",
+};
 
 // ─── SSO Detection ────────────────────────────────────────────────────────────
 const detectSSO = () => {
@@ -228,11 +144,8 @@ const detectSSO = () => {
   const storedEmail = LS.get("ft-session-email");
   const financeToken = LS.get("fl-session-token");
   const financeEmail = LS.get("fl-session-email");
-  // Already have a FinanceLog session
   if (financeToken && financeEmail) return { type: "fl_session", email: financeEmail, token: financeToken };
-  // IronLog cookie (cross-subdomain SSO)
   if (cookie) return { type: "ironlog_cookie", token: cookie };
-  // IronLog localStorage
   if (storedToken && storedEmail) return { type: "ironlog_local", email: storedEmail, token: storedToken };
   return null;
 };
@@ -242,8 +155,7 @@ const SessionManager = {
   create: async (email, pin, deviceId) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/session`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "create", email: email.toLowerCase(), pin, deviceId }),
       });
       if (!res.ok) return false;
@@ -258,788 +170,672 @@ const SessionManager = {
   validateSSO: async (token) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/session`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Session-Token": token },
-        body: JSON.stringify({ action: "validate" }),
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "validate", token }),
       });
       if (!res.ok) return null;
       return await res.json();
     } catch { return null; }
   },
+  sendVerifyCode: async (email) => {
+    try {
+      await fetch(`${API_URL}/api/auth/session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_verify_code", email: email.toLowerCase() }),
+      });
+    } catch {}
+  },
+  confirmVerify: async (email, code) => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "confirm_verify_code", email: email.toLowerCase(), code }),
+      });
+      return res.ok;
+    } catch { return false; }
+  },
+  sendResetCode: async (email) => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_reset_code", email: email.toLowerCase() }),
+      });
+      return res.ok;
+    } catch { return false; }
+  },
+  verifyResetCode: async (email, code) => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify_reset_code", email: email.toLowerCase(), code }),
+      });
+      return res.ok;
+    } catch { return false; }
+  },
+  setNewPin: async (email, code, newPin) => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "set_new_pin", email: email.toLowerCase(), code, newPin }),
+      });
+      return res.ok;
+    } catch { return false; }
+  },
 };
 
-// ─── API ──────────────────────────────────────────────────────────────────────
-const registerUser = async (payload) => {
-  const res = await fetch(`${API_URL}/api/users`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const json = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data: json };
-};
-
-const sendVerifyCode = async (email) => {
+// ─── Registration ─────────────────────────────────────────────────────────────
+async function registerUser(profile, goals, pin) {
+  const deviceId = LS.get("fl-device-id") || uid();
+  LS.set("fl-device-id", deviceId);
   try {
-    await fetch(`${API_URL}/api/auth/session`, {
+    const res = await fetch(`${API_URL}/api/users`, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "send_verify_code", email }),
+      body: JSON.stringify({
+        ...profile, ...goals,
+        appSource: "financelog",
+        accountPin: pin,
+        units: "usd", split: null,
+        consentedAt: new Date().toISOString(),
+        consentVersion: "1.0",
+        deviceId, createdAt: new Date().toISOString(),
+      }),
     });
-  } catch {}
-};
+    return res.ok;
+  } catch { return false; }
+}
 
-const confirmVerifyCode = async (email, code) => {
-  const res = await fetch(`${API_URL}/api/auth/session`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "confirm_verify_code", email, code }),
-  });
-  return await res.json().catch(() => ({}));
-};
+// ─── Sign-in / Restore ────────────────────────────────────────────────────────
+async function signInPull(email, pin) {
+  const deviceId = LS.get("fl-device-id") || uid();
+  LS.set("fl-device-id", deviceId);
+  try {
+    const res = await fetch(`${API_URL}/api/sync/pull`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.toLowerCase(), deviceId, pin }),
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
 
-const signInPull = async (email, deviceId, pin) => {
-  const res = await fetch(`${API_URL}/api/sync/pull`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, deviceId, pin }),
-  });
-  return await res.json().catch(() => ({}));
-};
+function applyRestore(data, email) {
+  if (data?.transactions) LS.set("fl-tx", data.transactions);
+  if (data?.accounts) LS.set("fl-accounts", data.accounts);
+  if (data?.budgets) LS.set("fl-budgets", data.budgets);
+  LS.set("fl-session-email", email.toLowerCase());
+  LS.set("fl-session-token", data?.token || uid());
+  LS.set("fl-onboarded", true);
+}
 
-const sendForgotCode = async (email) => {
-  await fetch(`${API_URL}/api/auth/session`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "send_reset_code", email }),
-  });
-};
-
-const verifyForgotCode = async (email, code) => {
-  const res = await fetch(`${API_URL}/api/auth/session`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "verify_reset_code", email, code }),
-  });
-  return await res.json().catch(() => ({}));
-};
-
-const setNewPin = async (email, resetToken, newPin) => {
-  const res = await fetch(`${API_URL}/api/auth/session`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "set_new_pin", email, resetToken, newPin }),
-  });
-  return await res.json().catch(() => ({}));
-};
-
-// ─── Render Engine ────────────────────────────────────────────────────────────
+// ─── Vanilla UI Helpers ───────────────────────────────────────────────────────
 let _state = {};
 let _currentView = null;
 
-function setState(updates) {
-  _state = { ..._state, ...updates };
-  render();
-}
-
+function setState(updates) { _state = { ..._state, ...updates }; render(); }
 function render() {
   const root = document.getElementById("auth-root");
-  root.innerHTML = "";
-  if (_currentView) _currentView(root, _state);
+  if (root && _currentView) { root.innerHTML = ""; _currentView(root, _state); }
+}
+
+function Ipt(container, { label, type = "text", value, placeholder, inputMode, maxLength, unit, mono } = {}) {
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "margin-bottom:12px";
+  if (label) {
+    const lbl = document.createElement("div");
+    lbl.style.cssText = `font-size:11px;color:${V.text3};text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:600`;
+    lbl.textContent = label;
+    wrap.appendChild(lbl);
+  }
+  const rel = document.createElement("div");
+  rel.style.cssText = "position:relative";
+  const inp = document.createElement("input");
+  inp.type = type; inp.value = value || ""; inp.placeholder = placeholder || "";
+  if (inputMode) inp.setAttribute("inputmode", inputMode);
+  if (maxLength) inp.maxLength = maxLength;
+  inp.style.cssText = `width:100%;padding:12px 14px;padding-right:${unit ? 44 : 14}px;background:rgba(255,255,255,0.04);border:1px solid ${V.cardBorder};border-radius:12px;color:${V.text};font-size:${mono ? 24 : 16}px;font-family:${mono ? V.mono : V.font};outline:none;box-sizing:border-box;-webkit-appearance:none;min-height:44px${mono ? ";text-align:center;letter-spacing:12px" : ""}`;
+  rel.appendChild(inp);
+  if (unit) {
+    const u = document.createElement("span");
+    u.style.cssText = `position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:${V.text3}`;
+    u.textContent = unit;
+    rel.appendChild(u);
+  }
+  wrap.appendChild(rel);
+  container.appendChild(wrap);
+  return inp;
+}
+
+function Btn(container, { label, variant = "primary", full, onClick } = {}) {
+  const btn = document.createElement("button");
+  const base = `display:flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;border:none;font-size:14px;font-weight:600;font-family:${V.font};cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;min-height:44px;${full ? "width:100%;" : ""}`;
+  const variants = {
+    primary: `${base}background:linear-gradient(135deg,${V.accent},${V.accent2});color:${V.bg};padding:12px 20px`,
+    secondary: `${base}background:rgba(255,255,255,0.06);color:${V.text2};padding:12px 20px;border:1px solid ${V.cardBorder}`,
+    danger: `${base}background:rgba(255,107,107,0.12);color:${V.danger};padding:12px 20px`,
+    ghost: `${base}background:transparent;color:${V.text3};padding:8px 12px;font-size:13px`,
+  };
+  btn.style.cssText = variants[variant] || variants.primary;
+  btn.textContent = label;
+  if (onClick) btn.addEventListener("click", onClick);
+  container.appendChild(btn);
+  return btn;
+}
+
+function Card(container, styles = "") {
+  const div = document.createElement("div");
+  div.style.cssText = `padding:16px;border-radius:14px;background:${V.card};border:1px solid ${V.cardBorder};margin-bottom:12px;${styles}`;
+  container.appendChild(div);
+  return div;
+}
+
+function PinDots(container, pin) {
+  const row = document.createElement("div");
+  row.style.cssText = "display:flex;justify-content:center;gap:6px;margin-top:8px";
+  for (let i = 0; i < 6; i++) {
+    const dot = document.createElement("div");
+    dot.style.cssText = `width:10px;height:10px;border-radius:5px;background:${i < pin.length ? V.accent : "rgba(255,255,255,0.1)"};transition:all .15s`;
+    row.appendChild(dot);
+  }
+  container.appendChild(row);
+  return row;
 }
 
 // ─── Views ────────────────────────────────────────────────────────────────────
 
-// WELCOME VIEW
 function viewWelcome(root, state) {
   const sso = state.detectedSSO;
   root.innerHTML = `
-    <div class="fu" style="margin-bottom:auto;padding-top:20px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:40px">
-        <div style="width:42px;height:42px;border-radius:14px;background:rgba(0,212,160,.15);border:1px solid rgba(0,212,160,.3);display:flex;align-items:center;justify-content:center;font-size:22px">💎</div>
-        <div>
-          <div style="font-size:17px;font-weight:800;color:#dff0ea;line-height:1">FinanceLog</div>
-          <div style="font-size:10px;color:#3a5a4a;letter-spacing:.1em;font-weight:600">BY IRONLOG</div>
-        </div>
-      </div>
-      <h1 style="font-size:30px;font-weight:800;color:#dff0ea;margin:0 0 10px;line-height:1.2">Take control of<br/><span style="color:#00d4a0">your money.</span></h1>
-      <p style="color:#7faa9a;font-size:14px;line-height:1.65;margin:0 0 32px">Track spending, set budgets, monitor net worth — and earn IRON XP while building real financial habits.</p>
+    <div style="text-align:center;padding:40px 0 20px">
+      <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,${V.accent},${V.accent2});display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:30px">💎</div>
+      <div style="font-size:28px;font-weight:800;margin-bottom:8px;color:${V.text}">Finance<span style="color:${V.accent}">Log</span></div>
+      <div style="font-size:14px;color:${V.text3};margin-bottom:32px;line-height:1.6">Track spending, build budgets,<br/>and grow your wealth.</div>
     </div>
-    ${sso ? `
-    <div class="sso-card fu s1" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <div style="width:36px;height:36px;border-radius:11px;background:rgba(77,158,245,.18);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🔗</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:#4d9ef5">IronLog Account Detected</div>
-          <div style="font-size:11px;color:#7faa9a;margin-top:1px">${sso.email ? sso.email : "Session active"}</div>
-        </div>
-        <div style="margin-left:auto;width:8px;height:8px;border-radius:4px;background:#00d4a0;box-shadow:0 0 8px #00d4a0;flex-shrink:0"></div>
+    ${sso && sso.valid ? `
+    <div style="padding:14px 16px;border-radius:14px;background:${V.card};border:1px solid rgba(0,245,160,0.2);margin-bottom:16px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:11px;background:rgba(0,245,160,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🔗</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:${V.accent}">IronLog Account Detected</div>
+        <div style="font-size:10px;color:${V.text3};margin-top:2px">${sso.email || ""} · Tap to link</div>
       </div>
-      <button id="btn-sso" class="btn-sso pr">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M10 14L21 3M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/></svg>
-        Continue with IronLog SSO
-      </button>
-    </div>
-    <div class="divider"><span>or create a new account</span></div>` : ""}
-    <button id="btn-signup" class="btn-primary pr fu s2" style="margin-bottom:12px">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Create Free Account
-    </button>
-    <button id="btn-signin" class="btn-ghost pr fu s3">Sign In to Existing Account</button>
-    <p class="muted fu s4" style="text-align:center;margin-top:20px">By continuing, you agree to our <a href="#" style="color:#00d4a0;text-decoration:none">Terms</a> and <a href="#" style="color:#00d4a0;text-decoration:none">Privacy Policy</a></p>
+      <button id="btn-sso" style="margin-left:auto;background:linear-gradient(135deg,${V.accent},${V.accent2});color:${V.bg};border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:${V.font}">Link</button>
+    </div>` : ""}
+    <button id="btn-create" style="display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border-radius:12px;border:none;background:linear-gradient(135deg,${V.accent},${V.accent2});color:${V.bg};font-size:15px;font-weight:700;cursor:pointer;font-family:${V.font};margin-bottom:10px">Get Started</button>
+    <button id="btn-signin" style="display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;border-radius:12px;border:1px solid ${V.cardBorder};background:rgba(255,255,255,0.04);color:${V.text2};font-size:14px;font-weight:600;cursor:pointer;font-family:${V.font}">Sign In — Restore My Data</button>
   `;
-  document.getElementById("btn-signup")?.addEventListener("click", () => {
-    _currentView = viewSignup;
-    setState({ step: 0 });
+  root.querySelector("#btn-create").addEventListener("click", () => {
+    setState({ signupStep: 1, signupData: {}, signupError: "" });
+    _currentView = viewSignup; render();
   });
-  document.getElementById("btn-signin")?.addEventListener("click", () => {
-    _currentView = viewSignIn;
-    setState({ siStep: "email", siEmail: "", siPin: "", siError: "", siLoading: false });
+  root.querySelector("#btn-signin").addEventListener("click", () => {
+    setState({ signInStep: "email", signInEmail: "", signInPin: "", signInError: "" });
+    _currentView = viewSignIn; render();
   });
-  document.getElementById("btn-sso")?.addEventListener("click", () => {
-    handleSSOLogin(sso);
-  });
-}
-
-// SSO LOGIN
-async function handleSSOLogin(sso) {
-  const root = document.getElementById("auth-root");
-  root.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:16px;color:#4d9ef5"><div class="spinner" style="width:32px;height:32px;border-color:rgba(77,158,245,.3);border-top-color:#4d9ef5"></div><div style="font-size:13px;font-weight:600">Connecting to IronLog…</div></div>`;
-  const result = await SessionManager.validateSSO(sso.token);
-  if (result && result.valid) {
-    // Store FL session using existing IronLog session
-    LS.set("fl-session-token", sso.token);
-    LS.set("fl-session-email", result.email || sso.email || "");
-    LS.set("fl-onboarded", true);
-    // Mark in FinanceLog that this is an SSO user
-    LS.set("fl-sso-linked", true);
-    LS.set("fl-sso-source", "ironlog");
-    showSuccess("IronLog account linked!", () => { showApp(); });
-  } else {
-    // Token invalid/expired — fall back to manual sign in
-    _currentView = viewSignIn;
-    setState({ siStep: "email", siEmail: sso.email || "", siPin: "", siError: "Session expired. Please sign in again.", siLoading: false });
+  if (sso?.valid) {
+    root.querySelector("#btn-sso")?.addEventListener("click", () => {
+      LS.set("fl-session-token", sso.token);
+      LS.set("fl-session-email", sso.email || "");
+      LS.set("fl-sso-linked", true);
+      LS.set("fl-sso-source", sso.type);
+      setState({ signupStep: 1, signupData: { email: sso.email || "" }, signupError: "", ssoLinked: true });
+      _currentView = viewSignup; render();
+    });
   }
 }
 
-// SIGNUP FLOW — 4 steps
-const TOTAL_STEPS = 4;
+// ─── SIGNUP ───────────────────────────────────────────────────────────────────
+
+const SIGNUP_STEPS = 4; // profile, goals, pin, verify
+
 function viewSignup(root, state) {
-  const { step = 0 } = state;
-  const pct = ((step + 1) / TOTAL_STEPS) * 100;
-  const steps = ["Profile", "Goals", "Security", "Verify"];
+  const step = state.signupStep || 1;
+  const data = state.signupData || {};
 
-  let inner = "";
-  if (step === 0) inner = stepProfile(state);
-  else if (step === 1) inner = stepGoals(state);
-  else if (step === 2) inner = stepSecurity(state);
-  else if (step === 3) inner = stepVerify(state);
-
+  // Progress bar
   root.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-shrink:0;padding-top:4px">
-      <button id="btn-back" style="background:none;border:none;cursor:pointer;padding:8px 4px;display:flex;align-items:center;gap:4px;color:#00d4a0;font-size:14px;font-weight:600;font-family:'Sora',sans-serif">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4a0" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        Back
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <button id="btn-back" style="background:none;border:none;display:flex;align-items:center;gap:5px;padding:8px 0;cursor:pointer;-webkit-tap-highlight-color:transparent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${V.accent}" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span style="font-size:14px;color:${V.accent};font-weight:600;font-family:${V.font}">Back</span>
       </button>
-      <div style="flex:1">
-        <div class="step-indicator">${steps.map((_, i) => `<div class="step-dot ${i < step ? "done" : i === step ? "active" : ""}"></div>`).join("")}</div>
-        <div style="font-size:10px;color:#3a5a4a;font-weight:600;letter-spacing:.06em">${steps[step].toUpperCase()} · ${step + 1} of ${TOTAL_STEPS}</div>
-      </div>
+      <span style="font-size:12px;color:${V.text3};font-weight:600;font-family:${V.font}">Step ${step} of ${SIGNUP_STEPS}</span>
+      <div style="width:60px"></div>
     </div>
-    <div class="progress-bar" style="margin-bottom:28px"><div class="progress-fill" style="width:${pct}%"></div></div>
-    <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch">${inner}</div>
+    <div style="height:3px;border-radius:2px;background:rgba(255,255,255,0.06);margin-bottom:24px">
+      <div style="height:3px;border-radius:2px;width:${(step / SIGNUP_STEPS) * 100}%;background:linear-gradient(90deg,${V.accent},${V.accent2});transition:width .3s"></div>
+    </div>
+    <div id="step-content"></div>
   `;
 
-  document.getElementById("btn-back")?.addEventListener("click", () => {
-    if (step === 0) { _currentView = viewWelcome; render(); }
-    else setState({ step: step - 1, signupError: "" });
+  root.querySelector("#btn-back").addEventListener("click", () => {
+    if (step <= 1) { _currentView = viewWelcome; render(); }
+    else { setState({ signupStep: step - 1, signupError: "" }); _currentView = viewSignup; render(); }
   });
-  bindStepListeners(step, state);
+
+  const content = root.querySelector("#step-content");
+
+  if (step === 1) renderSignupProfile(content, data, state);
+  else if (step === 2) renderSignupGoals(content, data, state);
+  else if (step === 3) renderSignupPin(content, data, state);
+  else if (step === 4) renderSignupVerify(content, data, state);
 }
 
-function stepProfile(state) {
-  const s = state.profile || {};
-  const agreed = state.agreed || false;
-  return `
-    <h2 class="fu" style="font-size:24px;font-weight:800;color:#dff0ea;margin:0 0 6px">Tell us about you</h2>
-    <p class="fu s1 muted" style="margin:0 0 24px;font-size:13px;line-height:1.6">We use this to personalize your experience and keep your account secure.</p>
-    <div class="fu s1">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-        <div class="field-wrap" style="margin-bottom:0">
-          <label class="field-label">First Name *</label>
-          <input id="p-first" class="field-input" placeholder="First" value="${s.firstName || ""}"/>
-        </div>
-        <div class="field-wrap" style="margin-bottom:0">
-          <label class="field-label">Last Name *</label>
-          <input id="p-last" class="field-input" placeholder="Last" value="${s.lastName || ""}"/>
-        </div>
-      </div>
+function renderSignupProfile(el, data, state) {
+  el.innerHTML = `
+    <div style="font-size:20px;font-weight:700;margin-bottom:4px;color:${V.text}">Your Profile</div>
+    <div style="font-size:13px;color:${V.text3};margin-bottom:20px">A few details to personalize your experience</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
+      <div class="field-wrap"><div class="field-lbl">First Name *</div><input class="ipt" id="f-first" placeholder="Jane" value="${data.firstName||""}"/></div>
+      <div class="field-wrap"><div class="field-lbl">Last Name *</div><input class="ipt" id="f-last" placeholder="Smith" value="${data.lastName||""}"/></div>
+    </div>
+    <div class="field-wrap"><div class="field-lbl">Email *</div><input class="ipt" id="f-email" type="email" placeholder="you@email.com" value="${data.email||""}"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field-wrap"><div class="field-lbl">Date of Birth *</div><input class="ipt" id="f-dob" type="date" value="${data.dob||""}"/></div>
       <div class="field-wrap">
-        <label class="field-label">Email Address *</label>
-        <input id="p-email" class="field-input" type="email" placeholder="you@email.com" value="${s.email || ""}"/>
-      </div>
-      <div class="field-wrap">
-        <label class="field-label">Date of Birth *</label>
-        <input id="p-dob" class="field-input" type="date" value="${s.dob || ""}"/>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-        <div class="field-wrap" style="margin-bottom:0">
-          <label class="field-label">State</label>
-          <select id="p-state" class="field-input">
-            <option value="">Select…</option>
-            ${["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","Other"].map(st => `<option ${s.state === st ? "selected" : ""}>${st}</option>`).join("")}
-          </select>
-        </div>
-        <div class="field-wrap" style="margin-bottom:0">
-          <label class="field-label">Zip Code</label>
-          <input id="p-zip" class="field-input" placeholder="12345" maxlength="5" value="${s.zipCode || ""}" inputmode="numeric"/>
-        </div>
-      </div>
-      <div class="legal-check" style="margin-bottom:8px">
-        <div id="chk-agree" class="checkbox ${agreed ? "checked" : ""}" style="margin-top:2px">
-          ${agreed ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#070e18" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>` : ""}
-        </div>
-        <p style="margin:0;font-size:12px;color:#7faa9a;line-height:1.5">I agree to the <a href="#" style="color:#00d4a0;text-decoration:none">Terms of Service</a> and <a href="#" style="color:#00d4a0;text-decoration:none">Privacy Policy</a>. I am at least 13 years old.</p>
+        <div class="field-lbl">State *</div>
+        <select class="ipt" id="f-state" style="appearance:none;-webkit-appearance:none">
+          <option value="">Select…</option>
+          ${["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","Other"].map(s=>`<option value="${s}" ${data.state===s?"selected":""}>${s}</option>`).join("")}
+        </select>
       </div>
     </div>
-    <div id="step-error" class="err">${state.signupError || ""}</div>
-    <button id="btn-next" class="btn-primary pr fu s2" style="margin-top:16px">Continue →</button>
+    <div class="field-wrap"><div class="field-lbl">Zip Code</div><input class="ipt" id="f-zip" inputmode="numeric" placeholder="19711" value="${data.zipCode||""}"/></div>
+    ${state.signupError ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px;text-align:center">${state.signupError}</div>` : ""}
+    <button id="btn-next" class="btn-primary" style="margin-top:8px">Next</button>
   `;
+  el.querySelector("#btn-next").addEventListener("click", () => {
+    const first = el.querySelector("#f-first").value.trim();
+    const last = el.querySelector("#f-last").value.trim();
+    const email = el.querySelector("#f-email").value.trim();
+    const dob = el.querySelector("#f-dob").value;
+    const state2 = el.querySelector("#f-state").value;
+    if (!first || !last || !email || !dob || !state2) { setState({ signupError: "Please fill in all required fields" }); _currentView = viewSignup; render(); return; }
+    if (!isValidEmail(email)) { setState({ signupError: "Please enter a valid email address" }); _currentView = viewSignup; render(); return; }
+    const age = (Date.now() - new Date(dob)) / (365.25 * 24 * 36e5);
+    if (age < 13) { setState({ signupError: "You must be at least 13 years old" }); _currentView = viewSignup; render(); return; }
+    setState({ signupStep: 2, signupError: "", signupData: { ...(_state.signupData||{}), firstName: first, lastName: last, email, dob, state: state2, zipCode: el.querySelector("#f-zip").value.trim() } });
+    _currentView = viewSignup; render();
+  });
 }
 
-function stepGoals(state) {
-  const g = state.finGoals || {};
+function renderSignupGoals(el, data, state) {
   const goals = [
-    { id: "debt", label: "Pay Off Debt", icon: "💳" },
-    { id: "emergency", label: "Emergency Fund", icon: "🛡️" },
-    { id: "house", label: "Buy a Home", icon: "🏠" },
-    { id: "invest", label: "Grow Investments", icon: "📈" },
-    { id: "retire", label: "Retire Early", icon: "🏝️" },
-    { id: "budget", label: "Better Budgeting", icon: "📊" },
-    { id: "savings", label: "Build Savings", icon: "💰" },
-    { id: "net_worth", label: "Track Net Worth", icon: "💎" },
+    { id: "debt", icon: "📉", label: "Pay Off Debt" },
+    { id: "emergency", icon: "🛡️", label: "Build Emergency Fund" },
+    { id: "house", icon: "🏠", label: "Save for a Home" },
+    { id: "invest", icon: "📈", label: "Start Investing" },
+    { id: "retire", icon: "🌴", label: "Plan for Retirement" },
+    { id: "budget", icon: "📊", label: "Get on a Budget" },
   ];
-  const incomeRanges = [
-    { id: "under30", label: "Under $30k" },
-    { id: "30_60", label: "$30k – $60k" },
-    { id: "60_100", label: "$60k – $100k" },
-    { id: "100_200", label: "$100k – $200k" },
-    { id: "over200", label: "$200k+" },
-    { id: "prefer_not", label: "Prefer not to say" },
-  ];
-  return `
-    <h2 class="fu" style="font-size:24px;font-weight:800;color:#dff0ea;margin:0 0 6px">Your financial goals</h2>
-    <p class="fu s1 muted" style="margin:0 0 24px;font-size:13px;line-height:1.6">Select your primary goals so we can personalize your experience.</p>
-    <div class="fu s1" style="margin-bottom:20px">
-      <div class="field-label" style="display:block;margin-bottom:10px">Primary Goal *</div>
-      <div class="chips" id="goal-chips">
-        ${goals.map(goal => `<button class="chip pr ${g.primaryGoal === goal.id ? "sel" : ""}" data-goal="${goal.id}">${goal.icon} ${goal.label}</button>`).join("")}
-      </div>
+  const incomeRanges = ["Under $25k", "$25k–$50k", "$50k–$75k", "$75k–$100k", "$100k–$150k", "$150k+"];
+  const selGoal = data.primaryGoal || "";
+  const selIncome = data.incomeRange || "";
+
+  el.innerHTML = `
+    <div style="font-size:20px;font-weight:700;margin-bottom:4px;color:${V.text}">Your Goals</div>
+    <div style="font-size:13px;color:${V.text3};margin-bottom:20px">What are you working toward?</div>
+    <div style="font-size:11px;color:${V.text3};text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:10px">Primary Goal</div>
+    ${goals.map(g => `
+      <button data-goal="${g.id}" style="display:flex;align-items:center;gap:14px;width:100%;padding:13px 16px;margin-bottom:8px;border-radius:14px;text-align:left;border:2px solid ${selGoal===g.id?V.accent:V.cardBorder};background:${selGoal===g.id?`${V.accent}10`:"rgba(255,255,255,0.02)"};cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;font-family:${V.font}">
+        <span style="font-size:22px;flex-shrink:0">${g.icon}</span>
+        <span style="font-size:14px;font-weight:600;color:${selGoal===g.id?V.accent:V.text}">${g.label}</span>
+        ${selGoal===g.id?`<span style="margin-left:auto;color:${V.accent};font-size:16px">✓</span>`:""}
+      </button>`).join("")}
+    <div style="font-size:11px;color:${V.text3};text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:16px;margin-bottom:10px">Annual Income</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${incomeRanges.map(r=>`<button data-income="${r}" style="padding:11px;border-radius:12px;border:2px solid ${selIncome===r?V.accent:V.cardBorder};background:${selIncome===r?`${V.accent}10`:"rgba(255,255,255,0.02)"};color:${selIncome===r?V.accent:V.text2};font-size:12px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;font-family:${V.font}">${r}</button>`).join("")}
     </div>
-    <div class="fu s2" style="margin-bottom:20px">
-      <div class="field-label" style="display:block;margin-bottom:10px">Annual Income Range</div>
-      <div class="chips" id="income-chips">
-        ${incomeRanges.map(r => `<button class="chip pr ${g.incomeRange === r.id ? "sel" : ""}" data-income="${r.id}">${r.label}</button>`).join("")}
-      </div>
-    </div>
-    <div class="fu s3">
-      <div class="field-wrap">
-        <label class="field-label">Monthly Savings Target (optional)</label>
-        <div style="position:relative">
-          <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#3a5a4a;font-family:'DM Mono',monospace;font-size:16px">$</span>
-          <input id="savings-target" class="field-input" type="number" placeholder="500" style="padding-left:32px" value="${g.monthlySavingsTarget || ""}" inputmode="decimal"/>
-        </div>
-      </div>
-    </div>
-    <div id="step-error" class="err">${state.signupError || ""}</div>
-    <button id="btn-next" class="btn-primary pr fu s3" style="margin-top:8px">Continue →</button>
+    <div class="field-wrap"><div class="field-lbl">Monthly Savings Target</div><div style="position:relative"><input class="ipt" id="f-savings" type="number" inputmode="numeric" placeholder="500" value="${data.monthlySavingsTarget||""}"/><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:${V.text3}">$/mo</span></div></div>
+    ${state.signupError ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px;text-align:center">${state.signupError}</div>` : ""}
+    <button id="btn-next" class="btn-primary">Next</button>
   `;
+
+  el.querySelectorAll("[data-goal]").forEach(btn => btn.addEventListener("click", () => {
+    setState({ signupData: { ...(_state.signupData||{}), primaryGoal: btn.dataset.goal } });
+    _currentView = viewSignup; render();
+  }));
+  el.querySelectorAll("[data-income]").forEach(btn => btn.addEventListener("click", () => {
+    setState({ signupData: { ...(_state.signupData||{}), incomeRange: btn.dataset.income } });
+    _currentView = viewSignup; render();
+  }));
+  el.querySelector("#btn-next").addEventListener("click", () => {
+    const d = _state.signupData || {};
+    if (!d.primaryGoal) { setState({ signupError: "Please select a goal" }); _currentView = viewSignup; render(); return; }
+    const savings = el.querySelector("#f-savings").value;
+    setState({ signupStep: 3, signupError: "", signupData: { ...d, monthlySavingsTarget: savings } });
+    _currentView = viewSignup; render();
+  });
 }
 
-function stepSecurity(state) {
-  const pin = state.newPin || "";
-  const confirm = state.confirmPin || "";
-  const phase = state.pinPhase || "enter"; // enter | confirm
-  const displayPin = phase === "enter" ? pin : confirm;
-  const dots = [0,1,2,3,4,5].map(i => `<div class="pin-dot ${displayPin.length > i ? "filled" : ""} ${state.signupError && phase === "confirm" ? "error" : ""}">${displayPin.length > i ? "•" : ""}</div>`).join("");
-  return `
-    <h2 class="fu" style="font-size:24px;font-weight:800;color:#dff0ea;margin:0 0 6px">${phase === "enter" ? "Set your PIN" : "Confirm your PIN"}</h2>
-    <p class="fu s1 muted" style="margin:0 0 8px;font-size:13px;line-height:1.6">${phase === "enter" ? "Create a 6-digit PIN to secure your account and sync data." : "Enter the same PIN again to confirm."}</p>
-    <div class="pin-row fu s1">${dots}</div>
-    <div id="step-error" class="err" style="text-align:center;margin-bottom:12px">${state.signupError || ""}</div>
-    <div class="numpad fu s2">
-      ${[1,2,3,4,5,6,7,8,9,"","0","⌫"].map((k,i) => {
-        if (k === "") return `<div class="num-key empty"></div>`;
-        const cls = k === "⌫" ? "del" : "";
-        return `<button class="num-key ${cls} pr" data-key="${k}">${k}</button>`;
-      }).join("")}
+function renderSignupPin(el, data, state) {
+  let pin = state.signupPin || "";
+  let confirm = state.signupConfirmPin || "";
+  const pinErr = state.signupError || "";
+
+  el.innerHTML = `
+    <div style="font-size:20px;font-weight:700;margin-bottom:4px;color:${V.text}">Secure Your Account</div>
+    <div style="font-size:13px;color:${V.text3};margin-bottom:20px;line-height:1.6">Create a 6-digit PIN to protect your data. You'll use this to restore your account on a new device.</div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;color:${V.text3};text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:600">Create PIN</div>
+      <input id="inp-pin" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •"
+        style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${pin.length===6?V.accent:V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:12px;outline:none;box-sizing:border-box"/>
+      <div id="dots-pin" style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${[0,1,2,3,4,5].map(i=>`<div style="width:10px;height:10px;border-radius:5px;background:${i<pin.length?V.accent:"rgba(255,255,255,0.1)"};transition:all .15s"></div>`).join("")}
+      </div>
     </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;color:${V.text3};text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:600">Confirm PIN</div>
+      <input id="inp-confirm" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •"
+        style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${confirm.length===6&&confirm===pin?V.accent:confirm.length===6&&confirm!==pin?V.danger:V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:12px;outline:none;box-sizing:border-box"/>
+    </div>
+    ${pinErr ? `<div style="font-size:12px;color:${V.danger};text-align:center;margin-bottom:8px">${pinErr}</div>` : ""}
+    <button id="btn-next" class="btn-primary" ${pin.length===6&&confirm.length===6?"":"style=\"opacity:.4\""}>Create Account</button>
   `;
+
+  const pinInp = el.querySelector("#inp-pin");
+  const confInp = el.querySelector("#inp-confirm");
+  const dots = el.querySelector("#dots-pin");
+
+  pinInp.value = pin;
+  confInp.value = confirm;
+
+  pinInp.addEventListener("input", () => {
+    const v = pinInp.value.replace(/\D/g, "").slice(0, 6);
+    pinInp.value = v;
+    setState({ signupPin: v, signupError: "" });
+    _currentView = viewSignup; render();
+  });
+  confInp.addEventListener("input", () => {
+    const v = confInp.value.replace(/\D/g, "").slice(0, 6);
+    confInp.value = v;
+    setState({ signupConfirmPin: v, signupError: "" });
+    _currentView = viewSignup; render();
+  });
+
+  el.querySelector("#btn-next").addEventListener("click", async () => {
+    const p = _state.signupPin || "";
+    const c = _state.signupConfirmPin || "";
+    if (p.length !== 6) { setState({ signupError: "PIN must be 6 digits" }); _currentView = viewSignup; render(); return; }
+    if (p !== c) { setState({ signupError: "PINs don't match" }); _currentView = viewSignup; render(); return; }
+    el.querySelector("#btn-next").textContent = "Creating account…";
+    el.querySelector("#btn-next").style.opacity = "0.6";
+
+    const d = _state.signupData || {};
+    const deviceId = LS.get("fl-device-id") || uid();
+    LS.set("fl-device-id", deviceId);
+
+    await registerUser(d, { primaryGoal: d.primaryGoal, incomeRange: d.incomeRange, monthlySavingsTarget: d.monthlySavingsTarget }, p);
+    await SessionManager.create(d.email, p, deviceId);
+    LS.set("fl-profile", d);
+    SessionManager.sendVerifyCode(d.email);
+
+    setState({ signupStep: 4, signupError: "", verifyCode: "", verifyCooldown: 60 });
+    _currentView = viewSignup; render();
+  });
 }
 
-function stepVerify(state) {
-  const email = (state.profile || {}).email || "";
-  const vs = state.verifyStatus || "pending";
-  if (vs === "done") return `
-    <div style="text-align:center;padding:40px 0;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
-      <div style="font-size:56px;margin-bottom:16px">✅</div>
-      <div style="font-size:20px;font-weight:800;color:#00d4a0;margin-bottom:8px">Email Verified!</div>
-      <div class="muted" style="font-size:13px">Taking you to FinanceLog…</div>
+function renderSignupVerify(el, data, state) {
+  const email = (state.signupData || {}).email || "";
+  const verifyCooldown = state.verifyCooldown || 0;
+  el.innerHTML = `
+    <div style="text-align:center;padding:10px 0 20px">
+      <div style="font-size:40px;margin-bottom:12px">📬</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:8px;color:${V.text}">Check Your Email</div>
+      <div style="font-size:13px;color:${V.text3};line-height:1.6;margin-bottom:24px">We sent a 6-digit code to<br/><strong style="color:${V.accent}">${email}</strong></div>
     </div>
-  `;
-  return `
-    <h2 class="fu" style="font-size:24px;font-weight:800;color:#dff0ea;margin:0 0 6px">Verify your email</h2>
-    <p class="fu s1 muted" style="margin:0 0 24px;font-size:13px;line-height:1.6">We sent a 6-digit code to <strong style="color:#dff0ea">${email}</strong>. Enter it below to activate your account.</p>
-    <div class="fu s1" style="margin-bottom:16px">
-      <input id="verify-code" class="code-input" type="number" placeholder="123456" inputmode="numeric" maxlength="6" value="${state.verifyCode || ""}"/>
+    <div class="field-wrap">
+      <div class="field-lbl">Verification Code</div>
+      <input id="inp-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+        style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:8px;outline:none;box-sizing:border-box;margin-bottom:8px"/>
     </div>
-    <div id="step-error" class="err" style="margin-bottom:16px">${state.signupError || ""}</div>
-    <button id="btn-next" class="btn-primary pr fu s2" ${state.verifyLoading ? "disabled" : ""}>
-      ${state.verifyLoading ? `<div class="spinner"></div>` : "Verify & Enter App →"}
-    </button>
-    <button id="btn-resend" class="btn-ghost pr fu s3" style="margin-top:12px" ${state.verifyCooldown > 0 ? "disabled" : ""}>
-      ${state.verifyCooldown > 0 ? `Resend in ${state.verifyCooldown}s` : "Resend Code"}
-    </button>
-    <button id="btn-skip" class="pr" style="margin-top:16px;background:none;border:none;color:#3a5a4a;font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;width:100%">Skip for now</button>
+    ${state.signupError ? `<div style="font-size:12px;color:${V.danger};text-align:center;margin-bottom:8px">${state.signupError}</div>` : ""}
+    <button id="btn-verify" class="btn-primary" style="margin-bottom:12px">Verify Email</button>
+    <div style="text-align:center;margin-bottom:8px">
+      ${verifyCooldown > 0
+        ? `<span style="font-size:12px;color:${V.text3}">Resend in ${verifyCooldown}s</span>`
+        : `<button id="btn-resend" style="background:none;border:none;cursor:pointer;font-size:12px;color:${V.accent};font-family:${V.font}">Resend Code</button>`
+      }
+    </div>
+    <button id="btn-skip" style="display:block;width:100%;padding:12px;background:none;border:none;cursor:pointer;font-size:12px;color:${V.text3};font-family:${V.font}">Skip for now</button>
   `;
-}
 
-function bindStepListeners(step, state) {
-  if (step === 0) {
-    document.getElementById("chk-agree")?.addEventListener("click", () => {
-      setState({ agreed: !state.agreed, signupError: "" });
-    });
-    document.getElementById("btn-next")?.addEventListener("click", () => {
-      const firstName = document.getElementById("p-first")?.value.trim() || "";
-      const lastName = document.getElementById("p-last")?.value.trim() || "";
-      const email = document.getElementById("p-email")?.value.trim() || "";
-      const dob = document.getElementById("p-dob")?.value || "";
-      const stateVal = document.getElementById("p-state")?.value || "";
-      const zipCode = document.getElementById("p-zip")?.value || "";
-      if (!firstName || !lastName || !email || !dob) return setState({ signupError: "Please fill in all required fields (*)." });
-      if (!isValidEmail(email)) return setState({ signupError: "Please enter a valid email address." });
-      const age = Math.floor((Date.now() - new Date(dob + "T00:00:00")) / (365.25 * 864e5));
-      if (age < 13) return setState({ signupError: "You must be at least 13 years old." });
-      if (!state.agreed) return setState({ signupError: "Please agree to the Terms of Service." });
-      setState({ profile: { firstName, lastName, email, dob, state: stateVal, zipCode }, step: 1, signupError: "" });
-    });
+  if (verifyCooldown > 0) {
+    setTimeout(() => { setState({ verifyCooldown: verifyCooldown - 1 }); _currentView = viewSignup; render(); }, 1000);
   }
-  if (step === 1) {
-    document.querySelectorAll("[data-goal]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const g = state.finGoals || {};
-        setState({ finGoals: { ...g, primaryGoal: btn.dataset.goal }, signupError: "" });
-      });
-    });
-    document.querySelectorAll("[data-income]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const g = state.finGoals || {};
-        setState({ finGoals: { ...g, incomeRange: btn.dataset.income }, signupError: "" });
-      });
-    });
-    document.getElementById("btn-next")?.addEventListener("click", () => {
-      const g = state.finGoals || {};
-      if (!g.primaryGoal) return setState({ signupError: "Please select a primary goal." });
-      const target = document.getElementById("savings-target")?.value || "";
-      setState({ finGoals: { ...g, monthlySavingsTarget: target ? parseFloat(target) : null }, step: 2, signupError: "", newPin: "", confirmPin: "", pinPhase: "enter" });
-    });
-  }
-  if (step === 2) {
-    document.querySelectorAll("[data-key]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const key = btn.dataset.key;
-        const phase = state.pinPhase || "enter";
-        let pin = phase === "enter" ? (state.newPin || "") : (state.confirmPin || "");
-        if (key === "⌫") { pin = pin.slice(0, -1); }
-        else if (pin.length < 6) { pin += key; }
-        if (phase === "enter") {
-          if (pin.length === 6) { setState({ newPin: pin, pinPhase: "confirm", confirmPin: "", signupError: "" }); return; }
-          setState({ newPin: pin, signupError: "" });
-        } else {
-          if (pin.length === 6) {
-            if (pin === state.newPin) {
-              setState({ confirmPin: pin, signupError: "" });
-              setTimeout(() => submitSignup(state, pin), 200);
-            } else {
-              setState({ confirmPin: "", signupError: "PINs don't match. Try again.", pinPhase: "confirm" });
-              setTimeout(() => setState({ signupError: "", pinPhase: "enter", newPin: "", confirmPin: "" }), 1500);
-            }
-            return;
-          }
-          setState({ confirmPin: pin, signupError: "" });
-        }
-      });
-    });
-  }
-  if (step === 3) {
-    document.getElementById("verify-code")?.addEventListener("input", (e) => {
-      setState({ verifyCode: e.target.value.slice(0, 6), signupError: "" });
-    });
-    document.getElementById("btn-next")?.addEventListener("click", () => {
-      handleVerify(state);
-    });
-    document.getElementById("btn-resend")?.addEventListener("click", () => {
-      if (state.verifyCooldown > 0) return;
-      sendVerifyCode((state.profile || {}).email || "");
-      startVerifyCooldown();
-    });
-    document.getElementById("btn-skip")?.addEventListener("click", () => {
+
+  el.querySelector("#btn-verify").addEventListener("click", async () => {
+    const code = el.querySelector("#inp-code").value.trim();
+    if (code.length !== 6) { setState({ signupError: "Enter the 6-digit code" }); _currentView = viewSignup; render(); return; }
+    const ok = await SessionManager.confirmVerify(email, code);
+    if (ok) {
+      LS.set("fl-email-verified", "true");
       LS.set("fl-onboarded", true);
-      showApp();
-    });
-  }
-}
-
-async function submitSignup(state, pin) {
-  setState({ step: 3, signupError: "", verifyStatus: "pending", verifyCode: "", verifyLoading: false, verifyCooldown: 0 });
-  const profile = state.profile || {};
-  const g = state.finGoals || {};
-  const deviceId = uid();
-  LS.set("fl-device-id", deviceId);
-
-  const payload = {
-    // Identity
-    firstName: profile.firstName,
-    lastName: profile.lastName,
-    email: profile.email.toLowerCase(),
-    dob: profile.dob,
-    state: profile.state || null,
-    zipCode: profile.zipCode || null,
-    // Finance-specific
-    primaryGoal: g.primaryGoal || null,
-    incomeRange: g.incomeRange || null,
-    monthlySavingsTarget: g.monthlySavingsTarget || null,
-    appSource: "financelog",
-    // Required by IronLog API
-    accountPin: pin,
-    units: "usd",
-    split: null,
-    // Consent
-    consentedAt: new Date().toISOString(),
-    consentVersion: "1.0",
-    deviceId,
-    createdAt: new Date().toISOString(),
-  };
-
-  // Non-blocking — app works regardless of API success
-  registerUser(payload).then(async result => {
-    if (result.ok) {
-      await SessionManager.create(profile.email.toLowerCase(), pin, deviceId);
-      await sendVerifyCode(profile.email.toLowerCase());
-    } else if (result.status === 409) {
-      // Account exists — prompt sign in
-      _currentView = viewSignIn;
-      setState({ siStep: "email", siEmail: profile.email, siPin: "", siError: "An account with this email already exists. Sign in instead.", siLoading: false });
+      mountApp();
+    } else {
+      setState({ signupError: "Invalid or expired code" }); _currentView = viewSignup; render();
     }
-    // 500/network errors: silently continue, data is local
-  }).catch(() => {});
-
-  // Store profile locally immediately
-  LS.set("fl-profile", { email: profile.email.toLowerCase(), firstName: profile.firstName, lastName: profile.lastName });
-  LS.set("fl-goals", g);
-  // Start verify cooldown
-  startVerifyCooldown();
-}
-
-async function handleVerify(state) {
-  const code = (state.verifyCode || "").trim();
-  if (code.length !== 6) return setState({ signupError: "Enter the 6-digit code from your email." });
-  setState({ verifyLoading: true, signupError: "" });
-  const email = (state.profile || {}).email || LS.get("fl-profile")?.email || "";
-  const result = await confirmVerifyCode(email, code);
-  if (result.verified || result.already_verified) {
-    LS.set("fl-email-verified", "true");
+  });
+  el.querySelector("#btn-resend")?.addEventListener("click", () => {
+    SessionManager.sendVerifyCode(email);
+    setState({ verifyCooldown: 60 }); _currentView = viewSignup; render();
+  });
+  el.querySelector("#btn-skip").addEventListener("click", () => {
     LS.set("fl-onboarded", true);
-    setState({ verifyStatus: "done", verifyLoading: false });
-    setTimeout(() => { showApp(); }, 1400);
-  } else {
-    setState({ signupError: result.error || "Incorrect code. Try again.", verifyLoading: false });
-  }
+    mountApp();
+  });
 }
 
-let _cooldownInterval = null;
-function startVerifyCooldown() {
-  if (_cooldownInterval) clearInterval(_cooldownInterval);
-  setState({ verifyCooldown: 60 });
-  _cooldownInterval = setInterval(() => {
-    _state.verifyCooldown = (_state.verifyCooldown || 1) - 1;
-    if (_state.verifyCooldown <= 0) { clearInterval(_cooldownInterval); _cooldownInterval = null; }
-    render();
-  }, 1000);
-}
+// ─── SIGN IN ──────────────────────────────────────────────────────────────────
 
-// ─── SIGN IN VIEW ─────────────────────────────────────────────────────────────
 function viewSignIn(root, state) {
-  const { siStep = "email", siEmail = "", siPin = "", siError = "", siLoading = false } = state;
-  const forgotStep = state.forgotStep;
-
-  let inner = "";
-  if (forgotStep) inner = renderForgot(state);
-  else if (siStep === "email") inner = `
-    <h2 class="fu" style="font-size:24px;font-weight:800;color:#dff0ea;margin:0 0 6px">Welcome back</h2>
-    <p class="fu s1 muted" style="margin:0 0 24px;font-size:13px;line-height:1.6">Enter your email to restore your FinanceLog data.</p>
-    <div class="fu s1 field-wrap"><label class="field-label">Email Address</label><input id="si-email" class="field-input" type="email" placeholder="you@email.com" value="${siEmail}" autocomplete="email"/></div>
-    <div id="step-error" class="err" style="margin-bottom:16px">${siError}</div>
-    <button id="btn-continue" class="btn-primary pr fu s2" ${siLoading ? "disabled" : ""}>${siLoading ? `<div class="spinner"></div>` : "Continue →"}</button>
-  `;
-  else if (siStep === "pin") inner = renderSignInPin(state);
+  const step = state.signInStep || "email";
+  const email = state.signInEmail || "";
+  const pin = state.signInPin || "";
+  const err = state.signInError || "";
+  const loading = state.signInLoading || false;
 
   root.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;padding-top:4px">
-      <button id="btn-back" style="background:none;border:none;cursor:pointer;padding:8px 4px;display:flex;align-items:center;gap:4px;color:#00d4a0;font-size:14px;font-weight:600;font-family:'Sora',sans-serif">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00d4a0" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        Back
+    <div style="display:flex;align-items:center;gap:5px;margin-bottom:24px;padding-top:8px">
+      <button id="btn-back" style="background:none;border:none;display:flex;align-items:center;gap:5px;padding:8px 0;cursor:pointer;-webkit-tap-highlight-color:transparent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${V.accent}" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span style="font-size:14px;color:${V.accent};font-weight:600;font-family:${V.font}">Back</span>
       </button>
     </div>
-    <div style="flex:1;overflow-y:auto">${inner}</div>
+    <div style="font-size:22px;font-weight:700;margin-bottom:4px;color:${V.text}">Welcome Back</div>
+    <div style="font-size:13px;color:${V.text3};margin-bottom:24px">Sign in to restore your data</div>
+    <div id="step-content"></div>
   `;
 
-  document.getElementById("btn-back")?.addEventListener("click", () => {
-    if (forgotStep) { setState({ forgotStep: null, forgotError: "", forgotSuccess: "" }); return; }
-    if (siStep === "pin") { setState({ siStep: "email", siError: "" }); return; }
-    _currentView = viewWelcome; render();
+  root.querySelector("#btn-back").addEventListener("click", () => {
+    if (step === "email") { _currentView = viewWelcome; render(); }
+    else setState({ signInStep: "email", signInError: "" }); _currentView = viewSignIn; render();
   });
-  bindSignInListeners(state);
-}
 
-function renderSignInPin(state) {
-  const { siEmail = "", siPin = "", siError = "", siLoading = false } = state;
-  const dots = [0,1,2,3,4,5].map(i => `<div class="pin-dot ${siPin.length > i ? "filled" : ""} ${siError ? "error" : ""}">${siPin.length > i ? "•" : ""}</div>`).join("");
-  return `
-    <h2 class="fu" style="font-size:22px;font-weight:800;color:#dff0ea;margin:0 0 4px">Enter your PIN</h2>
-    <p class="fu s1 muted" style="margin:0 0 4px;font-size:13px">${siEmail}</p>
-    <div class="pin-row fu s1">${dots}</div>
-    <div id="step-error" class="err" style="text-align:center;margin-bottom:12px">${siError}</div>
-    ${siLoading ? `<div style="text-align:center;padding:12px"><div class="spinner" style="margin:0 auto;width:28px;height:28px"></div></div>` : `
-    <div class="numpad fu s2">
-      ${[1,2,3,4,5,6,7,8,9,"","0","⌫"].map(k => {
-        if (k === "") return `<div class="num-key empty"></div>`;
-        return `<button class="num-key ${k === "⌫" ? "del" : ""} pr" data-key="${k}">${k}</button>`;
-      }).join("")}
-    </div>`}
-    <button id="btn-forgot" style="margin-top:18px;background:none;border:none;color:#3a5a4a;font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;width:100%">Forgot PIN?</button>
-  `;
-}
+  const c = root.querySelector("#step-content");
 
-function renderForgot(state) {
-  const { forgotStep = "email", forgotEmail = "", forgotCode = "", forgotNewPin = "", forgotConfirmPin = "", forgotError = "", forgotSuccess = "", forgotLoading = false } = state;
-  if (forgotStep === "email") return `
-    <h2 class="fu" style="font-size:22px;font-weight:800;color:#dff0ea;margin:0 0 6px">Reset PIN</h2>
-    <p class="fu s1 muted" style="margin:0 0 24px;font-size:13px;line-height:1.6">Enter your email and we'll send a reset code.</p>
-    <div class="fu s1 field-wrap"><label class="field-label">Email</label><input id="forgot-email" class="field-input" type="email" placeholder="you@email.com" value="${forgotEmail}"/></div>
-    ${forgotError ? `<div class="err" style="margin-bottom:12px">${forgotError}</div>` : ""}
-    ${forgotSuccess ? `<div style="color:#00d4a0;font-size:12px;margin-bottom:12px">${forgotSuccess}</div>` : ""}
-    <button id="btn-forgot-send" class="btn-primary pr" ${forgotLoading ? "disabled" : ""}>${forgotLoading ? `<div class="spinner"></div>` : "Send Reset Code"}</button>
-  `;
-  if (forgotStep === "code") return `
-    <h2 class="fu" style="font-size:22px;font-weight:800;color:#dff0ea;margin:0 0 6px">Enter Code</h2>
-    <p class="fu s1 muted" style="margin:0 0 24px;font-size:13px;line-height:1.6">Check your email for the 6-digit reset code.</p>
-    ${forgotSuccess ? `<div style="color:#00d4a0;font-size:12px;margin-bottom:12px;line-height:1.5">${forgotSuccess}</div>` : ""}
-    <div class="fu s1 field-wrap"><label class="field-label">Reset Code</label><input id="forgot-code" class="code-input" type="number" placeholder="123456" inputmode="numeric" value="${forgotCode}"/></div>
-    ${forgotError ? `<div class="err" style="margin-bottom:12px">${forgotError}</div>` : ""}
-    <button id="btn-forgot-verify" class="btn-primary pr" ${forgotLoading ? "disabled" : ""}>${forgotLoading ? `<div class="spinner"></div>` : "Verify Code →"}</button>
-  `;
-  if (forgotStep === "newpin") {
-    const np = forgotNewPin || "", cp = forgotConfirmPin || "";
-    const phase = state.forgotPinPhase || "new";
-    const display = phase === "new" ? np : cp;
-    const dots = [0,1,2,3,4,5].map(i => `<div class="pin-dot ${display.length > i ? "filled" : ""}">${display.length > i ? "•" : ""}</div>`).join("");
-    return `
-      <h2 class="fu" style="font-size:22px;font-weight:800;color:#dff0ea;margin:0 0 6px">${phase === "new" ? "New PIN" : "Confirm New PIN"}</h2>
-      <p class="fu s1 muted" style="margin:0 0 8px;font-size:13px">Choose a new 6-digit PIN.</p>
-      <div class="pin-row fu s1">${dots}</div>
-      ${forgotError ? `<div class="err" style="text-align:center;margin-bottom:8px">${forgotError}</div>` : ""}
-      <div class="numpad fu s2">
-        ${[1,2,3,4,5,6,7,8,9,"","0","⌫"].map(k => {
-          if (k === "") return `<div class="num-key empty"></div>`;
-          return `<button class="num-key ${k === "⌫" ? "del" : ""} pr" data-forgot-key="${k}">${k}</button>`;
-        }).join("")}
-      </div>
+  if (step === "email") {
+    c.innerHTML = `
+      <div class="field-wrap"><div class="field-lbl">Email</div><input id="inp-email" class="ipt" type="email" placeholder="you@email.com" value="${email}" autocomplete="email"/></div>
+      ${err ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px">${err}</div>` : ""}
+      <button id="btn-next" class="btn-primary">Continue</button>
     `;
-  }
-}
-
-function bindSignInListeners(state) {
-  const { siStep, forgotStep } = state;
-  if (forgotStep === "email") {
-    document.getElementById("btn-forgot-send")?.addEventListener("click", async () => {
-      const email = document.getElementById("forgot-email")?.value.trim() || "";
-      if (!email || !isValidEmail(email)) { setState({ forgotError: "Enter a valid email." }); return; }
-      setState({ forgotLoading: true, forgotError: "", forgotEmail: email });
-      await sendForgotCode(email.toLowerCase());
-      setState({ forgotLoading: false, forgotSuccess: "If that email exists, a code was sent. Check your inbox.", forgotStep: "code", forgotCode: "" });
+    const inp = c.querySelector("#inp-email");
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") c.querySelector("#btn-next").click(); });
+    c.querySelector("#btn-next").addEventListener("click", () => {
+      const v = inp.value.trim();
+      if (!isValidEmail(v)) { setState({ signInError: "Enter a valid email" }); _currentView = viewSignIn; render(); return; }
+      setState({ signInStep: "pin", signInEmail: v, signInError: "" }); _currentView = viewSignIn; render();
     });
-  }
-  if (forgotStep === "code") {
-    document.getElementById("forgot-code")?.addEventListener("input", e => setState({ forgotCode: e.target.value, forgotError: "" }));
-    document.getElementById("btn-forgot-verify")?.addEventListener("click", async () => {
-      const code = (state.forgotCode || "").trim();
-      if (code.length !== 6) { setState({ forgotError: "Enter the 6-digit code." }); return; }
-      setState({ forgotLoading: true, forgotError: "" });
-      const result = await verifyForgotCode((state.forgotEmail || "").toLowerCase(), code);
-      if (result.reset_token) {
-        setState({ forgotLoading: false, forgotResetToken: result.reset_token, forgotStep: "newpin", forgotPinPhase: "new", forgotNewPin: "", forgotConfirmPin: "", forgotError: "" });
+  } else if (step === "pin") {
+    c.innerHTML = `
+      <div style="font-size:13px;color:${V.text3};margin-bottom:16px">Signing in as <strong style="color:${V.text}">${email}</strong></div>
+      <div class="field-wrap">
+        <div class="field-lbl">6-digit PIN</div>
+        <input id="inp-pin" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •"
+          style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:12px;outline:none;box-sizing:border-box;margin-bottom:6px"/>
+        <div style="display:flex;justify-content:center;gap:6px;margin-bottom:12px">
+          ${[0,1,2,3,4,5].map(i=>`<div style="width:8px;height:8px;border-radius:4px;background:${i<pin.length?V.accent:"rgba(255,255,255,0.1)"};transition:all .15s"></div>`).join("")}
+        </div>
+      </div>
+      ${err ? `<div style="font-size:12px;color:${V.danger};text-align:center;margin-bottom:8px">${err}</div>` : ""}
+      <button id="btn-signin" class="btn-primary" style="margin-bottom:10px">${loading ? "Signing in…" : "Sign In"}</button>
+      <button id="btn-forgot" style="display:block;width:100%;background:none;border:none;cursor:pointer;font-size:12px;color:${V.accent};font-family:${V.font};padding:8px;text-align:center">Forgot PIN?</button>
+    `;
+    const pinInp = c.querySelector("#inp-pin");
+    pinInp.value = pin;
+    pinInp.addEventListener("input", () => {
+      const v = pinInp.value.replace(/\D/g, "").slice(0, 6);
+      pinInp.value = v;
+      setState({ signInPin: v }); _currentView = viewSignIn; render();
+    });
+    c.querySelector("#btn-signin").addEventListener("click", async () => {
+      const p = pinInp.value.replace(/\D/g, "");
+      if (p.length !== 6) return;
+      setState({ signInLoading: true, signInError: "" }); _currentView = viewSignIn; render();
+      const result = await signInPull(email, p);
+      if (result) {
+        applyRestore(result, email);
+        await SessionManager.create(email, p, LS.get("fl-device-id") || uid());
+        mountApp();
       } else {
-        setState({ forgotLoading: false, forgotError: result.error || `Wrong code. ${result.attempts_remaining !== undefined ? result.attempts_remaining + " attempts left" : ""}` });
+        setState({ signInLoading: false, signInError: "Incorrect email or PIN" }); _currentView = viewSignIn; render();
       }
     });
-  }
-  if (forgotStep === "newpin") {
-    document.querySelectorAll("[data-forgot-key]").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const key = btn.dataset.forgotKey;
-        const phase = state.forgotPinPhase || "new";
-        let pin = phase === "new" ? (state.forgotNewPin || "") : (state.forgotConfirmPin || "");
-        if (key === "⌫") pin = pin.slice(0, -1);
-        else if (pin.length < 6) pin += key;
-        if (phase === "new") {
-          if (pin.length === 6) { setState({ forgotNewPin: pin, forgotPinPhase: "confirm", forgotConfirmPin: "", forgotError: "" }); return; }
-          setState({ forgotNewPin: pin });
-        } else {
-          if (pin.length === 6) {
-            if (pin === state.forgotNewPin) {
-              setState({ forgotLoading: true, forgotConfirmPin: pin });
-              const result = await setNewPin((state.forgotEmail || "").toLowerCase(), state.forgotResetToken, pin);
-              if (result.success) {
-                setState({ forgotLoading: false, forgotStep: null, siStep: "pin", siEmail: state.forgotEmail, siPin: "", siError: "", forgotError: "" });
-              } else {
-                setState({ forgotLoading: false, forgotError: result.error || "Failed to update PIN." });
-              }
-            } else {
-              setState({ forgotError: "PINs don't match.", forgotPinPhase: "new", forgotNewPin: "", forgotConfirmPin: "" });
-            }
-            return;
-          }
-          setState({ forgotConfirmPin: pin });
-        }
-      });
+    c.querySelector("#btn-forgot").addEventListener("click", () => {
+      setState({ signInStep: "forgot", forgotEmail: email, forgotError: "" }); _currentView = viewSignIn; render();
+    });
+  } else if (step === "forgot") {
+    const forgotEmail = state.forgotEmail || "";
+    c.innerHTML = `
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;color:${V.text}">Reset PIN</div>
+      <div style="font-size:12px;color:${V.text3};margin-bottom:16px">We'll send a reset code to your email</div>
+      <div class="field-wrap"><div class="field-lbl">Email</div><input id="inp-email" class="ipt" type="email" placeholder="you@email.com" value="${forgotEmail}"/></div>
+      ${err ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px">${err}</div>` : ""}
+      <button id="btn-send" class="btn-primary">Send Reset Code</button>
+    `;
+    c.querySelector("#btn-send").addEventListener("click", async () => {
+      const e2 = c.querySelector("#inp-email").value.trim();
+      if (!isValidEmail(e2)) { setState({ forgotError: "Invalid email", signInError: "Invalid email" }); _currentView = viewSignIn; render(); return; }
+      const ok = await SessionManager.sendResetCode(e2);
+      if (ok) { setState({ signInStep: "forgot_code", forgotEmail: e2, signInError: "" }); _currentView = viewSignIn; render(); }
+      else { setState({ signInError: "Email not found" }); _currentView = viewSignIn; render(); }
+    });
+  } else if (step === "forgot_code") {
+    const forgotEmail = state.forgotEmail || "";
+    c.innerHTML = `
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;color:${V.text}">Enter Reset Code</div>
+      <div style="font-size:12px;color:${V.text3};margin-bottom:16px">Check your email at <strong style="color:${V.text}">${forgotEmail}</strong></div>
+      <div class="field-wrap"><div class="field-lbl">6-Digit Code</div><input id="inp-code" class="ipt" type="text" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code"/></div>
+      ${err ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px">${err}</div>` : ""}
+      <button id="btn-verify" class="btn-primary">Verify Code</button>
+    `;
+    c.querySelector("#btn-verify").addEventListener("click", async () => {
+      const code = c.querySelector("#inp-code").value.trim();
+      if (code.length !== 6) return;
+      const ok = await SessionManager.verifyResetCode(forgotEmail, code);
+      if (ok) { setState({ signInStep: "new_pin", forgotCode: code, signInError: "" }); _currentView = viewSignIn; render(); }
+      else { setState({ signInError: "Invalid or expired code" }); _currentView = viewSignIn; render(); }
+    });
+  } else if (step === "new_pin") {
+    let np = ""; let cp = "";
+    c.innerHTML = `
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;color:${V.text}">New PIN</div>
+      <div style="font-size:12px;color:${V.text3};margin-bottom:16px">Choose a new 6-digit PIN</div>
+      <div class="field-wrap"><div class="field-lbl">New PIN</div><input id="inp-np" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •" style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:12px;outline:none;box-sizing:border-box"/></div>
+      <div class="field-wrap"><div class="field-lbl">Confirm PIN</div><input id="inp-cp" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •" style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:12px;outline:none;box-sizing:border-box"/></div>
+      ${err ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px">${err}</div>` : ""}
+      <button id="btn-set" class="btn-primary">Set New PIN</button>
+    `;
+    c.querySelector("#btn-set").addEventListener("click", async () => {
+      const npi = c.querySelector("#inp-np").value.replace(/\D/g,"");
+      const cpi = c.querySelector("#inp-cp").value.replace(/\D/g,"");
+      if (npi.length !== 6 || npi !== cpi) { setState({ signInError: npi.length!==6?"PIN must be 6 digits":"PINs don't match" }); _currentView = viewSignIn; render(); return; }
+      const ok = await SessionManager.setNewPin(state.forgotEmail, state.forgotCode, npi);
+      if (ok) {
+        await SessionManager.create(state.forgotEmail, npi, LS.get("fl-device-id") || uid());
+        LS.set("fl-onboarded", true);
+        mountApp();
+      } else { setState({ signInError: "Failed to set PIN" }); _currentView = viewSignIn; render(); }
     });
   }
-  if (!forgotStep) {
-    if (siStep === "email") {
-      document.getElementById("btn-continue")?.addEventListener("click", async () => {
-        const email = document.getElementById("si-email")?.value.trim() || "";
-        if (!email || !isValidEmail(email)) { setState({ siError: "Enter a valid email address." }); return; }
-        setState({ siLoading: true, siError: "", siEmail: email });
-        try {
-          const deviceId = uid(); LS.set("fl-device-id", deviceId);
-          const result = await signInPull(email.toLowerCase(), deviceId, null);
-          if (result?.pin_required) { setState({ siStep: "pin", siLoading: false, siError: "" }); }
-          else if (result?.data) { applyRestore(result.data, email); }
-          else { setState({ siLoading: false, siError: result?.error || "No account found with this email." }); }
-        } catch { setState({ siLoading: false, siError: "Connection failed. Check your internet." }); }
-      });
-    }
-    if (siStep === "pin") {
-      document.querySelectorAll("[data-key]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const key = btn.dataset.key;
-          let pin = state.siPin || "";
-          if (key === "⌫") pin = pin.slice(0, -1);
-          else if (pin.length < 6) pin += key;
-          if (pin.length === 6) {
-            setState({ siPin: pin, siLoading: true, siError: "" });
-            try {
-              const deviceId = LS.get("fl-device-id") || uid();
-              const result = await signInPull(state.siEmail.toLowerCase(), deviceId, pin);
-              if (result?.wrong_pin) {
-                setState({ siLoading: false, siPin: "", siError: `Wrong PIN. ${result.attempts_remaining} attempt${result.attempts_remaining !== 1 ? "s" : ""} remaining.` });
-                if (result.locked) setState({ siError: `Account locked. Try again in ${result.retry_minutes} minutes.` });
-              } else if (result?.data) { applyRestore(result.data, state.siEmail); }
-              else { setState({ siLoading: false, siPin: "", siError: "Could not restore. Try again." }); }
-            } catch { setState({ siLoading: false, siPin: "", siError: "Connection failed." }); }
-            return;
-          }
-          setState({ siPin: pin, siError: "" });
-        });
-      });
-      document.getElementById("btn-forgot")?.addEventListener("click", () => {
-        setState({ forgotStep: "email", forgotEmail: state.siEmail || "", forgotError: "", forgotSuccess: "" });
-      });
-    }
-  }
 }
 
-function applyRestore(data, email) {
-  // Restore synced data to FinanceLog localStorage keys
-  if (data?.transactions) LS.set("fl-tx", data.transactions);
-  if (data?.accounts) LS.set("fl-accounts", data.accounts);
-  if (data?.budgets) LS.set("fl-budgets", data.budgets);
-  if (data?.profile) LS.set("fl-profile", data.profile);
-  LS.set("fl-session-email", (email || "").toLowerCase());
-  LS.set("fl-onboarded", true);
-  showSuccess("Account restored!", () => { showApp(); });
-}
-
-function showSuccess(msg, cb) {
-  const root = document.getElementById("auth-root");
-  root.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:16px;text-align:center"><div style="font-size:52px">✅</div><div style="font-size:18px;font-weight:800;color:#00d4a0">${msg}</div><div class="muted">One moment…</div></div>`;
-  setTimeout(cb, 1200);
-}
-
-
-// ─── Switch to App ────────────────────────────────────────────────────────────
-function showApp() {
+// ─── Mount App ────────────────────────────────────────────────────────────────
+function mountApp() {
   document.getElementById("auth-root").style.display = "none";
   document.getElementById("app-shell").style.display = "flex";
-  // If React is already compiled and ready, boot now
-  if (window.__bootApp) { window.__bootApp(); }
-  // Otherwise set flag — CDN loader will boot when it finishes
-  else { window.__shouldBoot = true; }
+  if (window.__reactReady && window.__mountApp) {
+    window.__mountApp();
+  } else {
+    window.__pendingMount = function() { window.__mountApp(); };
+  }
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
-(async function boot() {
-  // If already onboarded, go straight to the app
-  if (LS.get("fl-onboarded") && LS.get("fl-session-token")) {
-    showApp();
+(function() {
+  function startAuth(sso) {
+    _state = { detectedSSO: sso || null };
+    _currentView = viewWelcome;
+    render();
+  }
+
+  const onboarded = LS.get("fl-onboarded");
+  const sessionToken = LS.get("fl-session-token");
+
+  if (onboarded && sessionToken) { mountApp(); return; }
+
+  const sso = detectSSO();
+  if (sso && sso.type !== "fl_session") {
+    const t = setTimeout(() => startAuth(null), 3000);
+    SessionManager.validateSSO(sso.token)
+      .then(r => { clearTimeout(t); startAuth(r?.valid ? { ...sso, email: r.email || sso.email, valid: true } : null); })
+      .catch(() => { clearTimeout(t); startAuth(null); });
     return;
   }
-
-  // Detect any existing SSO session
-  const sso = detectSSO();
-  let resolvedSSO = sso;
-
-  // If we have an IronLog cookie/token, validate it quietly
-  if (sso && sso.type !== "fl_session") {
-    const result = await SessionManager.validateSSO(sso.token).catch(() => null);
-    if (result && result.valid) {
-      resolvedSSO = { ...sso, email: result.email || sso.email, valid: true };
-    } else {
-      resolvedSSO = null; // Expired, don't show SSO option
-    }
-  }
-
-  _state = { detectedSSO: resolvedSSO };
-  _currentView = viewWelcome;
-  render();
+  startAuth(sso);
 })();
 
 </script>
 
-<!-- ── App CDN Loaders + React App ── -->
-
-</head>
-<body>
-<div id="ll"><div style="font-size:32px">🔄</div><div>Rotate to portrait mode</div></div>
-<div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:14px;color:#00d4a0"><div style="font-size:38px">💎</div><div style="font-family:'DM Mono',monospace;font-size:10px;opacity:.35;letter-spacing:.15em;animation:pulse 1.5s infinite">LOADING</div></div></div>
+<!-- React CDN Loader -->
 <script>
-function ld(url,name){return new Promise(function(res,rej){var s=document.createElement('script');s.src=url;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej(new Error(name+' failed'));};document.head.appendChild(s);});}
-function showErr(msg){document.getElementById('react-root').innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:24px;text-align:center;gap:12px;background:#070e18"><div style="font-size:28px">⚠️</div><div style="color:#ff5757;font-family:monospace;font-size:12px;line-height:1.7;max-width:300px">'+msg+'</div></div>';}
+
+
+function ld(url,name){return new Promise(function(res,rej){var s=document.createElement('script');s.src=url;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej(new Error(name+' failed'));};document.head.appendChild(s);})}
+function showReactError(msg){
+  var el = document.getElementById('react-root');
+  if(el) el.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;gap:12px"><div style="font-size:28px">⚠️</div><div style="color:#ff5757;font-family:monospace;font-size:12px;line-height:1.7;max-width:300px">'+msg+'</div></div>';
+}
+window.__reactReady = false;
+
 (function(){
-ld('https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js','React')
-.catch(function(){return ld('https://unpkg.com/react@18/umd/react.production.min.js','React');})
-.then(function(){return ld('https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js','ReactDOM').catch(function(){return ld('https://unpkg.com/react-dom@18/umd/react-dom.production.min.js','ReactDOM');});})
-.then(function(){return ld('https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.0/babel.min.js','Babel').catch(function(){return ld('https://unpkg.com/@babel/standalone@7.24.0/babel.min.js','Babel');});})
-.then(function(){
-  if(typeof React==='undefined')throw new Error('React unavailable');
-  if(typeof Babel==='undefined')throw new Error('Babel unavailable');
-  var src=document.getElementById('app-src');
-  var code;
-  try{code=Babel.transform(src.textContent,{presets:[['react',{runtime:'classic'}]],filename:'app.jsx'}).code;}
-  catch(e){throw new Error('Compile: '+e.message.slice(0,100));}
-  try{new Function(code)();}
-  catch(e){throw new Error('Runtime: '+e.message.slice(0,100));}
-  // If auth already called showApp() before we were ready, boot now
-  if (window.__shouldBoot && window.__bootApp) { window.__bootApp(); }
-}).catch(function(e){showErr(e.message);});
+  ld('https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js','React')
+  .catch(function(){return ld('https://unpkg.com/react@18/umd/react.production.min.js','React');})
+  .then(function(){return ld('https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js','ReactDOM').catch(function(){return ld('https://unpkg.com/react-dom@18/umd/react-dom.production.min.js','ReactDOM');});})
+  .then(function(){return ld('https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.0/babel.min.js','Babel').catch(function(){return ld('https://unpkg.com/@babel/standalone@7.24.0/babel.min.js','Babel');});})
+  .then(function(){
+    if(typeof React==='undefined') throw new Error('React failed to load');
+    if(typeof Babel==='undefined') throw new Error('Babel failed to load');
+    var src = document.getElementById('app-src');
+    var code;
+    try{ code = Babel.transform(src.textContent,{presets:[['react',{runtime:'classic'}]],filename:'app.jsx'}).code; }
+    catch(e){ throw new Error('Compile error: '+e.message.slice(0,120)); }
+    try{ new Function(code)(); }
+    catch(e){ throw new Error('Runtime error: '+e.message.slice(0,120)); }
+    // React app compiled and __mountApp is now defined
+    window.__reactReady = true;
+    // If auth already completed and is waiting for React, mount now
+    if(window.__pendingMount){ window.__pendingMount(); window.__pendingMount = null; }
+  })
+  .catch(function(e){ showReactError(e.message); });
 })();
+
+
 </script>
+
+<!-- App JSX -->
 <script type="text/plain" id="app-src">
+
+
 const{useState,useEffect,useReducer,useMemo,useRef}=React;
 const LS={get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
 const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
@@ -1053,12 +849,21 @@ const fmtShort=(n)=>{const a=Math.abs(n);if(a>=1e6)return`${(a/1e6).toFixed(1)}M
 const mShort=(m)=>{try{return new Date(m+"-15").toLocaleDateString("en-US",{month:"short"});}catch{return m;}};
 const Haptic={light:()=>{try{navigator.vibrate?.(8);}catch{}},med:()=>{try{navigator.vibrate?.([8,20,8]);}catch{}}};
 
-const T={bg:"#070e18",surf:"#0d1a28",card:"rgba(255,255,255,0.038)",brd:"rgba(255,255,255,0.07)",
-  acc:"#00d4a0",accDim:"rgba(0,212,160,0.14)",acc2:"#00b08a",
-  gold:"#f5b940",goldDim:"rgba(245,185,64,0.14)",
-  red:"#ff5757",redDim:"rgba(255,87,87,0.12)",blue:"#4d9ef5",
-  t1:"#dff0ea",t2:"#7faa9a",t3:"#3a5a4a",
-  font:"'Sora',sans-serif",mono:"'DM Mono',monospace"};
+const T={
+  bg:"#08080d",
+  card:"rgba(255,255,255,0.035)",
+  brd:"rgba(255,255,255,0.06)",
+  acc:"#00f5a0",
+  acc2:"#00d9f5",
+  danger:"#ff6b6b",
+  warn:"#ff9f43",
+  gold:"#fbbf24",
+  t1:"#e8e8ec",
+  t2:"#8b8b9e",
+  t3:"#4a4a5c",
+  font:"'Outfit',sans-serif",
+  mono:"'JetBrains Mono',monospace",
+};
 
 const IRON_RANKS=[
   {level:1,tier:"Bronze",name:"Bronze I",icon:"🥉",xpNeeded:0,color:"#cd7f32",tc:"#cd7f32"},
@@ -1094,15 +899,15 @@ const IRON_RANKS=[
 ];
 
 const EXP_CATS=[
-  {id:"housing",label:"Housing",icon:"🏠",color:"#4d9ef5"},
+  {id:"housing",label:"Housing",icon:"🏠",color:"#00d9f5"},
   {id:"food",label:"Food & Dining",icon:"🍔",color:"#fb923c"},
   {id:"transport",label:"Transport",icon:"🚗",color:"#a07ef5"},
-  {id:"health",label:"Health",icon:"💊",color:"#ff5757"},
-  {id:"entertainment",label:"Entertainment",icon:"🎬",color:"#f5b940"},
+  {id:"health",label:"Health",icon:"💊",color:"#ff6b6b"},
+  {id:"entertainment",label:"Entertainment",icon:"🎬",color:"#ff9f43"},
   {id:"shopping",label:"Shopping",icon:"🛍️",color:"#c084fc"},
   {id:"utilities",label:"Utilities",icon:"💡",color:"#38bdf8"},
   {id:"subscriptions",label:"Subscriptions",icon:"📱",color:"#fb7185"},
-  {id:"fitness",label:"Fitness",icon:"💪",color:"#00d4a0"},
+  {id:"fitness",label:"Fitness",icon:"💪",color:"#00f5a0"},
   {id:"travel",label:"Travel",icon:"✈️",color:"#f59e0b"},
   {id:"education",label:"Education",icon:"📚",color:"#818cf8"},
   {id:"personal",label:"Personal",icon:"🪴",color:"#6ee7b7"},
@@ -1111,9 +916,9 @@ const EXP_CATS=[
   {id:"other",label:"Other",icon:"📦",color:"#7faa9a"},
 ];
 const INC_CATS=[
-  {id:"salary",label:"Salary",icon:"💼",color:"#00d4a0"},
-  {id:"freelance",label:"Freelance",icon:"💻",color:"#4d9ef5"},
-  {id:"investment",label:"Investment",icon:"📈",color:"#f5b940"},
+  {id:"salary",label:"Salary",icon:"💼",color:"#00f5a0"},
+  {id:"freelance",label:"Freelance",icon:"💻",color:"#00d9f5"},
+  {id:"investment",label:"Investment",icon:"📈",color:"#ff9f43"},
   {id:"rental",label:"Rental",icon:"🏠",color:"#fb923c"},
   {id:"bonus",label:"Bonus",icon:"🎉",color:"#a07ef5"},
   {id:"other_inc",label:"Other",icon:"💰",color:"#7faa9a"},
@@ -1164,11 +969,11 @@ function getInsights(s){
   const ins=[];
   if(mInc>0){const r=Math.round((mInc-mExp)/mInc*100);
     if(r>=30)ins.push({icon:"🔥",label:"Great savings",text:`${r}% savings rate`,color:T.acc});
-    else if(r>0)ins.push({icon:"📊",label:"Savings rate",text:`Saving ${r}% of income`,color:T.gold});
-    else ins.push({icon:"⚠️",label:"Overspending",text:"Expenses exceed income",color:T.red});
+    else if(r>0)ins.push({icon:"📊",label:"Savings rate",text:`Saving ${r}% of income`,color:T.warn});
+    else ins.push({icon:"⚠️",label:"Overspending",text:"Expenses exceed income",color:T.danger});
   }
   if(pmExp>0&&mExp>0){const diff=Math.round((mExp-pmExp)/pmExp*100);
-    if(diff>15)ins.push({icon:"📈",label:"Spending up",text:`${diff}% more than last month`,color:T.red});
+    if(diff>15)ins.push({icon:"📈",label:"Spending up",text:`${diff}% more than last month`,color:T.danger});
     else if(diff<-10)ins.push({icon:"📉",label:"Spending down",text:`${Math.abs(diff)}% less`,color:T.acc});
   }
   const cm={};mTx.filter(t=>t.type==="expense").forEach(t=>{cm[t.catId]=(cm[t.catId]||0)+t.amount;});
@@ -1221,7 +1026,7 @@ function ConfirmDlg(){
   if(!c)return null;
   return ReactDOM.createPortal(
     <div style={{position:"fixed",inset:0,zIndex:9996,background:"rgba(0,0,0,.65)",display:"flex",alignItems:"flex-end",padding:"0 16px 16px",backdropFilter:"blur(4px)"}} onClick={()=>set(null)}>
-      <div className="su" onClick={e=>e.stopPropagation()} style={{width:"100%",background:T.surf,borderRadius:24,padding:24,border:`1px solid ${T.brd}`}}>
+      <div className="su" onClick={e=>e.stopPropagation()} style={{width:"100%",background:T.card,borderRadius:24,padding:24,border:`1px solid ${T.brd}`}}>
         <div style={{fontSize:17,fontWeight:700,color:T.t1,marginBottom:c.sub?6:20}}>{c.msg}</div>
         {c.sub&&<div style={{fontSize:13,color:T.t2,marginBottom:20,lineHeight:1.5}}>{c.sub}</div>}
         <div style={{display:"flex",gap:10}}>
@@ -1232,85 +1037,40 @@ function ConfirmDlg(){
     </div>,document.body);
 }
 const Btn=({children,v="primary",full,disabled,onClick,style:ex={}})=>{
-  const B={display:"flex",alignItems:"center",justifyContent:"center",gap:7,borderRadius:14,border:"none",fontSize:14,fontWeight:600,fontFamily:T.font,cursor:disabled?"not-allowed":"pointer",opacity:disabled?.38:1,WebkitTapHighlightColor:"transparent",minHeight:48,transition:"opacity .15s",...(full?{width:"100%"}:{}),...ex};
+  const base={display:"flex",alignItems:"center",justifyContent:"center",gap:6,borderRadius:12,border:"none",
+    fontSize:14,fontWeight:600,fontFamily:T.font,cursor:disabled?"default":"pointer",opacity:disabled?.4:1,
+    WebkitTapHighlightColor:"transparent",transition:"all .15s",minHeight:44,...(full?{width:"100%"}:{}),...ex};
+  const vars={
+    primary:{...base,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:T.bg,padding:"12px 20px"},
+    secondary:{...base,background:"rgba(255,255,255,0.06)",color:T.t2,padding:"12px 20px",border:`1px solid ${T.brd}`},
+    danger:{...base,background:"rgba(255,107,107,0.12)",color:T.danger,padding:"12px 20px"},
+    ghost:{...base,background:"transparent",color:T.t3,padding:"8px 12px",fontSize:13},
+    sm:{...base,background:"rgba(255,255,255,0.06)",color:T.t2,padding:"8px 14px",fontSize:12,minHeight:34,borderRadius:9,border:`1px solid ${T.brd}`},
+  };
+  return <button onClick={onClick} disabled={disabled} style={vars[v]||vars.primary}>{children}</button>;
+};
   const V2={
-    primary:{...B,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:"#070e18",padding:"0 22px",boxShadow:`0 4px 20px ${T.acc}28`},
+    primary:{...B,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:"#08080d",padding:"0 22px",boxShadow:`0 4px 20px ${T.acc}28`},
     ghost:{...B,background:"rgba(255,255,255,.05)",color:T.t2,padding:"0 22px",border:`1px solid ${T.brd}`},
-    danger:{...B,background:T.redDim,color:T.red,padding:"0 22px",border:"1px solid rgba(255,87,87,.2)"},
-    sm:{...B,background:T.accDim,color:T.acc,padding:"0 14px",minHeight:36,fontSize:12,borderRadius:10},
+    danger:{...B,background:"rgba(255,107,107,0.12)",color:T.danger,padding:"0 22px",border:"1px solid rgba(255,87,87,.2)"},
+    sm:{...B,background:"rgba(0,245,160,0.12)",color:T.acc,padding:"0 14px",minHeight:36,fontSize:12,borderRadius:10},
   };
   return<button className="pr" onClick={disabled?undefined:onClick} style={V2[v]||V2.primary}>{children}</button>;
 };
 
-const Field=({label,value,onChange,type="text",unit,placeholder,step,autoFocus})=>(
-  <div style={{marginBottom:14}}>
-    {label&&<div style={{fontSize:11,color:T.t3,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8,fontWeight:600}}>{label}</div>}
+const Field=({label,value,onChange,type="text",unit,placeholder,min,max,step})=>(
+  <div style={{marginBottom:12}}>
+    {label&&<div style={{fontSize:11,color:T.t3,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6,fontWeight:600}}>{label}</div>}
     <div style={{position:"relative"}}>
-      <input autoFocus={autoFocus} type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} step={step}
-        style={{width:"100%",padding:"14px 16px",paddingRight:unit?50:16,background:"rgba(255,255,255,.04)",border:`1px solid ${T.brd}`,borderRadius:14,color:T.t1,fontSize:16,fontFamily:T.mono,outline:"none",boxSizing:"border-box",minHeight:50,WebkitAppearance:"none",transition:"border .2s"}}
-        onFocus={e=>e.target.style.borderColor="rgba(0,212,160,.4)"}
-        onBlur={e=>e.target.style.borderColor=T.brd}/>
-      {unit&&<span style={{position:"absolute",right:16,top:"50%",transform:"translateY(-50%)",fontSize:12,color:T.t3,fontFamily:T.mono}}>{unit}</span>}
+      <input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}
+        min={min} max={max} step={step}
+        style={{width:"100%",padding:"12px 14px",paddingRight:unit?44:14,background:"rgba(255,255,255,0.04)",
+          border:`1px solid ${T.brd}`,borderRadius:12,color:T.t1,fontSize:16,fontFamily:T.mono,
+          outline:"none",boxSizing:"border-box",WebkitAppearance:"none",minHeight:44}}/>
+      {unit&&<span style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",fontSize:11,color:T.t3}}>{unit}</span>}
     </div>
   </div>
 );
-
-const Sheet=({title,onClose,children,footer})=>ReactDOM.createPortal(
-  <div style={{position:"fixed",inset:0,zIndex:9990,background:`linear-gradient(180deg,${T.surf},${T.bg})`,display:"flex",flexDirection:"column"}} role="dialog">
-    <div className="shh" style={{flexShrink:0,display:"flex",alignItems:"center",gap:10,paddingLeft:16,paddingRight:16,borderBottom:`1px solid ${T.brd}`,background:"rgba(7,14,24,.92)",backdropFilter:"blur(14px)"}}>
-      <button onClick={onClose} className="pr" style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",padding:"8px 4px"}}>
-        <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={T.acc} strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        <span style={{fontSize:14,color:T.acc,fontWeight:600}}>Back</span>
-      </button>
-      <h3 style={{margin:0,fontSize:16,color:T.t1,fontFamily:T.font,fontWeight:700,flex:1,textAlign:"center",paddingRight:56}}>{title}</h3>
-    </div>
-    <div style={{flex:1,minHeight:0,overflowY:"auto",WebkitOverflowScrolling:"touch",overscrollBehavior:"contain",padding:20}}>{children}</div>
-    {footer&&<div className="shf" style={{background:"rgba(7,14,24,.96)",backdropFilter:"blur(12px)",borderTop:`1px solid ${T.brd}`}}>{footer}</div>}
-  </div>,document.body);
-
-function DonutChart({data,size=158,sw=20}){
-  const r=(size-sw)/2,circ=2*Math.PI*r,cx=size/2,cy=size/2;
-  const total=data.reduce((a,d)=>a+d.v,0);
-  if(!total)return<svg width={size} height={size}><circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,.05)" strokeWidth={sw}/></svg>;
-  let cum=0;
-  return(
-    <svg width={size} height={size} style={{transform:"rotate(-90deg)"}}>
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,.05)" strokeWidth={sw}/>
-      {data.map((d,i)=>{const pct=d.v/total,gap=0.012,da=`${Math.max(0,pct-gap)*circ} ${circ}`,off=-(cum*circ);cum+=pct;return<circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={d.color} strokeWidth={sw} strokeDasharray={da} strokeDashoffset={off} strokeLinecap="round"/>;})}
-    </svg>);
-}
-
-function Sparkline({data,w=240,h=52,color=T.acc}){
-  if(!data||data.length<2)return<div style={{width:w,height:h}}/>;
-  const mx=Math.max(...data),mn=Math.min(...data),rng=mx-mn||1;
-  const pts=data.map((v,i)=>[i/(data.length-1)*w,h-((v-mn)/rng)*(h-8)-4]);
-  const d="M "+pts.map(p=>p.join(",")).join(" L ");
-  const gid="sg"+Math.round(w);
-  return(
-    <svg width={w} height={h} style={{overflow:"visible"}}>
-      <defs><linearGradient id={gid} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity="0.22"/><stop offset="100%" stopColor={color} stopOpacity="0"/></linearGradient></defs>
-      <path d={d+` L ${w},${h} L 0,${h} Z`} fill={`url(#${gid})`}/>
-      <path d={d} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx={pts[pts.length-1][0]} cy={pts[pts.length-1][1]} r={4} fill={color}/>
-    </svg>);
-}
-
-function Ring({value,max,size=52,sw=6,color=T.acc}){
-  const r=(size-sw)/2,circ=2*Math.PI*r,pct=max>0?Math.min(1,value/max):0;
-  return(
-    <svg width={size} height={size} style={{transform:"rotate(-90deg)",flexShrink:0}}>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,.06)" strokeWidth={sw}/>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={value>max&&max>0?T.red:color} strokeWidth={sw} strokeDasharray={`${pct*circ} ${circ}`} strokeLinecap="round" style={{transition:"stroke-dasharray .55s cubic-bezier(.22,.68,0,1)"}}/>
-    </svg>);
-}
-
-function AnimCount({value,dec=2}){
-  const[disp,setDisp]=useState(value);
-  const prev=useRef(value);
-  useEffect(()=>{
-    const from=prev.current,to=value;prev.current=to;if(from===to)return;
-    const dur=550,start=performance.now();
-    const tick=(now)=>{const p=Math.min(1,(now-start)/dur),e=1-Math.pow(1-p,3);setDisp(from+(to-from)*e);if(p<1)requestAnimationFrame(tick);};
     requestAnimationFrame(tick);
   },[value]);
   return<span>{fmtMoney(disp,dec)}</span>;
@@ -1362,11 +1122,11 @@ function Missions({missions}){
   const done=missions.filter(m=>m.done).length,earned=missions.filter(m=>m.done).reduce((a,m)=>a+m.xp,0),all=done===missions.length;
   return(<>
     <button onClick={()=>setShow(true)} className="pr" style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderRadius:16,background:all?"rgba(0,212,160,.08)":"rgba(255,255,255,.03)",border:`1px solid ${all?"rgba(0,212,160,.22)":T.brd}`,cursor:"pointer",width:"100%",textAlign:"left",WebkitTapHighlightColor:"transparent"}}>
-      <div style={{width:36,height:36,borderRadius:11,background:T.accDim,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>⚡</div>
+      <div style={{width:36,height:36,borderRadius:11,background:"rgba(0,245,160,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>⚡</div>
       <div style={{flex:1,minWidth:0}}>
         <div style={{fontSize:13,fontWeight:700,color:T.t1,marginBottom:3}}>Daily Missions</div>
         <div style={{height:3,borderRadius:2,background:"rgba(255,255,255,.07)"}}>
-          <div style={{height:"100%",borderRadius:2,width:(done/missions.length*100)+"%",background:`linear-gradient(90deg,${T.acc},${T.blue})`,transition:"width .4s"}}/>
+          <div style={{height:"100%",borderRadius:2,width:(done/missions.length*100)+"%",background:`linear-gradient(90deg,${T.acc},${"#00d9f5"})`,transition:"width .4s"}}/>
         </div>
       </div>
       <div style={{textAlign:"right",flexShrink:0}}>
@@ -1375,7 +1135,7 @@ function Missions({missions}){
       </div>
     </button>
     {show&&ReactDOM.createPortal(
-      <div className="fi" style={{position:"fixed",inset:0,zIndex:9991,background:`linear-gradient(180deg,${T.surf},${T.bg})`,display:"flex",flexDirection:"column"}}>
+      <div className="fi" style={{position:"fixed",inset:0,zIndex:9991,background:`linear-gradient(180deg,${T.card},${T.bg})`,display:"flex",flexDirection:"column"}}>
         <div className="shh" style={{display:"flex",alignItems:"center",gap:10,paddingLeft:16,paddingRight:16,borderBottom:`1px solid ${T.brd}`,background:"rgba(7,14,24,.95)",backdropFilter:"blur(12px)",flexShrink:0}}>
           <button onClick={()=>setShow(false)} className="pr" style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",padding:"8px 4px"}}>
             <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={T.acc} strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1390,11 +1150,11 @@ function Missions({missions}){
             {all&&<div style={{fontSize:13,color:T.acc,fontWeight:700,marginTop:8}}>🎉 All complete!</div>}
           </div>
           <div style={{height:6,borderRadius:3,background:"rgba(255,255,255,.06)",marginBottom:24}}>
-            <div style={{height:"100%",borderRadius:3,width:(done/missions.length*100)+"%",background:`linear-gradient(90deg,${T.acc},${T.blue})`}}/>
+            <div style={{height:"100%",borderRadius:3,width:(done/missions.length*100)+"%",background:`linear-gradient(90deg,${T.acc},${"#00d9f5"})`}}/>
           </div>
           {missions.map((m,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:16,background:m.done?"rgba(0,212,160,.06)":"rgba(255,255,255,.02)",border:`1px solid ${m.done?"rgba(0,212,160,.18)":T.brd}`,marginBottom:8}}>
-              <div style={{width:40,height:40,borderRadius:12,background:m.done?T.accDim:"rgba(255,255,255,.05)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{m.icon}</div>
+              <div style={{width:40,height:40,borderRadius:12,background:m.done?"rgba(0,245,160,0.12)":"rgba(255,255,255,.05)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{m.icon}</div>
               <div style={{flex:1}}>
                 <div style={{fontSize:13,fontWeight:700,color:m.done?T.t2:T.t1,textDecoration:m.done?"line-through":"none"}}>{m.title}</div>
                 <div style={{fontSize:11,color:T.t3,marginTop:1}}>{m.desc}</div>
@@ -1441,7 +1201,7 @@ function AddTx({onClose,onSave}){
           <button key={o.v} onClick={()=>{setType(o.v);setCat(o.v==="expense"?"food":"salary");}} className="pr"
             style={{flex:1,padding:11,borderRadius:12,border:"none",fontSize:14,fontWeight:700,fontFamily:T.font,cursor:"pointer",transition:"all .2s",
               background:type===o.v?(o.v==="expense"?"rgba(255,87,87,.15)":"rgba(0,212,160,.15)"):"transparent",
-              color:type===o.v?(o.v==="expense"?T.red:T.acc):T.t3}}>{o.l}</button>))}
+              color:type===o.v?(o.v==="expense"?T.danger:T.acc):T.t3}}>{o.l}</button>))}
       </div>
       <div style={{textAlign:"center",marginBottom:20}}>
         <div style={{fontSize:11,color:T.t3,textTransform:"uppercase",letterSpacing:".1em",marginBottom:10,fontWeight:600}}>Amount</div>
@@ -1476,15 +1236,14 @@ function TxRow({tx,onDelete}){
         <div style={{fontSize:10,color:T.t3,marginTop:2}}>{fmtDateShort(tx.date)} · {c.label}</div>
       </div>
       <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-        <span style={{fontSize:15,fontWeight:700,fontFamily:T.mono,color:tx.type==="income"?T.acc:T.red}}>{tx.type==="income"?"+":"-"}${fmtMoney(tx.amount)}</span>
+        <span style={{fontSize:15,fontWeight:700,fontFamily:T.mono,color:tx.type==="income"?T.acc:T.danger}}>{tx.type==="income"?"+":"-"}${fmtMoney(tx.amount)}</span>
         {onDelete&&<button onClick={onDelete} className="pr" style={{background:"none",border:"none",padding:6,cursor:"pointer",opacity:.38,borderRadius:8}}>
           <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
         </button>}
       </div>
     </div>);
 }
-function HomeTab({s,d,score,missions}){
-  const[showAdd,setShowAdd]=useState(false);
+function HomeTab({s,d,score,missions,showAdd,setShowAdd}){
   const m=thisMonth();
   const mTx=s.transactions.filter(tx=>tx.date.startsWith(m));
   const mInc=mTx.filter(tx=>tx.type==="income").reduce((a,tx)=>a+tx.amount,0);
@@ -1507,22 +1266,22 @@ function HomeTab({s,d,score,missions}){
       </div>
       <div className="fu s1" style={{borderRadius:24,padding:"22px 20px",background:"linear-gradient(135deg,rgba(0,212,160,.1),rgba(0,176,138,.04))",border:"1px solid rgba(0,212,160,.18)",boxShadow:"0 8px 40px rgba(0,0,0,.3)"}}>
         <div style={{fontSize:10,color:T.t3,fontWeight:600,letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>Total Net Worth</div>
-        <div style={{fontSize:40,fontWeight:800,fontFamily:T.mono,color:netWorth>=0?T.acc:T.red,lineHeight:1,marginBottom:s.accounts.length?12:0}}>
+        <div style={{fontSize:40,fontWeight:800,fontFamily:T.mono,color:netWorth>=0?T.acc:T.danger,lineHeight:1,marginBottom:s.accounts.length?12:0}}>
           {netWorth<0&&"-"}$<AnimCount value={Math.abs(netWorth)}/>
         </div>
         {s.accounts.length>0&&<div style={{display:"flex",gap:18,marginBottom:14}}>
           <div><div style={{fontSize:9,color:T.t3,marginBottom:2}}>ASSETS</div><div style={{fontSize:13,fontWeight:700,color:T.acc2,fontFamily:T.mono}}>+${fmtShort(assets)}</div></div>
-          <div><div style={{fontSize:9,color:T.t3,marginBottom:2}}>DEBT</div><div style={{fontSize:13,fontWeight:700,color:T.red,fontFamily:T.mono}}>-${fmtShort(debts)}</div></div>
+          <div><div style={{fontSize:9,color:T.t3,marginBottom:2}}>DEBT</div><div style={{fontSize:13,fontWeight:700,color:T.danger,fontFamily:T.mono}}>-${fmtShort(debts)}</div></div>
         </div>}
-        {sparkData.some(v=>v!==0)&&<Sparkline data={sparkData} w={290} h={48} color={sparkData[sparkData.length-1]>=0?T.acc:T.red}/>}
+        {sparkData.some(v=>v!==0)&&<Sparkline data={sparkData} w={290} h={48} color={sparkData[sparkData.length-1]>=0?T.acc:T.danger}/>}
       </div>
       <div className="fu s2" style={{borderRadius:20,border:`1px solid ${T.brd}`,background:T.card,padding:"16px 18px"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <div style={{fontSize:13,fontWeight:700,color:T.t1}}>{new Date().toLocaleDateString("en-US",{month:"long"})}</div>
-          {mInc>0&&<div style={{fontSize:11,fontWeight:700,color:savRate>=20?T.acc:savRate>0?T.gold:T.red,fontFamily:T.mono,background:savRate>=20?T.accDim:savRate>0?T.goldDim:T.redDim,padding:"3px 10px",borderRadius:20}}>{savRate}% saved</div>}
+          {mInc>0&&<div style={{fontSize:11,fontWeight:700,color:savRate>=20?T.acc:savRate>0?T.warn:T.danger,fontFamily:T.mono,background:savRate>=20?"rgba(0,245,160,0.12)":savRate>0?"rgba(255,159,67,0.12)":"rgba(255,107,107,0.12)",padding:"3px 10px",borderRadius:20}}>{savRate}% saved</div>}
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1px 1fr 1px 1fr",gap:0,marginBottom:mInc>0?14:0}}>
-          {[{l:"Income",v:mInc,c:T.acc,s:"+"},{l:"Spent",v:mExp,c:T.red,s:"-"},{l:"Saved",v:Math.abs(mSav),c:mSav>=0?T.acc:T.red,s:mSav>=0?"+":"−"}].map((x,i)=>[
+          {[{l:"Income",v:mInc,c:T.acc,s:"+"},{l:"Spent",v:mExp,c:T.danger,s:"-"},{l:"Saved",v:Math.abs(mSav),c:mSav>=0?T.acc:T.danger,s:mSav>=0?"+":"−"}].map((x,i)=>[
             i>0&&<div key={"d"+i} style={{background:T.brd}}/>,
             <div key={x.l} style={{textAlign:"center",padding:"0 8px"}}>
               <div style={{fontSize:9,color:T.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:".06em",marginBottom:5}}>{x.l}</div>
@@ -1530,7 +1289,7 @@ function HomeTab({s,d,score,missions}){
             </div>])}
         </div>
         {mInc>0&&<div style={{height:5,borderRadius:3,background:"rgba(255,255,255,.06)"}}>
-          <div style={{height:"100%",borderRadius:3,width:`${Math.min(100,mExp/mInc*100)}%`,background:`linear-gradient(90deg,${T.acc},${mExp>mInc?T.red:T.acc2})`,transition:"width .5s"}}/>
+          <div style={{height:"100%",borderRadius:3,width:`${Math.min(100,mExp/mInc*100)}%`,background:`linear-gradient(90deg,${T.acc},${mExp>mInc?T.danger:T.acc2})`,transition:"width .5s"}}/>
         </div>}
       </div>
       {donutData.length>0&&(
@@ -1541,7 +1300,7 @@ function HomeTab({s,d,score,missions}){
               <DonutChart data={donutData} size={148} sw={19}/>
               <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",textAlign:"center"}}>
                 <div style={{fontSize:9,color:T.t3,marginBottom:2}}>Total</div>
-                <div style={{fontSize:15,fontWeight:700,fontFamily:T.mono,color:T.red}}>-${fmtShort(mExp)}</div>
+                <div style={{fontSize:15,fontWeight:700,fontFamily:T.mono,color:T.danger}}>-${fmtShort(mExp)}</div>
               </div>
             </div>
             <div style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
@@ -1569,7 +1328,7 @@ function HomeTab({s,d,score,missions}){
       <div className="fu s3" style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderRadius:16,background:T.card,border:`1px solid ${T.brd}`}}>
         <IronCard score={score} compact/>
       </div>
-      <Btn full onClick={()=>setShowAdd(true)} style={{height:52,fontWeight:700,fontSize:15,borderRadius:16,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:"#070e18",boxShadow:`0 4px 24px ${T.acc}2e`}}>
+      <Btn full onClick={()=>setShowAdd(true)} style={{height:52,fontWeight:700,fontSize:15,borderRadius:16,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,color:"#08080d",boxShadow:`0 4px 24px ${T.acc}2e`}}>
         <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Transaction
       </Btn>
@@ -1592,7 +1351,7 @@ function HomeTab({s,d,score,missions}){
           <Btn onClick={()=>setShowAdd(true)}>Get Started</Btn>
         </div>)}
       <div className="fu s5"><Missions missions={missions}/></div>
-      {showAdd&&<AddTx onClose={()=>setShowAdd(false)} onSave={tx=>{d({type:"ADD_TX",tx});Toast.show(tx.type==="income"?"💚 Income logged":"🔴 Expense added",tx.type==="income"?T.acc:T.red);Haptic.med();}}/>}
+      {showAdd&&<AddTx onClose={()=>setShowAdd(false)} onSave={tx=>{d({type:"ADD_TX",tx});Toast.show(tx.type==="income"?"💚 Income logged":"🔴 Expense added",tx.type==="income"?T.acc:T.danger);Haptic.med();}}/>}
     </div>);
 }
 function TxTab({s,d}){
@@ -1613,7 +1372,7 @@ function TxTab({s,d}){
         {months.map(m=>(
           <button key={m} onClick={()=>setFMonth(fMonth===m?"":m)} className="pr"
             style={{padding:"8px 16px",borderRadius:20,border:"none",fontSize:12,fontWeight:600,fontFamily:T.font,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,
-              background:fMonth===m?T.accDim:"rgba(255,255,255,.05)",color:fMonth===m?T.acc:T.t3}}>
+              background:fMonth===m?"rgba(0,245,160,0.12)":"rgba(255,255,255,.05)",color:fMonth===m?T.acc:T.t3}}>
             {fMonth===m?"✓ ":""}{mShort(m)} {m.slice(0,4)}
           </button>))}
       </div>
@@ -1622,13 +1381,13 @@ function TxTab({s,d}){
           <button key={t} onClick={()=>setFType(t)} className="pr"
             style={{flex:1,padding:9,borderRadius:11,border:"none",fontSize:12,fontWeight:700,fontFamily:T.font,cursor:"pointer",transition:"all .2s",
               background:fType===t?(t==="income"?"rgba(0,212,160,.15)":t==="expense"?"rgba(255,87,87,.15)":"rgba(255,255,255,.07)"):"transparent",
-              color:fType===t?(t==="income"?T.acc:t==="expense"?T.red:T.t1):T.t3}}>
+              color:fType===t?(t==="income"?T.acc:t==="expense"?T.danger:T.t1):T.t3}}>
             {t==="all"?"All":t==="income"?"Income":"Expenses"}
           </button>))}
       </div>
       {filtered.length>0&&(
         <div style={{display:"grid",gridTemplateColumns:"1fr 1px 1fr 1px 1fr",borderRadius:16,background:T.card,border:`1px solid ${T.brd}`,overflow:"hidden"}}>
-          {[{l:"IN",v:totals.i,c:T.acc,s:"+"},{l:"OUT",v:totals.e,c:T.red,s:"-"},{l:"NET",v:totals.i-totals.e,c:(totals.i-totals.e)>=0?T.acc:T.red,s:(totals.i-totals.e)>=0?"+":"-"}].map((x,i)=>[
+          {[{l:"IN",v:totals.i,c:T.acc,s:"+"},{l:"OUT",v:totals.e,c:T.danger,s:"-"},{l:"NET",v:totals.i-totals.e,c:(totals.i-totals.e)>=0?T.acc:T.danger,s:(totals.i-totals.e)>=0?"+":"-"}].map((x,i)=>[
             i>0&&<div key={"d"+i} style={{background:T.brd}}/>,
             <div key={x.l} style={{textAlign:"center",padding:"14px 8px"}}>
               <div style={{fontSize:9,color:T.t3,fontWeight:700,letterSpacing:".08em",marginBottom:4}}>{x.l}</div>
@@ -1643,7 +1402,7 @@ function TxTab({s,d}){
           </div>
         </div>))}
       {filtered.length===0&&<div style={{textAlign:"center",padding:"48px 20px"}}><div style={{fontSize:36,marginBottom:12}}>🔍</div><div style={{fontSize:14,color:T.t2,marginBottom:4}}>No transactions</div><div style={{fontSize:12,color:T.t3}}>Try a different filter</div></div>}
-      {showAdd&&<AddTx onClose={()=>setShowAdd(false)} onSave={tx=>{d({type:"ADD_TX",tx});Toast.show(tx.type==="income"?"Income added":"Expense logged",tx.type==="income"?T.acc:T.red);Haptic.med();}}/>}
+      {showAdd&&<AddTx onClose={()=>setShowAdd(false)} onSave={tx=>{d({type:"ADD_TX",tx});Toast.show(tx.type==="income"?"Income added":"Expense logged",tx.type==="income"?T.acc:T.danger);Haptic.med();}}/>}
     </div>);
 }
 
@@ -1657,7 +1416,7 @@ function BudgetTab({s,d}){
   const totalSp=Object.values(spent).reduce((a,b)=>a+b,0);
   const overCats=EXP_CATS.filter(c=>parseFloat(s.budgets[c.id])>0&&(spent[c.id]||0)>parseFloat(s.budgets[c.id]));
   const health=totalBud>0?Math.max(0,Math.round(100-(Math.max(0,totalSp-totalBud)/totalBud*100)-(overCats.length*8))):null;
-  const hColor=health===null?T.t3:health>=80?T.acc:health>=50?T.gold:T.red;
+  const hColor=health===null?T.t3:health>=80?T.acc:health>=50?T.warn:T.danger;
   const catRows=EXP_CATS.filter(cat=>s.budgets[cat.id]||spent[cat.id]);
   return(
     <div style={{display:"flex",flexDirection:"column",gap:14}}>
@@ -1682,7 +1441,7 @@ function BudgetTab({s,d}){
           </div>
           {totalBud>0&&<div style={{marginTop:14}}>
             <div style={{height:6,borderRadius:3,background:"rgba(255,255,255,.06)"}}>
-              <div style={{height:"100%",borderRadius:3,width:`${Math.min(100,totalSp/totalBud*100)}%`,background:`linear-gradient(90deg,${T.acc},${totalSp>totalBud?T.red:T.acc2})`,transition:"width .5s"}}/>
+              <div style={{height:"100%",borderRadius:3,width:`${Math.min(100,totalSp/totalBud*100)}%`,background:`linear-gradient(90deg,${T.acc},${totalSp>totalBud?T.danger:T.acc2})`,transition:"width .5s"}}/>
             </div>
           </div>}
         </div>
@@ -1694,11 +1453,11 @@ function BudgetTab({s,d}){
           <Btn onClick={()=>{setEditB({...s.budgets});setShowEdit(true);}}>Set Budgets</Btn>
         </div>)}
       {overCats.length>0&&(
-        <div style={{borderRadius:16,background:T.redDim,border:"1px solid rgba(255,87,87,.2)",padding:"12px 16px",display:"flex",gap:10,alignItems:"center"}}>
+        <div style={{borderRadius:16,background:"rgba(255,107,107,0.12)",border:"1px solid rgba(255,87,87,.2)",padding:"12px 16px",display:"flex",gap:10,alignItems:"center"}}>
           <span style={{fontSize:20}}>⚠️</span>
           <div>
-            <div style={{fontSize:13,fontWeight:700,color:T.red}}>{overCats.length} {overCats.length===1?"category":"categories"} over budget</div>
-            <div style={{fontSize:11,color:T.red,opacity:.7}}>{overCats.map(c=>c.label).join(", ")}</div>
+            <div style={{fontSize:13,fontWeight:700,color:T.danger}}>{overCats.length} {overCats.length===1?"category":"categories"} over budget</div>
+            <div style={{fontSize:11,color:T.danger,opacity:.7}}>{overCats.map(c=>c.label).join(", ")}</div>
           </div>
         </div>)}
       {catRows.map((cat)=>{
@@ -1714,13 +1473,13 @@ function BudgetTab({s,d}){
               <div style={{flex:1,minWidth:0}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:4}}>
                   <div style={{fontSize:13,fontWeight:700,color:T.t1}}>{cat.label}</div>
-                  {bud>0&&<div style={{fontSize:12,fontWeight:800,fontFamily:T.mono,color:over?T.red:pct>80?T.gold:T.acc}}>{pct}%</div>}
+                  {bud>0&&<div style={{fontSize:12,fontWeight:800,fontFamily:T.mono,color:over?T.danger:pct>80?T.warn:T.acc}}>{pct}%</div>}
                 </div>
                 <div style={{fontSize:11,color:T.t3}}>
-                  <span style={{color:over?T.red:T.t2,fontFamily:T.mono,fontWeight:600}}>${fmtMoney(sp,0)}</span>
+                  <span style={{color:over?T.danger:T.t2,fontFamily:T.mono,fontWeight:600}}>${fmtMoney(sp,0)}</span>
                   {bud>0&&<span> of ${fmtMoney(bud,0)}</span>}
                   {!bud&&<span> (no limit)</span>}
-                  {over&&<span style={{color:T.red,fontWeight:700}}> · ${fmtMoney(sp-bud,0)} over</span>}
+                  {over&&<span style={{color:T.danger,fontWeight:700}}> · ${fmtMoney(sp-bud,0)} over</span>}
                 </div>
               </div>
             </div>
@@ -1749,16 +1508,16 @@ function WealthTab({s,d}){
   const[form,setForm]=useState({name:"",balance:"",type:"checking"});
   const[editId,setEditId]=useState(null);
   const ACC=[
-    {id:"checking",label:"Checking",icon:"🏦",color:T.blue},
+    {id:"checking",label:"Checking",icon:"🏦",color:"#00d9f5"},
     {id:"savings",label:"Savings",icon:"💰",color:T.acc},
-    {id:"investment",label:"Investment",icon:"📈",color:T.gold},
+    {id:"investment",label:"Investment",icon:"📈",color:T.warn},
     {id:"crypto",label:"Crypto",icon:"🪙",color:"#f7931a"},
     {id:"property",label:"Property",icon:"🏠",color:"#fb923c"},
-    {id:"debt",label:"Debt / Loan",icon:"💳",color:T.red},
+    {id:"debt",label:"Debt / Loan",icon:"💳",color:T.danger},
   ];
   const assets=s.accounts.filter(a=>a.type!=="debt").reduce((a,ac)=>a+parseFloat(ac.balance||0),0);
   const debts=s.accounts.filter(a=>a.type==="debt").reduce((a,ac)=>a+parseFloat(ac.balance||0),0);
-  const nw=assets-debts,nwC=nw>=0?T.acc:T.red,ar=assets>0?assets/(assets+debts):0;
+  const nw=assets-debts,nwC=nw>=0?T.acc:T.danger,ar=assets>0?assets/(assets+debts):0;
   const open=(ac=null)=>{
     if(ac){setEditId(ac.id);setForm({name:ac.name,balance:ac.balance.toString(),type:ac.type});}
     else{setEditId(null);setForm({name:"",balance:"",type:"checking"});}
@@ -1786,7 +1545,7 @@ function WealthTab({s,d}){
           </div>
           <div style={{display:"flex",justifyContent:"space-between"}}>
             <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:8,height:8,borderRadius:4,background:T.acc}}/><div style={{fontSize:11,color:T.t3}}>Assets <span style={{color:T.acc,fontFamily:T.mono,fontWeight:600}}>${fmtShort(assets)}</span></div></div>
-            <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:8,height:8,borderRadius:4,background:T.red}}/><div style={{fontSize:11,color:T.t3}}>Debt <span style={{color:T.red,fontFamily:T.mono,fontWeight:600}}>${fmtShort(debts)}</span></div></div>
+            <div style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:8,height:8,borderRadius:4,background:T.danger}}/><div style={{fontSize:11,color:T.t3}}>Debt <span style={{color:T.danger,fontFamily:T.mono,fontWeight:600}}>${fmtShort(debts)}</span></div></div>
           </div>
         </>}
       </div>
@@ -1810,10 +1569,10 @@ function WealthTab({s,d}){
         </button>)))}
       {s.accounts.filter(a=>a.type==="debt").map(ac=>(
         <button key={ac.id} onClick={()=>open(ac)} className="pr" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,background:"rgba(255,87,87,.05)",border:"1px solid rgba(255,87,87,.14)",cursor:"pointer",width:"100%",textAlign:"left",WebkitTapHighlightColor:"transparent"}}>
-          <div style={{width:44,height:44,borderRadius:14,background:T.redDim,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>💳</div>
-          <div style={{flex:1,minWidth:0}}><div style={{fontSize:14,fontWeight:700,color:T.t1}}>{ac.name}</div><div style={{fontSize:11,color:T.red,marginTop:2}}>Liability</div></div>
+          <div style={{width:44,height:44,borderRadius:14,background:"rgba(255,107,107,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>💳</div>
+          <div style={{flex:1,minWidth:0}}><div style={{fontSize:14,fontWeight:700,color:T.t1}}>{ac.name}</div><div style={{fontSize:11,color:T.danger,marginTop:2}}>Liability</div></div>
           <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
-            <div style={{fontSize:17,fontWeight:800,fontFamily:T.mono,color:T.red}}>-${fmtMoney(parseFloat(ac.balance))}</div>
+            <div style={{fontSize:17,fontWeight:800,fontFamily:T.mono,color:T.danger}}>-${fmtMoney(parseFloat(ac.balance))}</div>
             <button onClick={e=>{e.stopPropagation();Confirm.show(`Delete ${ac.name}?`,"",()=>d({type:"DEL_ACC",id:ac.id}));}} className="pr" style={{background:"none",border:"none",padding:6,cursor:"pointer",opacity:.36,borderRadius:8}}>
               <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
             </button>
@@ -1843,7 +1602,7 @@ function SettingsTab({s,d,score,missions}){
   const Acc=({id,icon,label,children})=>(
     <div style={{borderRadius:18,background:T.card,border:`1px solid ${T.brd}`,overflow:"hidden",marginBottom:10}}>
       <button onClick={()=>tog(id)} className="pr" style={{display:"flex",alignItems:"center",gap:12,padding:"16px",width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",WebkitTapHighlightColor:"transparent"}}>
-        <div style={{width:38,height:38,borderRadius:12,background:T.accDim,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{icon}</div>
+        <div style={{width:38,height:38,borderRadius:12,background:"rgba(0,245,160,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{icon}</div>
         <span style={{fontSize:14,fontWeight:600,color:T.t1,flex:1}}>{label}</span>
         <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={T.t3} strokeWidth="2" strokeLinecap="round" style={{transform:open===id?"rotate(90deg)":"none",transition:"transform .2s",flexShrink:0}}><polyline points="9 18 15 12 9 6"/></svg>
       </button>
@@ -1855,7 +1614,7 @@ function SettingsTab({s,d,score,missions}){
       <Acc id="rank" icon="🏆" label="IRON Rank">
         <IronCard score={score} compact={false}/>
         <div style={{fontSize:11,color:T.t3,lineHeight:1.6,marginTop:12,marginBottom:12}}>Rank up by logging consistently, hitting savings goals, and completing daily missions.</div>
-        <a href="https://ironlog.space" target="_blank" rel="noopener" style={{display:"block",padding:"12px",borderRadius:12,border:`1px solid ${T.acc}25`,background:T.accDim,color:T.acc,fontSize:13,fontWeight:600,textAlign:"center",textDecoration:"none"}}>Open IRONLOG ↗</a>
+        <a href="https://ironlog.space" target="_blank" rel="noopener" style={{display:"block",padding:"12px",borderRadius:12,border:`1px solid ${T.acc}25`,background:"rgba(0,245,160,0.12)",color:T.acc,fontSize:13,fontWeight:600,textAlign:"center",textDecoration:"none"}}>Open IRONLOG ↗</a>
       </Acc>
       <Acc id="missions" icon="⚡" label="Daily Missions">
         <Missions missions={missions}/>
@@ -1891,6 +1650,7 @@ function App(){
   const score=useMemo(()=>calcScore(s),[s.transactions.length,s.accounts.length,JSON.stringify(s.budgets)]);
   const missions=useMemo(()=>getMissions(s),[s.transactions.length,s.accounts.length,JSON.stringify(s.budgets)]);
   const{celebrating,celebRank,dismiss}=useLevelUp(score,"fl-last-level");
+  const[showAdd,setShowAdd]=useState(false);
 
   useEffect(()=>{
     d({type:"INIT",p:{transactions:LS.get("fl-tx")||[],accounts:LS.get("fl-accounts")||[],budgets:LS.get("fl-budgets")||{}}});
@@ -1904,79 +1664,94 @@ function App(){
   },[s.transactions,s.accounts,s.budgets,s.loaded]);
 
   if(!s.loaded)return(
-    <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",background:T.bg,flexDirection:"column",gap:14}}>
-      <div style={{fontSize:40}}>💎</div>
-      <div style={{fontSize:10,color:T.t3,fontFamily:T.mono,letterSpacing:".12em",animation:"pulse 1.5s infinite"}}>LOADING</div>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",background:T.bg,flexDirection:"column",gap:16}}>
+      <div style={{width:36,height:36,border:`3px solid rgba(0,245,160,0.15)`,borderTopColor:T.acc,borderRadius:"50%",animation:"spin .8s linear infinite"}}></div>
+      <div style={{fontSize:13,color:T.t2,fontFamily:T.font}}>Loading FinanceLog...</div>
     </div>);
 
   const TABS=[
-    {id:"home",label:"Home",icon:(a)=>(
-      <svg width={22} height={22} viewBox="0 0 24 24" fill={a?"currentColor":"none"} stroke="currentColor" strokeWidth={a?"0":"1.8"} strokeLinecap="round">
-        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21" stroke={a?"rgba(7,14,24,0.5)":"currentColor"} strokeWidth="1.8"/>
+    {id:"home",label:"Home",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/>
       </svg>)},
-    {id:"transactions",label:"Activity",icon:(a)=>(
-      <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-        <rect x="2" y="5" width="20" height="14" rx="2" fill={a?"currentColor":"none"} strokeWidth={a?"0":"1.8"}/>
-        <line x1="2" y1="10" x2="22" y2="10" stroke={a?"rgba(7,14,24,0.5)":"currentColor"}/>
-        <line x1="7" y1="15" x2="9" y2="15" stroke={a?"rgba(7,14,24,0.55)":"currentColor"}/>
-        <line x1="12" y1="15" x2="17" y2="15" stroke={a?"rgba(7,14,24,0.55)":"currentColor"}/>
+    {id:"transactions",label:"Activity",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
+        <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+        <line x1="7" y1="15" x2="9" y2="15"/><line x1="12" y1="15" x2="17" y2="15"/>
       </svg>)},
-    {id:"budget",label:"Budget",icon:(a)=>(
-      <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-        <circle cx="12" cy="12" r="10" fill={a?"currentColor":"none"} strokeWidth={a?"0":"1.8"}/>
-        <path d="M12 6v2M12 16v2M8 12h8" stroke={a?"rgba(7,14,24,0.5)":"currentColor"} strokeWidth="2"/>
+    {id:"budget",label:"Budget",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 6v2M12 16v2M8.5 9a3.5 3.5 0 0 1 7 0c0 2-3.5 3-3.5 3s-3.5 1-3.5 3a3.5 3.5 0 0 0 7 0"/>
       </svg>)},
-    {id:"wealth",label:"Wealth",icon:(a)=>(
-      <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-        <polyline points="16 7 22 7 22 13"/>
+    {id:"wealth",label:"Wealth",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
       </svg>)},
-    {id:"settings",label:"More",icon:(a)=>(
-      <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+    {id:"settings",label:"More",icon:({size=20,color=T.t3,strokeWidth=1.6})=>(
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>)},
   ];
 
   return(
-    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,position:"relative"}}>
-      <div style={{paddingTop:"env(safe-area-inset-top,0px)",background:T.bg,flexShrink:0}}/>
-      <div style={{flex:1,minHeight:0,position:"relative"}}>
-        <div className="ms" style={{paddingTop:20}}>
-          {s.tab==="home"&&<HomeTab s={s} d={d} score={score} missions={missions}/>}
-          {s.tab==="transactions"&&<TxTab s={s} d={d}/>}
-          {s.tab==="budget"&&<BudgetTab s={s} d={d}/>}
-          {s.tab==="wealth"&&<WealthTab s={s} d={d}/>}
-          {s.tab==="settings"&&<SettingsTab s={s} d={d} score={score} missions={missions}/>}
+    <div style={{height:"100%",display:"flex",flexDirection:"column",background:T.bg,color:T.t1,fontFamily:T.font,position:"relative"}}>
+      {/* safe-area top */}
+      <div style={{height:"env(safe-area-inset-top,0px)",background:T.bg,flexShrink:0}}/>
+
+      {/* Header */}
+      <div style={{padding:"12px 20px 10px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,borderBottom:`1px solid ${T.brd}`}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{width:28,height:28,borderRadius:8,background:`linear-gradient(135deg,${T.acc},${T.acc2})`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={T.bg} strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <span style={{fontSize:17,fontWeight:800,letterSpacing:"-0.03em",color:T.t1}}>Finance<span style={{color:T.acc}}>Log</span></span>
         </div>
+        <button onClick={()=>setShowAdd(true)} style={{width:34,height:34,borderRadius:10,background:`${T.acc}15`,border:`1px solid ${T.acc}30`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",border:"none"}}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.acc} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
       </div>
-      <div style={{position:"absolute",bottom:0,left:0,right:0,display:"flex",justifyContent:"center",padding:`8px 16px max(20px,env(safe-area-inset-bottom,20px)) 16px`,pointerEvents:"none"}}>
-        <div style={{display:"flex",gap:2,padding:"8px",borderRadius:28,background:"rgba(7,14,24,0.92)",border:"1px solid rgba(255,255,255,0.1)",backdropFilter:"blur(24px)",boxShadow:"0 8px 40px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04)",pointerEvents:"all",maxWidth:380,width:"100%"}}>
-          {TABS.map(tab=>{
-            const active=s.tab===tab.id;
-            return(
-              <button key={tab.id} onClick={()=>{Haptic.light();d({type:"TAB",tab:tab.id});}}
-                style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:3,background:active?T.accDim:"transparent",borderRadius:20,border:`1px solid ${active?"rgba(0,212,160,.22)":"transparent"}`,padding:"8px 4px",cursor:"pointer",WebkitTapHighlightColor:"transparent",transition:"all .2s",minHeight:52}}>
-                <div style={{color:active?T.acc:T.t3,transition:"color .2s"}}>{tab.icon(active)}</div>
-                <span style={{fontSize:9,fontWeight:active?700:500,color:active?T.acc:T.t3,letterSpacing:".02em"}}>{tab.label}</span>
-              </button>);
-          })}
-        </div>
+
+      {/* Content */}
+      <div style={{flex:1,overflowY:"auto",WebkitOverflowScrolling:"touch",minHeight:0}}>
+        {s.tab==="home"&&<HomeTab s={s} d={d} score={score} missions={missions} showAdd={showAdd} setShowAdd={setShowAdd}/>}
+        {s.tab==="transactions"&&<TxTab s={s} d={d}/>}
+        {s.tab==="budget"&&<BudgetTab s={s} d={d}/>}
+        {s.tab==="wealth"&&<WealthTab s={s} d={d}/>}
+        {s.tab==="settings"&&<SettingsTab s={s} d={d}/>}
       </div>
+
+      {/* Bottom Nav — IronLog style */}
+      <nav style={{flexShrink:0,background:"rgba(8,8,13,0.95)",backdropFilter:"blur(24px) saturate(180%)",
+        borderTop:`1px solid rgba(255,255,255,0.06)`,paddingBottom:"env(safe-area-inset-bottom,8px)",
+        display:"flex",justifyContent:"space-around",alignItems:"center",paddingTop:8,position:"relative",zIndex:50}}>
+        {TABS.map(tab=>{
+          const active=s.tab===tab.id;
+          return(
+            <button key={tab.id} onClick={()=>{Haptic.light();d({type:"TAB",tab:tab.id});}}
+              style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:"none",border:"none",
+                cursor:"pointer",padding:"6px 16px",minWidth:64,WebkitTapHighlightColor:"transparent",transition:"all .15s"}}>
+              <div style={{width:active?42:36,height:active?42:36,borderRadius:active?14:12,position:"relative",
+                background:active?`${T.acc}18`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",
+                transition:"all .2s ease"}}>
+                {tab.icon({size:active?22:20,color:active?T.acc:T.t3,strokeWidth:active?2.2:1.6})}
+              </div>
+              <span style={{fontSize:10,fontWeight:active?700:500,color:active?T.acc:T.t3,letterSpacing:".01em"}}>{tab.label}</span>
+            </button>);
+        })}
+      </nav>
+
       <ToastBar/>
       <ConfirmDlg/>
       {celebrating&&celebRank&&<LevelUp rank={celebRank} onDismiss={dismiss}/>}
     </div>);
 }
 
-// Called by auth layer after sign-in
-window.__bootApp = function() {
-  ReactDOM.createRoot(document.getElementById("react-root")).render(<App/>);
-};
-// Flag is set — showApp() was already called, boot now
-if (window.__shouldBoot) { window.__bootApp(); }
+
+function __mountApp() { ReactDOM.createRoot(document.getElementById("react-root")).render(<App/>); }
 
 </script>
-
 </body>
 </html>
