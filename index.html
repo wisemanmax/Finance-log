@@ -812,6 +812,9 @@ function renderSignupPin(el, data, state) {
       <div style="font-size:11px;color:${V.text3};text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:600">Confirm PIN</div>
       <input id="inp-confirm" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •"
         style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${confirm.length===6&&confirm===pin?V.accent:confirm.length===6&&confirm!==pin?V.danger:V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:12px;outline:none;box-sizing:border-box"/>
+      <div id="dots-confirm" style="display:flex;justify-content:center;gap:6px;margin-top:8px">
+        ${[0,1,2,3,4,5].map(i=>`<div style="width:10px;height:10px;border-radius:5px;background:${i<confirm.length?V.accent:"rgba(255,255,255,0.1)"};transition:all .15s"></div>`).join("")}
+      </div>
     </div>
     ${pinErr ? `<div style="font-size:12px;color:${V.danger};text-align:center;margin-bottom:8px">${pinErr}</div>` : ""}
     <button id="btn-next" class="btn-primary" ${pin.length===6&&confirm.length===6?"":"style=\"opacity:.4\""}>Create Account</button>
@@ -824,22 +827,28 @@ function renderSignupPin(el, data, state) {
   pinInp.value = pin;
   confInp.value = confirm;
 
+  function updateDots(container, len) {
+    const ds = container.querySelectorAll("div");
+    ds.forEach((d, i) => { d.style.background = i < len ? V.accent : "rgba(255,255,255,0.1)"; });
+  }
+
   pinInp.addEventListener("input", () => {
     const v = pinInp.value.replace(/\D/g, "").slice(0, 6);
     pinInp.value = v;
-    setState({ signupPin: v, signupError: "" });
-    _currentView = viewSignup; render();
+    updateDots(dots, v.length);
   });
   confInp.addEventListener("input", () => {
     const v = confInp.value.replace(/\D/g, "").slice(0, 6);
     confInp.value = v;
-    setState({ signupConfirmPin: v, signupError: "" });
-    _currentView = viewSignup; render();
+    const confDots = el.querySelector("#dots-confirm");
+    if (confDots) updateDots(confDots, v.length);
+    const match = v.length === 6 && v === pinInp.value.replace(/\D/g, "");
+    confInp.style.borderColor = v.length === 6 ? (match ? V.accent : V.danger) : V.cardBorder;
   });
 
   el.querySelector("#btn-next").addEventListener("click", async () => {
-    const p = _state.signupPin || "";
-    const c = _state.signupConfirmPin || "";
+    const p = pinInp.value.replace(/\D/g, "");
+    const c = confInp.value.replace(/\D/g, "");
     if (p.length !== 6) { setState({ signupError: "PIN must be 6 digits" }); _currentView = viewSignup; render(); return; }
     if (p !== c) { setState({ signupError: "PINs don't match" }); _currentView = viewSignup; render(); return; }
     el.querySelector("#btn-next").textContent = "Creating account…";
@@ -959,7 +968,7 @@ function viewSignIn(root, state) {
         <input id="inp-pin" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •"
           style="width:100%;padding:14px;background:rgba(255,255,255,0.04);border:1px solid ${V.cardBorder};border-radius:12px;color:${V.text};font-size:24px;text-align:center;font-family:${V.mono};letter-spacing:12px;outline:none;box-sizing:border-box;margin-bottom:6px"/>
         <div style="display:flex;justify-content:center;gap:6px;margin-bottom:12px">
-          ${[0,1,2,3,4,5].map(i=>`<div style="width:8px;height:8px;border-radius:4px;background:${i<pin.length?V.accent:"rgba(255,255,255,0.1)"};transition:all .15s"></div>`).join("")}
+          ${[0,1,2,3,4,5].map(i=>`<div class="pin-dot" style="width:8px;height:8px;border-radius:4px;background:${i<pin.length?V.accent:"rgba(255,255,255,0.1)"};transition:all .15s"></div>`).join("")}
         </div>
       </div>
       ${err ? `<div style="font-size:12px;color:${V.danger};text-align:center;margin-bottom:8px">${err}</div>` : ""}
@@ -971,7 +980,8 @@ function viewSignIn(root, state) {
     pinInp.addEventListener("input", () => {
       const v = pinInp.value.replace(/\D/g, "").slice(0, 6);
       pinInp.value = v;
-      setState({ signInPin: v }); _currentView = viewSignIn; render();
+      const pinDots = c.querySelectorAll(".pin-dot");
+      pinDots.forEach((d, i) => { d.style.background = i < v.length ? V.accent : "rgba(255,255,255,0.1)"; });
     });
     c.querySelector("#btn-signin").addEventListener("click", async () => {
       const p = pinInp.value.replace(/\D/g, "");
@@ -1052,23 +1062,22 @@ function mountApp() {
   document.getElementById("auth-root").style.display = "none";
   document.getElementById("app-shell").style.display = "flex";
 
+  function doMount() {
+    if (window.__reactMounted) return;
+    if (window.__reactReady && window.__mountApp) {
+      window.__mountApp();
+    } else {
+      window.__pendingMount = function() { window.__mountApp(); };
+    }
+  }
+
   if (_isNewUser) {
-    // New user: show tour OVER the app, then notif prompt, then fully mount
     _isNewUser = false;
     _tourSlide = 0;
     viewTour();
-    // Pre-mount React in background so it's ready after tour
-    if (window.__reactReady && window.__mountApp) {
-      window.__mountApp();
-    } else {
-      window.__pendingMount = function() { window.__mountApp(); };
-    }
+    doMount(); // pre-mount React in background while tour plays
   } else {
-    if (window.__reactReady && window.__mountApp) {
-      window.__mountApp();
-    } else {
-      window.__pendingMount = function() { window.__mountApp(); };
-    }
+    doMount();
   }
 }
 
@@ -2670,7 +2679,11 @@ function App(){
 }
 
 
-function __mountApp() { ReactDOM.createRoot(document.getElementById("react-root")).render(<ErrorBoundary><App/></ErrorBoundary>); }
+function __mountApp() {
+  if (window.__reactMounted) return;
+  window.__reactMounted = true;
+  ReactDOM.createRoot(document.getElementById("react-root")).render(<ErrorBoundary><App/></ErrorBoundary>);
+}
 
 </script>
 </body>
