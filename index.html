@@ -4,14 +4,19 @@
 <head>
 
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes,viewport-fit=cover"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FinanceLog"/>
 <meta name="theme-color" content="#08080d"/>
+<meta name="description" content="Track spending, build budgets, and grow your wealth. A secure, private personal finance PWA."/>
+<meta name="color-scheme" content="dark light"/>
+<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin"/>
 <link rel="manifest" href="manifest.json"/>
 <link rel="icon" type="image/svg+xml" href="icon.svg"/>
-<title>FinanceLog</title>
+<link rel="apple-touch-icon" href="icon.svg"/>
+<title>FinanceLog — Personal Finance Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script>
 // Apply theme before paint to avoid flash
@@ -24,7 +29,21 @@ try{
 }catch(e){}
 </script>
 <script>
-if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){});}
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').then(function(reg){
+    // Check for updates every 30 minutes
+    setInterval(function(){reg.update();},1800000);
+    reg.addEventListener('updatefound',function(){
+      var newWorker=reg.installing;
+      if(newWorker){newWorker.addEventListener('statechange',function(){
+        if(newWorker.state==='installed'&&navigator.serviceWorker.controller){
+          // New version available - notify user
+          if(window.__notifySWUpdate)window.__notifySWUpdate();
+        }
+      });}
+    });
+  }).catch(function(){});
+}
 </script>
 
 <style>
@@ -39,6 +58,37 @@ input[type=number]{-moz-appearance:textfield}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
 select{background:rgba(255,255,255,0.04);color:#e8e8ec}
 select option{background:#1a1a28;color:#e8e8ec}
+
+/* ── Accessibility: Focus visible styles ── */
+*:focus-visible{outline:2px solid #00f5a0;outline-offset:2px;border-radius:4px}
+button:focus-visible,a:focus-visible{outline:2px solid #00f5a0;outline-offset:2px}
+[data-theme="light"] *:focus-visible{outline-color:#059669}
+
+/* ── Accessibility: Skip to content link ── */
+.skip-link{position:absolute;top:-100%;left:16px;z-index:99999;padding:12px 24px;background:#00f5a0;color:#08080d;font-weight:700;border-radius:0 0 12px 12px;text-decoration:none;font-size:14px;transition:top .2s}
+.skip-link:focus{top:0}
+
+/* ── Content area padding ── */
+.tab-content{padding:16px 16px max(16px,env(safe-area-inset-bottom,16px));padding-bottom:16px}
+
+/* ── Horizontal scroll container ── */
+.sx{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-ms-overflow-style:none}
+.sx::-webkit-scrollbar{display:none}
+
+/* ── Pressable button reset ── */
+.pr{background:none;border:none;font-family:inherit;-webkit-tap-highlight-color:transparent}
+
+/* ── Skeleton loading shimmer ── */
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmerBar 1.5s ease-in-out infinite;border-radius:8px}
+[data-theme="light"] .skeleton{background:linear-gradient(90deg,rgba(0,0,0,.04) 25%,rgba(0,0,0,.08) 50%,rgba(0,0,0,.04) 75%);background-size:200% 100%}
+
+/* ── Desktop layout improvements ── */
+@media(min-width:768px){
+  .tab-content{max-width:640px;margin:0 auto;padding:24px 24px 24px}
+}
+@media(min-width:1024px){
+  .tab-content{max-width:720px;padding:32px 32px 32px}
+}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -126,8 +176,7 @@ select option{background:#1a1a28;color:#e8e8ec}
 .coach-dot{width:7px;height:7px;border-radius:50%;background:#00f5a0;animation:pulse 1.2s ease-in-out infinite}
 
 /* ── PWA install modal ── */
-@keyframes installIn{from{opacity:0;transform:translateY(30px)}
-@keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}to{opacity:1;transform:translateY(0)}}
+@keyframes installIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .install-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
 .install-step:last-child{border-bottom:none}
 .install-num{width:26px;height:26px;border-radius:8px;background:rgba(0,245,160,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#00f5a0;flex-shrink:0;margin-top:1px}
@@ -165,6 +214,7 @@ select option{background:#1a1a28;color:#e8e8ec}
 
 </head>
 <body>
+<a href="#react-root" class="skip-link">Skip to main content</a>
 <!-- Splash Screen -->
 <div id="splash-root">
   <div class="splash-ring2"></div>
@@ -239,6 +289,22 @@ const Cookie = {
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 const today = () => { const _d = new Date(); return `${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,"0")}-${String(_d.getDate()).padStart(2,"0")}`; };
 const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+// ─── Security: HTML entity escaping to prevent XSS ──────────────────────────
+const esc = (s) => { if (typeof s !== 'string') return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); };
+// ─── Security: Sanitize numeric input ────────────────────────────────────────
+const sanitizeNum = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : Math.round(n * 100) / 100; };
+// ─── Security: Rate limiter for PIN attempts ─────────────────────────────────
+const RateLimiter = {
+  _attempts: {},
+  check: (key, maxAttempts = 5, windowMs = 300000) => {
+    const now = Date.now();
+    if (!RateLimiter._attempts[key]) RateLimiter._attempts[key] = [];
+    RateLimiter._attempts[key] = RateLimiter._attempts[key].filter(t => now - t < windowMs);
+    if (RateLimiter._attempts[key].length >= maxAttempts) return false;
+    RateLimiter._attempts[key].push(now);
+    return true;
+  }
+};
 
 // ─── Design Tokens (matches IronLog) ─────────────────────────────────────────
 const V = {
@@ -494,7 +560,7 @@ function viewWelcome(root, state) {
       <div style="width:36px;height:36px;border-radius:11px;background:rgba(0,245,160,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🔗</div>
       <div>
         <div style="font-size:12px;font-weight:700;color:${V.accent}">IronLog Account Detected</div>
-        <div style="font-size:10px;color:${V.text3};margin-top:2px">${sso.email || ""} · Tap to link instantly</div>
+        <div style="font-size:10px;color:${V.text3};margin-top:2px">${esc(sso.email || "")} · Tap to link instantly</div>
       </div>
       <button id="btn-sso" style="margin-left:auto;background:linear-gradient(135deg,${V.accent},${V.accent2});color:${V.bg};border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:${V.font}">Link</button>
     </div>` : ""}
@@ -960,7 +1026,7 @@ function renderSignupVerify(el, data, state) {
     <div style="text-align:center;padding:10px 0 20px">
       <div style="font-size:40px;margin-bottom:12px">📬</div>
       <div style="font-size:20px;font-weight:700;margin-bottom:8px;color:${V.text}">Check Your Email</div>
-      <div style="font-size:13px;color:${V.text3};line-height:1.6;margin-bottom:24px">We sent a 6-digit code to<br/><strong style="color:${V.accent}">${email}</strong></div>
+      <div style="font-size:13px;color:${V.text3};line-height:1.6;margin-bottom:24px">We sent a 6-digit code to<br/><strong style="color:${V.accent}">${esc(email)}</strong></div>
     </div>
     <div class="field-wrap">
       <div class="field-lbl">Verification Code</div>
@@ -1027,7 +1093,7 @@ function viewSignIn(root, state) {
 
   root.querySelector("#btn-back").addEventListener("click", () => {
     if (step === "email") { _currentView = viewWelcome; render(); }
-    else setState({ signInStep: "email", signInError: "" }); _currentView = viewSignIn; render();
+    else { setState({ signInStep: "email", signInError: "" }); _currentView = viewSignIn; render(); }
   });
 
   const c = root.querySelector("#step-content");
@@ -1047,7 +1113,7 @@ function viewSignIn(root, state) {
     });
   } else if (step === "pin") {
     c.innerHTML = `
-      <div style="font-size:13px;color:${V.text3};margin-bottom:16px">Signing in as <strong style="color:${V.text}">${email}</strong></div>
+      <div style="font-size:13px;color:${V.text3};margin-bottom:16px">Signing in as <strong style="color:${V.text}">${esc(email)}</strong></div>
       <div class="field-wrap">
         <div class="field-lbl">6-digit PIN</div>
         <input id="inp-pin" type="password" inputmode="numeric" maxlength="6" placeholder="• • • • • •"
@@ -1071,6 +1137,9 @@ function viewSignIn(root, state) {
     c.querySelector("#btn-signin").addEventListener("click", async () => {
       const p = pinInp.value.replace(/\D/g, "");
       if (p.length !== 6) return;
+      if (!RateLimiter.check("signin-" + email, 5, 300000)) {
+        setState({ signInLoading: false, signInError: "Too many attempts. Please wait 5 minutes." }); _currentView = viewSignIn; render(); return;
+      }
       setState({ signInLoading: true, signInError: "" }); _currentView = viewSignIn; render();
       const result = await signInPull(email, p);
       if (result) {
@@ -1104,7 +1173,7 @@ function viewSignIn(root, state) {
     const forgotEmail = state.forgotEmail || "";
     c.innerHTML = `
       <div style="font-size:16px;font-weight:700;margin-bottom:4px;color:${V.text}">Enter Reset Code</div>
-      <div style="font-size:12px;color:${V.text3};margin-bottom:16px">Check your email at <strong style="color:${V.text}">${forgotEmail}</strong></div>
+      <div style="font-size:12px;color:${V.text3};margin-bottom:16px">Check your email at <strong style="color:${V.text}">${esc(forgotEmail)}</strong></div>
       <div class="field-wrap"><div class="field-lbl">6-Digit Code</div><input id="inp-code" class="ipt" type="text" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code"/></div>
       ${err ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px">${err}</div>` : ""}
       <button id="btn-verify" class="btn-primary">Verify Code</button>
@@ -1292,7 +1361,7 @@ window.__reactReady = false;
 <script type="text/plain" id="app-src">
 
 
-const{useState,useEffect,useReducer,useMemo,useRef}=React;
+const{useState,useEffect,useReducer,useMemo,useRef,useCallback,useContext,createContext}=React;
 const LS={get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
 const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
 const today=()=>{const _d=new Date();return`${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,"0")}-${String(_d.getDate()).padStart(2,"0")}`;};
@@ -1304,6 +1373,27 @@ const fmtMoney=(n,dec=2)=>Math.abs(n).toLocaleString("en-US",{minimumFractionDig
 const fmtShort=(n)=>{const a=Math.abs(n);if(a>=1e6)return`${(a/1e6).toFixed(1)}M`;if(a>=1000)return`${(a/1000).toFixed(1)}k`;return a.toFixed(0);};
 const mShort=(m)=>{try{return new Date(m+"-15").toLocaleDateString("en-US",{month:"short"});}catch{return m;}};
 const Haptic={light:()=>{try{navigator.vibrate?.(8);}catch{}},med:()=>{try{navigator.vibrate?.([8,20,8]);}catch{}}};
+// ── Safe financial arithmetic (avoids floating-point drift) ──────────────────
+const safeAdd=(a,b)=>Math.round((a+b)*100)/100;
+const safeSub=(a,b)=>Math.round((a-b)*100)/100;
+const safeSum=(arr)=>Math.round(arr.reduce((a,b)=>a+b,0)*100)/100;
+// ── Transaction validation ───────────────────────────────────────────────────
+const validateTx=(tx)=>{
+  if(!tx||typeof tx!=="object")return false;
+  if(!tx.type||!["income","expense"].includes(tx.type))return false;
+  if(typeof tx.amount!=="number"||tx.amount<=0||tx.amount>1e9)return false;
+  if(!tx.date||!/^\d{4}-\d{2}-\d{2}$/.test(tx.date))return false;
+  if(tx.note&&typeof tx.note==="string"&&tx.note.length>500)return false;
+  return true;
+};
+// ── Account validation ───────────────────────────────────────────────────────
+const validateAccount=(acc)=>{
+  if(!acc||typeof acc!=="object")return false;
+  if(!acc.name||typeof acc.name!=="string"||acc.name.trim().length===0||acc.name.length>100)return false;
+  const balance=parseFloat(acc.balance);
+  if(isNaN(balance)||Math.abs(balance)>1e12)return false;
+  return true;
+};
 
 const T={
   bg:"#08080d",
@@ -1519,7 +1609,7 @@ function Sparkline({data,w=280,h=44,color=T.acc,gId="spg"}){
 }
 
 // ── DonutChart ────────────────────────────────────────────────────────────────
-function DonutChart({data,size=140,sw=18,onSegClick}){
+const DonutChart=React.memo(function DonutChart({data,size=140,sw=18,onSegClick}){
   const{dark}=useTheme();
   const[hov,setHov]=useState(null);
   const hole=dark?"rgba(0,0,0,0.35)":"rgba(240,240,245,0.92)";
@@ -1542,7 +1632,7 @@ function DonutChart({data,size=140,sw=18,onSegClick}){
       })}
       <circle cx={cx} cy={cy} r={r-sw/2-1} fill={hole}/>
     </svg>);
-}
+});
 
 // ── Ring ──────────────────────────────────────────────────────────────────────
 function Ring({value,max,size=52,sw=6,color=T.acc}){
@@ -1589,20 +1679,65 @@ function reducer(s,a){
   switch(a.type){
     case"INIT":return{...s,...a.p,loaded:true};
     case"TAB":return{...s,tab:a.tab};
-    case"ADD_TX":return{...s,transactions:[a.tx,...s.transactions]};
+    case"ADD_TX":{
+      if(!a.tx||!a.tx.id)return s;
+      // Prevent duplicate IDs
+      if(s.transactions.some(t=>t.id===a.tx.id))return s;
+      return{...s,transactions:[a.tx,...s.transactions]};
+    }
     case"DEL_TX":return{...s,transactions:s.transactions.filter(t=>t.id!==a.id)};
-    case"UPD_TX":return{...s,transactions:s.transactions.map(t=>t.id===a.tx.id?a.tx:t)};
-    case"ADD_ACC":return{...s,accounts:[...s.accounts,a.acc]};
+    case"UPD_TX":{
+      if(!a.tx||!a.tx.id)return s;
+      return{...s,transactions:s.transactions.map(t=>t.id===a.tx.id?a.tx:t)};
+    }
+    case"ADD_ACC":{
+      if(!a.acc||!a.acc.id)return s;
+      if(s.accounts.some(x=>x.id===a.acc.id))return s;
+      return{...s,accounts:[...s.accounts,a.acc]};
+    }
     case"DEL_ACC":return{...s,accounts:s.accounts.filter(x=>x.id!==a.id)};
-    case"UPD_ACC":return{...s,accounts:s.accounts.map(x=>x.id===a.acc.id?a.acc:x)};
-    case"SET_BUD":return{...s,budgets:{...s.budgets,...a.b}};
-    case"ADD_GOAL":return{...s,goals:[...s.goals,a.goal]};
-    case"UPD_GOAL":return{...s,goals:s.goals.map(g=>g.id===a.goal.id?a.goal:g)};
+    case"UPD_ACC":{
+      if(!a.acc||!a.acc.id)return s;
+      return{...s,accounts:s.accounts.map(x=>x.id===a.acc.id?a.acc:x)};
+    }
+    case"SET_BUD":{
+      // Sanitize budget values
+      const cleaned={};
+      Object.entries(a.b||{}).forEach(([k,v])=>{
+        const num=parseFloat(v);
+        cleaned[k]=isNaN(num)||num<0?"":v;
+      });
+      return{...s,budgets:{...s.budgets,...cleaned}};
+    }
+    case"ADD_GOAL":{
+      if(!a.goal||!a.goal.id)return s;
+      return{...s,goals:[...s.goals,a.goal]};
+    }
+    case"UPD_GOAL":{
+      if(!a.goal||!a.goal.id)return s;
+      return{...s,goals:s.goals.map(g=>g.id===a.goal.id?a.goal:g)};
+    }
     case"DEL_GOAL":return{...s,goals:s.goals.filter(g=>g.id!==a.id)};
-    case"ADD_RECUR":return{...s,recurring:[...s.recurring,a.r]};
+    case"ADD_RECUR":{
+      if(!a.r||!a.r.id)return s;
+      return{...s,recurring:[...s.recurring,a.r]};
+    }
     case"DEL_RECUR":return{...s,recurring:s.recurring.filter(r=>r.id!==a.id)};
-    case"UPD_RECUR":return{...s,recurring:s.recurring.map(r=>r.id===a.r.id?a.r:r)};
-    case"RESTORE_BACKUP":return{...s,...a.p,loaded:true};
+    case"UPD_RECUR":{
+      if(!a.r||!a.r.id)return s;
+      return{...s,recurring:s.recurring.map(r=>r.id===a.r.id?a.r:r)};
+    }
+    case"RESTORE_BACKUP":{
+      // Validate backup data structure
+      const p=a.p||{};
+      return{...s,
+        transactions:Array.isArray(p.transactions)?p.transactions:[],
+        accounts:Array.isArray(p.accounts)?p.accounts:[],
+        budgets:p.budgets&&typeof p.budgets==="object"?p.budgets:{},
+        goals:Array.isArray(p.goals)?p.goals:[],
+        recurring:Array.isArray(p.recurring)?p.recurring:[],
+        loaded:true};
+    }
     case"SET_CAT_FILTER":return{...s,tab:"transactions",catFilter:a.catId};
     default:return s;
   }
@@ -1676,10 +1811,6 @@ const Field=({label,value,onChange,type="text",unit,placeholder,min,max,step,aut
     </div>
   </div>);
 };
-    requestAnimationFrame(tick);
-  },[value]);
-  return<span>{fmtMoney(disp,dec)}</span>;
-}
 
 function IronCard({score,compact}){
   const T=useT();
@@ -1805,10 +1936,12 @@ function TxForm({onClose,onSave,initial}){
   const[recur,setRecur]=useState("");
   const[showRecur,setShowRecur]=useState(false);
   const cats=type==="expense"?EXP_CATS:INC_CATS;
-  const valid=amount&&parseFloat(amount)>0;
+  const parsedAmt=parseFloat(amount);
+  const valid=amount&&parsedAmt>0&&parsedAmt<=1e9;
   const save=()=>{
     if(!valid)return;
-    const tx={id:initial?.id||uid(),type,amount:parseFloat(amount),catId:cat,cat,note:note.trim(),date};
+    const tx={id:initial?.id||uid(),type,amount:Math.round(parsedAmt*100)/100,catId:cat,cat,note:note.trim().slice(0,500),date};
+    if(!validateTx(tx)){Toast.show("Invalid transaction data",T.danger);return;}
     if(recur&&!editing){tx.recurring=recur;}
     Haptic.med();
     onSave(tx,recur&&!editing?recur:null);onClose();
@@ -1866,7 +1999,7 @@ function Highlight({text,query}){
   if(i<text.length)parts.push(<span key={i}>{text.slice(i)}</span>);
   return parts.length?<span>{parts}</span>:<span>{text}</span>;
 }
-function TxRow({tx,onEdit,onDelete,query=""}){
+const TxRow=React.memo(function TxRow({tx,onEdit,onDelete,query=""}){
   const T=useT();
   const c=getCat(tx.catId||tx.cat);
   return(
@@ -1883,7 +2016,7 @@ function TxRow({tx,onEdit,onDelete,query=""}){
         </button>}
       </div>
     </button>);
-}
+});
 // ── Goals Section ─────────────────────────────────────────────────────────────
 const GOAL_ICONS=["🏠","🚗","🎓","✈️","💍","🏖️","🛡️","💰","📱","🎯","🏋️","💎"];
 function GoalsSection({s,d}){
@@ -2359,7 +2492,8 @@ function WealthTab({s,d}){
   };
   const save=()=>{
     if(!form.name.trim()||!form.balance)return;
-    const acc={...form,balance:parseFloat(form.balance)};
+    const acc={...form,name:form.name.trim().slice(0,100),balance:Math.round(parseFloat(form.balance)*100)/100};
+    if(!validateAccount(acc)){Toast.show("Invalid account data",T.danger);return;}
     if(editId){d({type:"UPD_ACC",acc:{id:editId,...acc}});}
     else{d({type:"ADD_ACC",acc:{id:uid(),...acc,createdAt:today()}});}
     Toast.show("Account saved",T.acc);Haptic.med();setShowAdd(false);setEditId(null);
@@ -3044,22 +3178,29 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// ─── Theme ────────────────────────────────────────────────────────────────────
-function useTheme(){
+// ─── Theme Context (shared state across all components) ──────────────────────
+const ThemeCtx=createContext({dark:true,toggle:()=>{}});
+function ThemeProvider({children}){
   const[dark,setDark]=useState(()=>(LS.get("fl-theme")||"dark")==="dark");
-  const toggle=()=>{
-    const next=dark?"light":"dark";
-    setDark(!dark);
-    LS.set("fl-theme",next);
-    document.documentElement.setAttribute("data-theme",next);
-  };
-  return{dark,toggle};
+  const toggle=useCallback(()=>{
+    setDark(prev=>{
+      const next=!prev;
+      LS.set("fl-theme",next?"dark":"light");
+      document.documentElement.setAttribute("data-theme",next?"dark":"light");
+      const meta=document.querySelector('meta[name="theme-color"]');
+      if(meta)meta.setAttribute("content",next?"#08080d":"#f0f0f5");
+      return next;
+    });
+  },[]);
+  const value=useMemo(()=>({dark,toggle}),[dark,toggle]);
+  return React.createElement(ThemeCtx.Provider,{value},children);
 }
+function useTheme(){return useContext(ThemeCtx);}
 
 // ─── Reactive Theme Token Hook ──────────────────────────────────────────────
 function useT(){
   const{dark}=useTheme();
-  return{
+  return useMemo(()=>({
     ...T,
     bg:dark?"#08080d":"#f0f0f5",
     card:dark?"rgba(255,255,255,0.035)":"rgba(0,0,0,0.04)",
@@ -3067,7 +3208,7 @@ function useT(){
     t1:dark?"#e8e8ec":"#0f0f18",
     t2:dark?"#8b8b9e":"#5a5a72",
     t3:dark?"#4a4a5c":"#9a9ab0",
-  };
+  }),[dark]);
 }
 
 // ─── Streak ───────────────────────────────────────────────────────────────────
@@ -3120,21 +3261,25 @@ function CoachModal({s,onClose}){
     const newMsgs=[...msgs,{role:"user",content:userMsg}];
     setMsgs(newMsgs);setInput("");setLoading(true);
     try{
-      const res=await fetch("https://api.anthropic.com/v1/messages",{
+      // Route through server-side proxy to protect API keys
+      const token=LS.get("fl-session-token");
+      const res=await fetch("https://api.ironlog.space/api/ai/coach",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
         body:JSON.stringify({
-          model:"claude-sonnet-4-20250514",
-          max_tokens:1000,
-          system:`You are a friendly, sharp personal finance coach embedded in FinanceLog. You have access to the user's real financial data. Give concise, actionable, personalized advice. Use emojis sparingly. Keep responses under 120 words unless asked for detail. Never make up numbers beyond what's provided.\n\n${buildContext()}`,
+          context:buildContext(),
           messages:newMsgs.map(m=>({role:m.role,content:m.content})),
         }),
       });
+      if(!res.ok) throw new Error(`Server error: ${res.status}`);
       const data=await res.json();
-      const reply=data?.content?.[0]?.text||"Couldn't get a response. Try again.";
+      const reply=data?.reply||data?.content?.[0]?.text||"Couldn't get a response. Try again.";
       setMsgs(prev=>[...prev,{role:"assistant",content:reply}]);
-    }catch{
-      setMsgs(prev=>[...prev,{role:"assistant",content:"Connection error. Check your internet and try again."}]);
+    }catch(e){
+      const errMsg=e.message?.includes("Server error")
+        ?"AI Coach is not available right now. Please try again later."
+        :"Connection error. Check your internet and try again.";
+      setMsgs(prev=>[...prev,{role:"assistant",content:errMsg}]);
     }
     setLoading(false);
   }
@@ -3271,9 +3416,12 @@ function App(){
 
   // PWA install prompt
   const[deferredPrompt,setDeferredPrompt]=useState(null);
+  const[swUpdate,setSwUpdate]=useState(false);
   useEffect(()=>{
     const handler=e=>{e.preventDefault();setDeferredPrompt(e);};
     window.addEventListener("beforeinstallprompt",handler);
+    // SW update notification
+    window.__notifySWUpdate=()=>setSwUpdate(true);
     return()=>window.removeEventListener("beforeinstallprompt",handler);
   },[]);
 
@@ -3314,14 +3462,47 @@ function App(){
     d({type:"INIT",p:{transactions:newTxs,accounts:accs,budgets:buds,goals,recurring}});
   },[]);
 
+  // Persist state changes to localStorage with debounce
+  const saveTimer=useRef(null);
   useEffect(()=>{
     if(!s.loaded)return;
-    LS.set("fl-tx",s.transactions);
-    LS.set("fl-accounts",s.accounts);
-    LS.set("fl-budgets",s.budgets);
-    LS.set("fl-goals-v2",s.goals||[]);
-    LS.set("fl-recurring",s.recurring||[]);
+    if(saveTimer.current)clearTimeout(saveTimer.current);
+    saveTimer.current=setTimeout(()=>{
+      try{
+        LS.set("fl-tx",s.transactions);
+        LS.set("fl-accounts",s.accounts);
+        LS.set("fl-budgets",s.budgets);
+        LS.set("fl-goals-v2",s.goals||[]);
+        LS.set("fl-recurring",s.recurring||[]);
+      }catch(e){
+        console.error("Failed to persist data:",e);
+        Toast.show("Failed to save data",T.danger);
+      }
+    },300);
+    return()=>{if(saveTimer.current)clearTimeout(saveTimer.current);};
   },[s.transactions,s.accounts,s.budgets,s.goals,s.recurring,s.loaded]);
+
+  // Background sync (push to server when online)
+  useEffect(()=>{
+    if(!s.loaded||window._offlineMode)return;
+    const syncToServer=async()=>{
+      const token=LS.get("fl-session-token");
+      const email=LS.get("fl-session-email");
+      if(!token||!email)return;
+      try{
+        await fetch("https://api.ironlog.space/api/sync/push",{
+          method:"POST",
+          headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+          body:JSON.stringify({
+            email,transactions:s.transactions,accounts:s.accounts,
+            budgets:s.budgets,goals:s.goals,recurring:s.recurring
+          }),
+        });
+      }catch{}
+    };
+    const timer=setTimeout(syncToServer,5000);
+    return()=>clearTimeout(timer);
+  },[s.transactions.length,s.accounts.length,s.loaded]);
 
   if(!s.loaded)return(
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",background:T.bg,flexDirection:"column",gap:16}}>
@@ -3400,24 +3581,34 @@ function App(){
         </div>
       </div>
 
+      {/* SW Update Banner */}
+      {swUpdate&&<div style={{padding:"10px 16px",background:"rgba(0,245,160,0.1)",borderBottom:`1px solid rgba(0,245,160,0.2)`,display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+        <span style={{fontSize:14}}>🔄</span>
+        <span style={{fontSize:12,color:T.acc,fontWeight:600,flex:1}}>A new version is available</span>
+        <button onClick={()=>window.location.reload()} style={{padding:"6px 14px",borderRadius:8,border:"none",background:T.acc,color:T.bg,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:T.font}}>Update</button>
+        <button onClick={()=>setSwUpdate(false)} style={{background:"none",border:"none",cursor:"pointer",color:Tdyn.t3,fontSize:16,padding:4}}>×</button>
+      </div>}
       {/* Content */}
-      <div style={{flex:1,overflowY:"auto",WebkitOverflowScrolling:"touch",minHeight:0}}>
-        {s.tab==="home"&&<HomeTab s={s} d={d} score={score} missions={missions} showAdd={showAdd} setShowAdd={setShowAdd}/>}
-        {s.tab==="transactions"&&<TxTab s={s} d={d}/>}
-        {s.tab==="budget"&&<BudgetTab s={s} d={d}/>}
-        {s.tab==="wealth"&&<WealthTab s={s} d={d}/>}
-        {s.tab==="settings"&&<SettingsTab s={s} d={d} score={score} missions={missions} dark={dark} toggleTheme={toggleTheme}/>}
-        {s.tab==="admin"&&isAdmin&&<AdminTab dark={dark}/>}
-      </div>
+      <main id="main-content" role="main" aria-label={`${s.tab} tab content`} style={{flex:1,overflowY:"auto",WebkitOverflowScrolling:"touch",minHeight:0}}>
+        <div className="tab-content">
+          {s.tab==="home"&&<HomeTab s={s} d={d} score={score} missions={missions} showAdd={showAdd} setShowAdd={setShowAdd}/>}
+          {s.tab==="transactions"&&<TxTab s={s} d={d}/>}
+          {s.tab==="budget"&&<BudgetTab s={s} d={d}/>}
+          {s.tab==="wealth"&&<WealthTab s={s} d={d}/>}
+          {s.tab==="settings"&&<SettingsTab s={s} d={d} score={score} missions={missions} dark={dark} toggleTheme={toggleTheme}/>}
+          {s.tab==="admin"&&isAdmin&&<AdminTab dark={dark}/>}
+        </div>
+      </main>
 
       {/* Bottom Nav */}
-      <nav style={{flexShrink:0,background:dark?"rgba(8,8,13,0.95)":"rgba(240,240,245,0.95)",backdropFilter:"blur(24px) saturate(180%)",
+      <nav role="navigation" aria-label="Main navigation" style={{flexShrink:0,background:dark?"rgba(8,8,13,0.95)":"rgba(240,240,245,0.95)",backdropFilter:"blur(24px) saturate(180%)",
         borderTop:`1px solid ${Tdyn.brd}`,paddingBottom:"env(safe-area-inset-bottom,8px)",
         display:"flex",justifyContent:"space-around",alignItems:"center",paddingTop:8,position:"relative",zIndex:50}}>
         {TABS.map(tab=>{
           const active=s.tab===tab.id;
           return(
             <button key={tab.id} onClick={()=>{Haptic.light();d({type:"TAB",tab:tab.id});}}
+              role="tab" aria-selected={active} aria-label={tab.label}
               style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:"none",border:"none",
                 cursor:"pointer",padding:"6px 16px",minWidth:64,WebkitTapHighlightColor:"transparent",transition:"all .15s"}}>
               <div style={{width:active?42:36,height:active?42:36,borderRadius:active?14:12,position:"relative",
@@ -3443,7 +3634,9 @@ function App(){
 function __mountApp() {
   if (window.__reactMounted) return;
   window.__reactMounted = true;
-  ReactDOM.createRoot(document.getElementById("react-root")).render(<ErrorBoundary><App/></ErrorBoundary>);
+  ReactDOM.createRoot(document.getElementById("react-root")).render(
+    <ThemeProvider><ErrorBoundary><App/></ErrorBoundary></ThemeProvider>
+  );
 }
 
 </script>
