@@ -1292,7 +1292,7 @@ window.__reactReady = false;
 <script type="text/plain" id="app-src">
 
 
-const{useState,useEffect,useReducer,useMemo,useRef}=React;
+const{useState,useEffect,useReducer,useMemo,useRef,useCallback}=React;
 const LS={get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
 const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
 const today=()=>{const _d=new Date();return`${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,"0")}-${String(_d.getDate()).padStart(2,"0")}`;};
@@ -1676,10 +1676,6 @@ const Field=({label,value,onChange,type="text",unit,placeholder,min,max,step,aut
     </div>
   </div>);
 };
-    requestAnimationFrame(tick);
-  },[value]);
-  return<span>{fmtMoney(disp,dec)}</span>;
-}
 
 function IronCard({score,compact}){
   const T=useT();
