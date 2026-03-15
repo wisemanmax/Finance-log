@@ -266,10 +266,6 @@ button:focus-visible,a:focus-visible{outline:2px solid #00f5a0;outline-offset:2p
 
 <script>
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-const API_URL = "https://api.ironlog.space";
-const SYNC_URL=LS.get("ft-api-url")||"https://api.ironlog.space";
-
 // ─── Utils ────────────────────────────────────────────────────────────────────
 const LS={
   get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}},
@@ -277,7 +273,13 @@ const LS={
 };
 const Cookie={
   get:(name)=>{const m=document.cookie.match(new RegExp("(^| )"+name+"=([^;]+)"));return m?decodeURIComponent(m[2]):null;},
-  set:(name,value,days=30)=>{const exp=new Date(Date.now()+days*864e5).toUTCString();document.cookie=`${name}=${encodeURIComponent(value)};
+  set:(name,value,days=30)=>{const exp=new Date(Date.now()+days*864e5).toUTCString();document.cookie=`${name}=${encodeURIComponent(value)};expires=${exp};path=/;SameSite=Lax`;},
+};
+
+// ─── Config ───────────────────────────────────────────────────────────────────
+const API_URL = "https://api.ironlog.space";
+const SYNC_URL=LS.get("ft-api-url")||"https://api.ironlog.space";
+
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 const today = () => { const _d = new Date(); return `${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,"0")}-${String(_d.getDate()).padStart(2,"0")}`; };
 const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
