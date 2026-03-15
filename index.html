@@ -268,24 +268,16 @@ button:focus-visible,a:focus-visible{outline:2px solid #00f5a0;outline-offset:2p
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const API_URL = "https://api.ironlog.space";
+const SYNC_URL=LS.get("ft-api-url")||"https://api.ironlog.space";
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
-const LS = {
-  get: (k) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+const LS={
+  get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.warn("Error:",e);}},
 };
-const Cookie = {
-  get: (name) => { const m = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)")); return m ? decodeURIComponent(m[2]) : null; },
-  set: (name, value, days = 30) => {
-    const exp = new Date(Date.now() + days * 864e5).toUTCString();
-    const isIronlog = window.location.hostname.endsWith('ironlog.space');
-    document.cookie = `${name}=${encodeURIComponent(value)};expires=${exp};${isIronlog ? 'domain=.ironlog.space;' : ''}path=/;${isIronlog ? 'secure;' : ''}samesite=lax`;
-  },
-  clear: (name) => {
-    const isIL = window.location.hostname.endsWith('ironlog.space');
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;${isIL ? 'domain=.ironlog.space;' : ''}path=/;${isIL ? 'secure' : ''}`;
-  },
-};
+const Cookie={
+  get:(name)=>{const m=document.cookie.match(new RegExp("(^| )"+name+"=([^;]+)"));return m?decodeURIComponent(m[2]):null;},
+  set:(name,value,days=30)=>{const exp=new Date(Date.now()+days*864e5).toUTCString();document.cookie=`${name}=${encodeURIComponent(value)};
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 const today = () => { const _d = new Date(); return `${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,"0")}-${String(_d.getDate()).padStart(2,"0")}`; };
 const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
@@ -322,16 +314,18 @@ const V = {
   mono: "'JetBrains Mono', monospace",
 };
 
+// ─── Device ID (persistent per device) ───
+if(!LS.get("ft-device-id")){
+  LS.set("ft-device-id","dev_"+Math.random().toString(36).slice(2,10)+Date.now().toString(36));
+}
+
 // ─── SSO Detection ────────────────────────────────────────────────────────────
 const detectSSO = () => {
-  const cookie = Cookie.get("ironlog_session");
   const storedToken = LS.get("ft-session-token");
   const storedEmail = LS.get("ft-session-email");
-  const financeToken = LS.get("fl-session-token");
-  const financeEmail = LS.get("fl-session-email");
-  if (financeToken && financeEmail) return { type: "fl_session", email: financeEmail, token: financeToken };
+  if (storedToken && storedEmail) return { type: "session", email: storedEmail, token: storedToken };
+  const cookie = Cookie.get("ironlog_session");
   if (cookie) return { type: "ironlog_cookie", token: cookie };
-  if (storedToken && storedEmail) return { type: "ironlog_local", email: storedEmail, token: storedToken };
   return null;
 };
 
@@ -345,9 +339,9 @@ const SessionManager = {
       });
       if (!res.ok) return false;
       const json = await res.json();
-      LS.set("fl-session-token", json.token);
-      LS.set("fl-session-email", email.toLowerCase());
-      LS.set("fl-session-expires", json.expires_at);
+      LS.set("ft-session-token", json.token);
+      LS.set("ft-session-email", email.toLowerCase());
+      LS.set("ft-session-expires", json.expires_at);
       Cookie.set("ironlog_session", json.token, 30);
       return true;
     } catch { return false; }
@@ -411,8 +405,8 @@ const SessionManager = {
 // ─── Registration ─────────────────────────────────────────────────────────────
 async function registerUser(profile, goals, pin) {
   if (window._offlineMode) return true; // offline bypass
-  const deviceId = LS.get("fl-device-id") || uid();
-  LS.set("fl-device-id", deviceId);
+  const deviceId = LS.get("ft-device-id") || uid();
+  LS.set("ft-device-id", deviceId);
   try {
     const res = await fetch(`${API_URL}/api/users`, {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -433,8 +427,8 @@ async function registerUser(profile, goals, pin) {
 // ─── Sign-in / Restore ────────────────────────────────────────────────────────
 async function signInPull(email, pin) {
   if (window._offlineMode) return null; // offline bypass
-  const deviceId = LS.get("fl-device-id") || uid();
-  LS.set("fl-device-id", deviceId);
+  const deviceId = LS.get("ft-device-id") || uid();
+  LS.set("ft-device-id", deviceId);
   try {
     const res = await fetch(`${API_URL}/api/sync/pull`, {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -451,8 +445,8 @@ function applyRestore(data, email) {
   if (data?.budgets) LS.set("fl-budgets", data.budgets);
   if (data?.goals) LS.set("fl-goals-v2", data.goals);
   if (data?.recurring) LS.set("fl-recurring", data.recurring);
-  LS.set("fl-session-email", email.toLowerCase());
-  LS.set("fl-session-token", data?.token || uid());
+  LS.set("ft-session-email", email.toLowerCase());
+  LS.set("ft-session-token", data?.token || uid());
   LS.set("fl-onboarded", true);
 }
 
@@ -590,8 +584,8 @@ function viewWelcome(root, state) {
   });
   if (sso?.valid) {
     root.querySelector("#btn-sso")?.addEventListener("click", () => {
-      LS.set("fl-session-token", sso.token);
-      LS.set("fl-session-email", sso.email || "");
+      LS.set("ft-session-token", sso.token);
+      LS.set("ft-session-email", sso.email || "");
       LS.set("fl-sso-linked", true);
       LS.set("fl-sso-source", sso.type);
       setState({ signupStep: 1, signupData: { email: sso.email || "" }, signupError: "", ssoLinked: true });
@@ -842,8 +836,8 @@ function renderSignupProfile(el, data, state) {
     // ── Offline / Demo bypass ─────────────────────────────────────────────────
     if (first.toLowerCase() === "testing" && last.toLowerCase() === "tester") {
       const offlineId = "offline-tester@demo.local";
-      LS.set("fl-session-token", "offline-demo-token-" + uid());
-      LS.set("fl-session-email", offlineId);
+      LS.set("ft-session-token", "offline-demo-token-" + uid());
+      LS.set("ft-session-email", offlineId);
       LS.set("fl-onboarded", true);
       LS.set("fl-profile", { firstName: "Testing", lastName: "Tester", email: offlineId, offlineMode: true });
       // Seed sample data if this is a fresh offline session
@@ -1006,8 +1000,8 @@ function renderSignupPin(el, data, state) {
     el.querySelector("#btn-next").style.opacity = "0.6";
 
     const d = _state.signupData || {};
-    const deviceId = LS.get("fl-device-id") || uid();
-    LS.set("fl-device-id", deviceId);
+    const deviceId = LS.get("ft-device-id") || uid();
+    LS.set("ft-device-id", deviceId);
 
     await registerUser(d, { primaryGoal: d.primaryGoal, incomeRange: d.incomeRange, monthlySavingsTarget: d.monthlySavingsTarget }, p);
     await SessionManager.create(d.email, p, deviceId);
@@ -1144,7 +1138,7 @@ function viewSignIn(root, state) {
       const result = await signInPull(email, p);
       if (result) {
         applyRestore(result, email);
-        await SessionManager.create(email, p, LS.get("fl-device-id") || uid());
+        await SessionManager.create(email, p, LS.get("ft-device-id") || uid());
         mountApp();
       } else {
         setState({ signInLoading: false, signInError: "Incorrect email or PIN" }); _currentView = viewSignIn; render();
@@ -1201,7 +1195,7 @@ function viewSignIn(root, state) {
       if (npi.length !== 6 || npi !== cpi) { setState({ signInError: npi.length!==6?"PIN must be 6 digits":"PINs don't match" }); _currentView = viewSignIn; render(); return; }
       const ok = await SessionManager.setNewPin(state.forgotEmail, state.forgotCode, npi);
       if (ok) {
-        await SessionManager.create(state.forgotEmail, npi, LS.get("fl-device-id") || uid());
+        await SessionManager.create(state.forgotEmail, npi, LS.get("ft-device-id") || uid());
         LS.set("fl-onboarded", true);
         mountApp();
       } else { setState({ signInError: "Failed to set PIN" }); _currentView = viewSignIn; render(); }
@@ -1285,10 +1279,10 @@ function mountApp() {
   }
 
   // Restore offline mode flag if session was an offline one
-  const _offlineEmail = LS.get("fl-session-email");
+  const _offlineEmail = LS.get("ft-session-email");
   if (_offlineEmail === "offline-tester@demo.local") window._offlineMode = true;
   const onboarded = LS.get("fl-onboarded");
-  const sessionToken = LS.get("fl-session-token");
+  const sessionToken = LS.get("ft-session-token");
 
   if (onboarded && sessionToken) {
     // Returning user — short splash then go straight to app
@@ -2655,7 +2649,7 @@ function RecurringSection({s,d}){
 function AdminTab({dark}){
   const Tdyn2={bg:dark?"#08080d":"#f0f0f5",card:dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",brd:dark?"rgba(255,255,255,0.07)":"rgba(0,0,0,0.08)",t1:dark?"#e8e8ec":"#0f0f18",t2:dark?"#8b8b9e":"#5a5a72",t3:dark?"#4a4a5c":"#9a9ab0"};
   const API="https://api.ironlog.space";
-  const token=LS.get("fl-session-token");
+  const token=LS.get("ft-session-token");
   const authH={"Content-Type":"application/json","Authorization":`Bearer ${token}`};
   const af=async(p,o={})=>{try{return await fetch(`${API}${p}`,{...o,headers:{...(o.headers||{}),...authH}});}catch{return{ok:false,status:0,json:async()=>({})};};};
   const fmtM=n=>{const a=Math.abs(Number(n)||0);if(a>=1e6)return(a/1e6).toFixed(2)+"M";if(a>=1e3)return(a/1e3).toFixed(1)+"k";return a.toFixed(0);};
@@ -3150,7 +3144,7 @@ function SettingsTab({s,d,score,missions,dark,toggleTheme}){
         <div style={{fontSize:12,color:T.t2,marginBottom:16,lineHeight:1.7,padding:"12px 14px",borderRadius:12,background:"rgba(0,212,160,.06)",border:"1px solid rgba(0,212,160,.14)"}}>
           🔐 Transaction data is stored <strong style={{color:T.t1}}>locally on this device</strong>. Account creation and the AI Coach send limited data to our servers as needed.
         </div>
-        <Btn v="danger" full onClick={()=>Confirm.show("Delete all data?","All transactions, budgets, and accounts will be permanently deleted.",()=>{["fl-tx","fl-accounts","fl-budgets","fl-last-level","fl-onboarded","fl-session-token","fl-session-email","fl-session-expires","fl-profile","fl-goals-v2","fl-recurring","fl-device-id","fl-email-verified","fl-sso-linked","fl-sso-source","fl-theme"].forEach(k=>localStorage.removeItem(k));window.location.reload();})}>
+        <Btn v="danger" full onClick={()=>Confirm.show("Delete all data?","All transactions, budgets, and accounts will be permanently deleted.",()=>{["fl-tx","fl-accounts","fl-budgets","fl-last-level","fl-onboarded","ft-session-token","ft-session-email","ft-session-expires","fl-profile","fl-goals-v2","fl-recurring","ft-device-id","fl-email-verified","fl-sso-linked","fl-sso-source","fl-theme"].forEach(k=>localStorage.removeItem(k));Cookie.clear("ironlog_session");window.location.reload();})}>
           <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
           Clear All Data
         </Btn>
@@ -3262,7 +3256,7 @@ function CoachModal({s,onClose}){
     setMsgs(newMsgs);setInput("");setLoading(true);
     try{
       // Route through server-side proxy to protect API keys
-      const token=LS.get("fl-session-token");
+      const token=LS.get("ft-session-token");
       const res=await fetch("https://api.ironlog.space/api/ai/coach",{
         method:"POST",
         headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
@@ -3430,7 +3424,7 @@ function App(){
   const[isAdmin,setIsAdmin]=useState(!!window._adminFlag);
   useEffect(()=>{
     if(window._adminFlag){setIsAdmin(true);return;}
-    const tok=LS.get("fl-session-token");
+    const tok=LS.get("ft-session-token");
     if(!tok)return;
     if(window._offlineMode)return; // offline — skip admin probe
     fetch("https://api.ironlog.space/api/admin/stats",{headers:{"Content-Type":"application/json","Authorization":`Bearer ${tok}`}})
@@ -3487,8 +3481,8 @@ function App(){
   useEffect(()=>{
     if(!s.loaded||window._offlineMode)return;
     const syncToServer=async()=>{
-      const token=LS.get("fl-session-token");
-      const email=LS.get("fl-session-email");
+      const token=LS.get("ft-session-token");
+      const email=LS.get("ft-session-email");
       if(!token||!email)return;
       try{
         await fetch("https://api.ironlog.space/api/sync/push",{
