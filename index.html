@@ -274,6 +274,7 @@ const LS={
 const Cookie={
   get:(name)=>{const m=document.cookie.match(new RegExp("(^| )"+name+"=([^;]+)"));return m?decodeURIComponent(m[2]):null;},
   set:(name,value,days=30)=>{const exp=new Date(Date.now()+days*864e5).toUTCString();document.cookie=`${name}=${encodeURIComponent(value)};expires=${exp};path=/;SameSite=Lax`;},
+  clear:(name)=>{document.cookie=`${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Lax`;},
 };
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -438,7 +439,7 @@ async function signInPull(email, pin) {
     });
     if (!res.ok) return null;
     return await res.json();
-  } catch { return null; }
+  } catch { return { _networkError: true }; }
 }
 
 function applyRestore(data, email) {
@@ -797,15 +798,15 @@ function renderSignupProfile(el, data, state) {
     <div style="font-size:20px;font-weight:700;margin-bottom:4px;color:${V.text}">Your Profile</div>
     <div style="font-size:13px;color:${V.text3};margin-bottom:20px">A few details to personalize your experience</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
-      <div class="field-wrap"><div class="field-lbl">First Name *</div><input class="ipt" id="f-first" placeholder="Jane" value="${data.firstName||""}"/></div>
-      <div class="field-wrap"><div class="field-lbl">Last Name *</div><input class="ipt" id="f-last" placeholder="Smith" value="${data.lastName||""}"/></div>
+      <div class="field-wrap"><div class="field-lbl">First Name *</div><input class="ipt" id="f-first" placeholder="Jane" value="${esc(data.firstName||"")}"/></div>
+      <div class="field-wrap"><div class="field-lbl">Last Name *</div><input class="ipt" id="f-last" placeholder="Smith" value="${esc(data.lastName||"")}"/></div>
       <div id="offline-hint" style="display:none;margin-top:-4px;margin-bottom:8px;padding:8px 12px;background:rgba(160,126,245,.09);border:1px solid rgba(160,126,245,.22);border-radius:10px;font-size:11px;color:#a07ef5;line-height:1.5">
         🧪 <strong>Demo mode detected.</strong> Hit Next to skip signup and explore with sample data — no account needed.
       </div>
     </div>
-    <div class="field-wrap"><div class="field-lbl">Email *</div><input class="ipt" id="f-email" type="email" placeholder="you@email.com" value="${data.email||""}"/></div>
+    <div class="field-wrap"><div class="field-lbl">Email *</div><input class="ipt" id="f-email" type="email" placeholder="you@email.com" value="${esc(data.email||"")}"/></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="field-wrap"><div class="field-lbl">Date of Birth *</div><input class="ipt" id="f-dob" type="date" value="${data.dob||""}"/></div>
+      <div class="field-wrap"><div class="field-lbl">Date of Birth *</div><input class="ipt" id="f-dob" type="date" value="${esc(data.dob||"")}"/></div>
       <div class="field-wrap">
         <div class="field-lbl">State *</div>
         <select class="ipt" id="f-state" style="appearance:none;-webkit-appearance:none">
@@ -814,7 +815,7 @@ function renderSignupProfile(el, data, state) {
         </select>
       </div>
     </div>
-    <div class="field-wrap"><div class="field-lbl">Zip Code</div><input class="ipt" id="f-zip" inputmode="numeric" placeholder="19711" value="${data.zipCode||""}"/></div>
+    <div class="field-wrap"><div class="field-lbl">Zip Code</div><input class="ipt" id="f-zip" inputmode="numeric" placeholder="19711" value="${esc(data.zipCode||"")}"/></div>
     ${state.signupError ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px;text-align:center">${state.signupError}</div>` : ""}
     <button id="btn-next" class="btn-primary" style="margin-top:8px">Next</button>
   `;
@@ -1005,7 +1006,11 @@ function renderSignupPin(el, data, state) {
     const deviceId = LS.get("ft-device-id") || uid();
     LS.set("ft-device-id", deviceId);
 
-    await registerUser(d, { primaryGoal: d.primaryGoal, incomeRange: d.incomeRange, monthlySavingsTarget: d.monthlySavingsTarget }, p);
+    const regOk = await registerUser(d, { primaryGoal: d.primaryGoal, incomeRange: d.incomeRange, monthlySavingsTarget: d.monthlySavingsTarget }, p);
+    if (!regOk) {
+      setState({ signupError: "Could not create account. Check your connection and try again.", signupPin: p, signupConfirmPin: c });
+      _currentView = viewSignup; render(); return;
+    }
     await SessionManager.create(d.email, p, deviceId);
     LS.set("fl-profile", d);
     SessionManager.sendVerifyCode(d.email);
@@ -1096,7 +1101,7 @@ function viewSignIn(root, state) {
 
   if (step === "email") {
     c.innerHTML = `
-      <div class="field-wrap"><div class="field-lbl">Email</div><input id="inp-email" class="ipt" type="email" placeholder="you@email.com" value="${email}" autocomplete="email"/></div>
+      <div class="field-wrap"><div class="field-lbl">Email</div><input id="inp-email" class="ipt" type="email" placeholder="you@email.com" value="${esc(email)}" autocomplete="email"/></div>
       ${err ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px">${err}</div>` : ""}
       <button id="btn-next" class="btn-primary">Continue</button>
     `;
@@ -1138,9 +1143,12 @@ function viewSignIn(root, state) {
       }
       setState({ signInLoading: true, signInError: "" }); _currentView = viewSignIn; render();
       const result = await signInPull(email, p);
-      if (result) {
+      if (result && result._networkError) {
+        setState({ signInLoading: false, signInError: "Network error. Check your connection and try again." }); _currentView = viewSignIn; render();
+      } else if (result && !result._networkError) {
         applyRestore(result, email);
         await SessionManager.create(email, p, LS.get("ft-device-id") || uid());
+        _isNewUser = false; // returning user — skip tour
         mountApp();
       } else {
         setState({ signInLoading: false, signInError: "Incorrect email or PIN" }); _currentView = viewSignIn; render();
@@ -1154,7 +1162,7 @@ function viewSignIn(root, state) {
     c.innerHTML = `
       <div style="font-size:16px;font-weight:700;margin-bottom:4px;color:${V.text}">Reset PIN</div>
       <div style="font-size:12px;color:${V.text3};margin-bottom:16px">We'll send a reset code to your email</div>
-      <div class="field-wrap"><div class="field-lbl">Email</div><input id="inp-email" class="ipt" type="email" placeholder="you@email.com" value="${forgotEmail}"/></div>
+      <div class="field-wrap"><div class="field-lbl">Email</div><input id="inp-email" class="ipt" type="email" placeholder="you@email.com" value="${esc(forgotEmail)}"/></div>
       ${err ? `<div style="font-size:12px;color:${V.danger};margin-bottom:8px">${err}</div>` : ""}
       <button id="btn-send" class="btn-primary">Send Reset Code</button>
     `;
@@ -1199,6 +1207,7 @@ function viewSignIn(root, state) {
       if (ok) {
         await SessionManager.create(state.forgotEmail, npi, LS.get("ft-device-id") || uid());
         LS.set("fl-onboarded", true);
+        _isNewUser = false; // PIN reset user — skip tour
         mountApp();
       } else { setState({ signInError: "Failed to set PIN" }); _currentView = viewSignIn; render(); }
     });
@@ -1373,7 +1382,7 @@ const LS={get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):n
 const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
 const today=()=>{const _d=new Date();return`${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,"0")}-${String(_d.getDate()).padStart(2,"0")}`;};
 const thisMonth=()=>{const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;};
-const monthAgo=(n)=>{const d=new Date();d.setMonth(d.getMonth()-n);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;};
+const monthAgo=(n)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-n);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;};
 const fmtDate=(d)=>{try{const dt=new Date(d+"T12:00:00"),now=new Date(),diff=Math.round((now-dt)/86400000);if(diff===0)return"Today";if(diff===1)return"Yesterday";return dt.toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch{return d;}};
 const fmtDateShort=(d)=>{try{return new Date(d+"T12:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch{return d;}};
 const fmtMoney=(n,dec=2)=>Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec});
@@ -3415,6 +3424,18 @@ function App(){
     t3:dark?"#4a4a5c":"#9a9ab0",
   };
 
+  // Handle URL parameters from PWA shortcuts
+  useEffect(()=>{
+    try{
+      const params=new URLSearchParams(window.location.search);
+      if(params.get("action")==="add")setShowAdd(true);
+      const tab=params.get("tab");
+      if(tab&&["home","transactions","budget","wealth","settings"].includes(tab))d({type:"TAB",tab});
+      // Clean URL without reloading
+      if(params.toString())window.history.replaceState({},"",window.location.pathname);
+    }catch{}
+  },[]);
+
   // Keyboard shortcut: Shift+A → add transaction
   useEffect(()=>{
     const handler=(e)=>{if(e.shiftKey&&e.key==="A"&&!e.ctrlKey&&!e.metaKey&&document.activeElement.tagName!=="INPUT"&&document.activeElement.tagName!=="TEXTAREA"){e.preventDefault();setShowAdd(true);}};
@@ -3477,14 +3498,14 @@ function App(){
     if(saveTimer.current)clearTimeout(saveTimer.current);
     saveTimer.current=setTimeout(()=>{
       try{
-        LS.set("fl-tx",s.transactions);
-        LS.set("fl-accounts",s.accounts);
-        LS.set("fl-budgets",s.budgets);
-        LS.set("fl-goals-v2",s.goals||[]);
-        LS.set("fl-recurring",s.recurring||[]);
+        localStorage.setItem("fl-tx",JSON.stringify(s.transactions));
+        localStorage.setItem("fl-accounts",JSON.stringify(s.accounts));
+        localStorage.setItem("fl-budgets",JSON.stringify(s.budgets));
+        localStorage.setItem("fl-goals-v2",JSON.stringify(s.goals||[]));
+        localStorage.setItem("fl-recurring",JSON.stringify(s.recurring||[]));
       }catch(e){
         console.error("Failed to persist data:",e);
-        Toast.show("Failed to save data",T.danger);
+        Toast.show("Failed to save data — storage may be full",T.danger);
       }
     },300);
     return()=>{if(saveTimer.current)clearTimeout(saveTimer.current);};
@@ -3510,7 +3531,7 @@ function App(){
     };
     const timer=setTimeout(syncToServer,5000);
     return()=>clearTimeout(timer);
-  },[s.transactions.length,s.accounts.length,s.loaded]);
+  },[s.transactions,s.accounts,s.budgets,s.goals,s.recurring,s.loaded]);
 
   if(!s.loaded)return(
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",background:T.bg,flexDirection:"column",gap:16}}>
