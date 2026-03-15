@@ -107,7 +107,13 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() => cached);
+        .catch(() => {
+          if (cached) return cached;
+          // Offline with no cache — return offline fallback
+          return new Response('Offline — please check your connection.', {
+            status: 503, headers: { 'Content-Type': 'text/plain' }
+          });
+        });
 
       return cached || fetchPromise;
     })
