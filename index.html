@@ -1216,6 +1216,12 @@ function mountApp() {
       window.__mountApp();
     } else {
       window.__pendingMount = function() { window.__mountApp(); };
+      // Safety timeout: if React still hasn't loaded after 25s, show error
+      setTimeout(function() {
+        if (!window.__reactReady) {
+          showReactError('App failed to load. Check your connection and try again.');
+        }
+      }, 25000);
     }
   }
 
@@ -1318,19 +1324,24 @@ function mountApp() {
 <script>
 
 
-function ld(url,name){return new Promise(function(res,rej){var s=document.createElement('script');s.src=url;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej(new Error(name+' failed'));};document.head.appendChild(s);})}
+function ld(url,name){return new Promise(function(res,rej){var timer=setTimeout(function(){s.onload=s.onerror=null;rej(new Error(name+' timed out'));},15000);var s=document.createElement('script');s.src=url;s.crossOrigin='anonymous';s.onload=function(){clearTimeout(timer);res();};s.onerror=function(){clearTimeout(timer);rej(new Error(name+' failed'));};document.head.appendChild(s);})}
 function showReactError(msg){
   var el = document.getElementById('react-root');
-  if(el) el.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;gap:12px"><div style="font-size:28px">⚠️</div><div style="color:#ff5757;font-family:monospace;font-size:12px;line-height:1.7;max-width:300px">'+msg+'</div></div>';
+  if(el) el.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;gap:12px"><div style="font-size:28px">⚠️</div><div style="color:#ff5757;font-family:Outfit,sans-serif;font-size:13px;line-height:1.7;max-width:300px">'+msg+'</div><button onclick="location.reload()" style="margin-top:8px;padding:10px 28px;border-radius:10px;border:none;background:linear-gradient(135deg,#00f5a0,#00d9f5);color:#08080d;font-size:14px;font-weight:700;cursor:pointer;font-family:Outfit,sans-serif">Retry</button></div>';
 }
 window.__reactReady = false;
 
 (function(){
+  var loadTimeout = setTimeout(function(){
+    if(!window.__reactReady) showReactError('App took too long to load. Check your connection and try again.');
+  }, 20000);
+
   ld('https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js','React')
   .catch(function(){return ld('https://unpkg.com/react@18/umd/react.production.min.js','React');})
   .then(function(){return ld('https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js','ReactDOM').catch(function(){return ld('https://unpkg.com/react-dom@18/umd/react-dom.production.min.js','ReactDOM');});})
   .then(function(){return ld('https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.0/babel.min.js','Babel').catch(function(){return ld('https://unpkg.com/@babel/standalone@7.24.0/babel.min.js','Babel');});})
   .then(function(){
+    clearTimeout(loadTimeout);
     if(typeof React==='undefined') throw new Error('React failed to load');
     if(typeof Babel==='undefined') throw new Error('Babel failed to load');
     var src = document.getElementById('app-src');
@@ -1344,7 +1355,7 @@ window.__reactReady = false;
     // If auth already completed and is waiting for React, mount now
     if(window.__pendingMount){ window.__pendingMount(); window.__pendingMount = null; }
   })
-  .catch(function(e){ showReactError(e.message); });
+  .catch(function(e){ clearTimeout(loadTimeout); showReactError(e.message); });
 })();
 
 

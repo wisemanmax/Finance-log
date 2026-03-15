@@ -1,6 +1,6 @@
-const CACHE_NAME = 'financelog-v2';
-const STATIC_CACHE = 'financelog-static-v2';
-const CDN_CACHE = 'financelog-cdn-v2';
+const CACHE_NAME = 'financelog-v3';
+const STATIC_CACHE = 'financelog-static-v3';
+const CDN_CACHE = 'financelog-cdn-v3';
 
 const PRECACHE_URLS = [
   '/',
@@ -87,6 +87,9 @@ self.addEventListener('fetch', (event) => {
             caches.open(CDN_CACHE).then((cache) => cache.put(request, clone));
           }
           return response;
+        }).catch(() => {
+          // Network failed and no cache — let the script onerror handler fire
+          return new Response('', { status: 504, statusText: 'CDN unavailable' });
         });
       })
     );
