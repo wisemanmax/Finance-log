@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useRef } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { V } from './utils/theme';
 import { LS } from './utils/storage';
 import { CloudSync } from './utils/sync';

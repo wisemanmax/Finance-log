@@ -8,55 +8,54 @@ A personal finance and budget tracking PWA. Part of the IRONLOG ecosystem.
 
 **[https://financelog.ironlog.space](https://financelog.ironlog.space)**
 
-## Files
-
-| File | Purpose |
-|------|---------|
-| `index.html` | Entire app — single-file PWA (React 18 + Recharts + Babel, no build step) |
-| `manifest.json` | PWA install manifest — icons, theme color, display mode |
-| `CNAME` | GitHub Pages custom domain config |
-| `.nojekyll` | Disables Jekyll processing on GitHub Pages |
-
 ## Tech Stack
 
-- **Frontend**: React 18 UMD, Recharts 2.12, Babel Standalone (in-browser JSX)
-- **Storage**: localStorage — all data stays on device, nothing uploaded
-- **Auth**: Shared `ironlog_session` cookie on `.ironlog.space` domain
-- **Deployment**: GitHub Pages with custom subdomain
+- **Frontend**: React 18, Recharts 2.12, Vite 6
+- **Storage**: localStorage — all data stays on device by default
+- **Cloud Sync**: Optional push/pull to IRONLOG backend (Supabase)
+- **Auth**: Email + PIN, shared `ironlog_session` cookie for SSO across apps
+- **Deployment**: GitHub Pages via GitHub Actions
 
-No build step. No Node required. Edit `index.html`, push, deployed.
-
-## Deploy to GitHub Pages
+## Development
 
 ```bash
-# 1. Create a new repo on GitHub named: ironlog-finance
-# 2. Push this folder
-git init
-git add .
-git commit -m "initial deploy"
-git remote add origin https://github.com/YOUR_USERNAME/ironlog-finance.git
-git push -u origin main
-
-# 3. GitHub repo → Settings → Pages → Source: main branch, root folder
-# 4. Add a CNAME DNS record pointing to your GitHub Pages domain
+npm install
+npm run dev      # Dev server on port 3001
+npm run build    # Production build to dist/
+npm run preview  # Preview production build
 ```
 
-## DNS Setup
+## Project Structure
 
-In your domain registrar for `ironlog.space`:
-
-| Type | Host | Value |
-|------|------|-------|
-| CNAME | `financelog` | `YOUR_USERNAME.github.io` |
-
-GitHub Pages auto-provisions HTTPS once DNS propagates (usually < 30 min).
+```
+src/
+├── main.jsx              # Entry point, SW registration
+├── App.jsx               # Root component, routing, state persistence
+├── index.css             # Global styles
+├── components/
+│   ├── ui.jsx            # Shared UI (Btn, Card, Field, Sheet, etc.)
+│   ├── Icons.jsx         # SVG icons
+│   └── ErrorBoundary.jsx # Crash handler with emergency backup
+├── tabs/
+│   ├── Onboarding.jsx    # Multi-step signup wizard
+│   ├── HomeTab.jsx       # Dashboard
+│   └── SettingsTab.jsx   # Settings, export/import, sign out
+├── utils/
+│   ├── auth.js           # Session management
+│   ├── storage.js        # localStorage + encrypted storage + cookies
+│   ├── sync.js           # Cloud sync (push/pull)
+│   ├── theme.js          # Dark/light themes
+│   ├── helpers.js        # Date, currency, math utilities
+│   └── sentry.js         # Error tracking
+└── state/
+    └── reducer.js        # App state reducer + data constants
+```
 
 ## IRON Rank System
 
 FinanceLog participates in the shared IRONLOG XP/rank system:
 - Earn XP by logging consistently in this app
 - Progress through 30 ranks: Bronze I → Immortal III
-- Level-up celebration overlay fires on rank-up
 - Daily Missions with app-specific objectives
 - Light/dark theme toggle in Settings
 

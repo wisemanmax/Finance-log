@@ -23,9 +23,9 @@ class ErrorBoundary extends React.Component {
       React.createElement("button", {
         onClick: () => {
           try {
-            const keys = ["fl-tx", "fl-accounts", "fl-budgets", "fl-goals-v2", "fl-recurring", "fl-profile"];
+            const keyMap = {"fl-tx":"transactions","fl-accounts":"accounts","fl-budgets":"budgets","fl-goals-v2":"goals","fl-recurring":"recurring","fl-profile":"profile"};
             const data = {};
-            keys.forEach(k => { try { const v = localStorage.getItem(k); if (v) data[k.replace("fl-", "")] = JSON.parse(v); } catch (e) {} });
+            Object.entries(keyMap).forEach(([lsKey,name]) => { try { const v = localStorage.getItem(lsKey); if (v) data[name] = JSON.parse(v); } catch (e) {} });
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a"); a.href = url; a.download = `financelog-emergency-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click();

@@ -13,16 +13,23 @@ export const fmtDate = (d) => {
   return fmtShort(d);
 };
 
-export const fmtMoney = (n, dec = 2) => {
-  if (n == null || isNaN(n)) return "$0.00";
-  return "$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+const CURRENCY_SYMBOLS = { USD: "$", EUR: "\u20ac", GBP: "\u00a3", CAD: "C$", AUD: "A$", JPY: "\u00a5", INR: "\u20b9", BRL: "R$" };
+export const getCurrencySymbol = (code) => CURRENCY_SYMBOLS[code] || "$";
+
+export const fmtMoney = (n, dec = 2, currencyCode) => {
+  if (n == null || isNaN(n)) return getCurrencySymbol(currencyCode) + "0.00";
+  const sym = getCurrencySymbol(currencyCode);
+  const sign = n < 0 ? "-" : "";
+  return sign + sym + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
 };
 
-export const fmtShortMoney = (n) => {
+export const fmtShortMoney = (n, currencyCode) => {
+  const sym = getCurrencySymbol(currencyCode);
+  const sign = (n || 0) < 0 ? "-" : "";
   const abs = Math.abs(n || 0);
-  if (abs >= 1e6) return "$" + (abs / 1e6).toFixed(1) + "M";
-  if (abs >= 1e3) return "$" + (abs / 1e3).toFixed(1) + "k";
-  return "$" + abs.toFixed(0);
+  if (abs >= 1e6) return sign + sym + (abs / 1e6).toFixed(1) + "M";
+  if (abs >= 1e3) return sign + sym + (abs / 1e3).toFixed(1) + "k";
+  return sign + sym + abs.toFixed(0);
 };
 
 export const mShort = (m) => ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][parseInt(m.split("-")[1]) - 1] || m;

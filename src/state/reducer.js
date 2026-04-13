@@ -56,7 +56,7 @@ export function reducer(s, a) {
     case "TAB": return { ...s, tab: a.tab };
     case "ADD_TX": {
       if (s.transactions.some(t => t.id === a.tx.id)) return s;
-      return { ...s, transactions: [a.tx, ...s.transactions].sort((a, b) => b.date.localeCompare(a.date)) };
+      return { ...s, transactions: [a.tx, ...s.transactions].sort((a, b) => (b.date||"").localeCompare(a.date||"")) };
     }
     case "DEL_TX": return { ...s, transactions: s.transactions.filter(t => t.id !== a.id) };
     case "UPD_TX": return { ...s, transactions: s.transactions.map(t => t.id === a.tx.id ? { ...a.tx } : t) };

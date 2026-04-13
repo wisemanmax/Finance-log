@@ -6,6 +6,7 @@ import { today, fmtMoney, fmtShortMoney, thisMonth, safeSum } from '../utils/hel
 import { EXP_CATS, INC_CATS } from '../state/reducer';
 
 export function HomeTab({ s, d }) {
+  const cur = s.currency;
   const monthTx = useMemo(() => s.transactions.filter(t => t.date?.startsWith(thisMonth())), [s.transactions]);
   const monthIncome = safeSum(monthTx.filter(t => t.type === "income").map(t => t.amount));
   const monthExpense = safeSum(monthTx.filter(t => t.type === "expense").map(t => t.amount));
@@ -36,7 +37,7 @@ export function HomeTab({ s, d }) {
       {/* Net Worth Card */}
       <Card style={{ padding: 16, background: `linear-gradient(135deg,${V.accent}08,${V.accent2}05)`, border: `1px solid ${V.accent}20` }}>
         <div style={{ fontSize: 10, color: V.text3, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 4 }}>Net Worth</div>
-        <div style={{ fontSize: 28, fontWeight: 800, color: V.accent, fontFamily: V.mono }}>{fmtMoney(netWorth)}</div>
+        <div style={{ fontSize: 28, fontWeight: 800, color: V.accent, fontFamily: V.mono }}>{fmtMoney(netWorth, 2, cur)}</div>
         <div style={{ fontSize: 10, color: V.text3, marginTop: 2 }}>{s.accounts.length} account{s.accounts.length !== 1 ? "s" : ""} linked</div>
       </Card>
 
@@ -44,9 +45,9 @@ export function HomeTab({ s, d }) {
       <Card style={{ padding: 14 }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: V.text3, textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 10 }}>This Month</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-          <Stat label="Income" value={fmtShortMoney(monthIncome)} color={V.accent} />
-          <Stat label="Spent" value={fmtShortMoney(monthExpense)} color={V.danger} />
-          <Stat label="Net" value={(monthNet >= 0 ? "+" : "") + fmtShortMoney(monthNet)} color={monthNet >= 0 ? V.accent : V.danger} />
+          <Stat label="Income" value={fmtShortMoney(monthIncome, cur)} color={V.accent} />
+          <Stat label="Spent" value={fmtShortMoney(monthExpense, cur)} color={V.danger} />
+          <Stat label="Net" value={(monthNet >= 0 ? "+" : "") + fmtShortMoney(monthNet, cur)} color={monthNet >= 0 ? V.accent : V.danger} />
         </div>
       </Card>
 
@@ -62,7 +63,7 @@ export function HomeTab({ s, d }) {
               <div key={catId} style={{ marginBottom: 10 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                   <span style={{ fontSize: 11, color: V.text }}>{cat?.icon} {cat?.label || catId}</span>
-                  <span style={{ fontSize: 10, color: pct > 100 ? V.danger : V.text3, fontFamily: V.mono }}>{fmtMoney(spent, 0)} / {fmtMoney(limit, 0)}</span>
+                  <span style={{ fontSize: 10, color: pct > 100 ? V.danger : V.text3, fontFamily: V.mono }}>{fmtMoney(spent, 0, cur)} / {fmtMoney(limit, 0, cur)}</span>
                 </div>
                 <Progress val={spent} max={limit} color={pct > 100 ? V.danger : pct > 80 ? V.warn : V.accent} h={4} />
               </div>
@@ -81,7 +82,7 @@ export function HomeTab({ s, d }) {
               <div key={catId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0",
                 borderBottom: `1px solid rgba(255,255,255,0.03)` }}>
                 <span style={{ fontSize: 12, color: V.text }}>{cat?.icon} {cat?.label || catId}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: V.danger, fontFamily: V.mono }}>{fmtMoney(amount, 0)}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: V.danger, fontFamily: V.mono }}>{fmtMoney(amount, 0, cur)}</span>
               </div>
             );
           })}
@@ -101,7 +102,7 @@ export function HomeTab({ s, d }) {
             <div key={g.id} style={{ marginBottom: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                 <span style={{ fontSize: 12, color: V.text }}>{g.icon} {g.name}</span>
-                <span style={{ fontSize: 10, color: V.text3, fontFamily: V.mono }}>{fmtMoney(g.current || 0, 0)} / {fmtMoney(g.target, 0)}</span>
+                <span style={{ fontSize: 10, color: V.text3, fontFamily: V.mono }}>{fmtMoney(g.current || 0, 0, cur)} / {fmtMoney(g.target, 0, cur)}</span>
               </div>
               <Progress val={g.current || 0} max={g.target} color={V.accent2} h={4} />
             </div>

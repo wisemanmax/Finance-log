@@ -115,11 +115,7 @@ export function Onboarding({d}){
       // Apply to local state
       d({type:"SET_PROFILE",profile});
       d({type:"SET_CURRENCY",currency});
-      if(monthlyBudget){
-        const perCat=Math.round(parseFloat(monthlyBudget)/5);
-        d({type:"SET_BUD",budgets:{food:perCat,transport:perCat,entertainment:perCat,shopping:perCat,other:perCat}});
-      }
-      if(savingsGoal){d({type:"ADD_GOAL",goal:{id:uid(),name:"Savings Goal",target:parseFloat(savingsGoal)||1000,current:0,icon:"💰",created:today()}});}
+      // Budget & goal are applied in step 3's "Next" handler — not here, to avoid duplicates
       AuthToken.init(profile.email);
       LS.set("ft-device-id",payload.deviceId);
       await SessionManager.create(profile.email,accountPin,payload.deviceId);

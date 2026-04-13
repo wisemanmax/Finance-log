@@ -1,5 +1,4 @@
 import { LS } from './storage';
-import { AuthToken } from './auth';
 
 export const SYNC_URL = LS.get("ft-api-url") || "https://api.ironlog.space";
 export const APP_VERSION = "1.0";
@@ -26,13 +25,23 @@ export const CloudSync = {
         budgets: state.budgets || {},
         goals: state.goals || [],
         recurring: state.recurring || [],
+        settings: {
+          profile: state.profile || {},
+          currency: state.currency || "USD",
+        },
       });
-      await fetch(`${SYNC_URL}/api/sync/push`, {
+      const res = await fetch(`${SYNC_URL}/api/sync/push`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Session-Token": token },
         body: payload,
       });
-    } catch (e) {} finally { syncInFlight = false; }
+      if (res.status === 401) {
+        LS.set("ft-session-token", null);
+        console.warn("Sync: session expired");
+      } else if (!res.ok) {
+        console.warn("Sync push failed:", res.status);
+      }
+    } catch (e) { console.warn("Sync push error:", e); } finally { syncInFlight = false; }
   },
   debouncedPush: (() => {
     let t = null;
