@@ -7,7 +7,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 
 // Service Worker registration with update handling
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
     setInterval(() => reg.update(), 1800000); // check for updates every 30 min
     reg.addEventListener('updatefound', () => {
       const newWorker = reg.installing;
