@@ -21,7 +21,7 @@ export function GlobalConfirm() {
         {state.detail && <div style={{ fontSize: 12, color: V.text3, lineHeight: 1.5, marginBottom: 16 }}>{state.detail}</div>}
         <div style={{ display: "flex", gap: 10 }}>
           <Btn v="secondary" full onClick={() => ConfirmCtrl.clear()}>Cancel</Btn>
-          <Btn full onClick={() => { state.onConfirm(); ConfirmCtrl.clear(); }} s={{ background: V.danger }}>Confirm</Btn>
+          <Btn full onClick={() => { state.onConfirm?.(); ConfirmCtrl.clear(); }} s={{ background: V.danger }}>Confirm</Btn>
         </div>
       </div>
     </div>,

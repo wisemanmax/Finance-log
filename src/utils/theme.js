@@ -21,6 +21,7 @@ export const setTheme = (mode) => {
   LS.set("fl-theme", mode);
   document.body.style.background = V.bg;
   document.body.style.color = V.text;
+  document.documentElement.setAttribute("data-theme", mode);
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", V.bg);
 };
 
