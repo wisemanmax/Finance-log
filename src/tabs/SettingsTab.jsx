@@ -33,6 +33,9 @@ export function SettingsTab({ s, d }) {
     const mode = isDark ? "light" : "dark";
     setTheme(mode);
     setIsDark(!isDark);
+    // V is a mutated object, not React state — reload so every component
+    // re-reads the new theme values consistently on next render.
+    window.location.reload();
   };
 
   const exportData = () => {

@@ -35,9 +35,9 @@ export const fmtShortMoney = (n, currencyCode) => {
 export const mShort = (m) => ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][parseInt(m.split("-")[1]) - 1] || m;
 
 // Floating-point safe arithmetic
-export const safeAdd = (a, b) => Math.round((a + b) * 100) / 100;
-export const safeSub = (a, b) => Math.round((a - b) * 100) / 100;
-export const safeSum = (arr) => arr.reduce((s, v) => safeAdd(s, v), 0);
+export const safeAdd = (a, b) => Math.round(((+a || 0) + (+b || 0)) * 100) / 100;
+export const safeSub = (a, b) => Math.round(((+a || 0) - (+b || 0)) * 100) / 100;
+export const safeSum = (arr) => (arr || []).reduce((s, v) => safeAdd(s, v), 0);
 
 // Validation
 export const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
